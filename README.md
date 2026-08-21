@@ -13,7 +13,7 @@ A fast, responsive, and robust enterprise inventory, point-of-sale (POS), suppli
 - **?? Expense Management**: Categorized operating expenditure tracking with payment method splits (Cash, Card, MFS).
 - **??? Audit Logging Engine**: Tamper-evident, structured change logs across all 10 system entities with side-by-side field diffs.
 - **?? Database & Auto-Backups**: 1-click JSON full database snapshots, spreadsheet CSV archive exports, safe merge restore engine, and automated browser snapshots.
-- **?? Automated EmailJS Reports**: Beautifully formatted HTML summaries for daily closing, monthly reviews, and test alerts delivered directly to email inboxes.
+- **?? Automated EmailJS Reports**: Formatted HTML summaries for daily closing, monthly reviews, and test alerts delivered directly to email inboxes.
 - **?? Enterprise Access Control**: Google Authentication with cryptographic SHA-256 email whitelisting and Firestore cloud security rules.
 
 ---
@@ -28,7 +28,7 @@ A fast, responsive, and robust enterprise inventory, point-of-sale (POS), suppli
 
 ---
 
-## ?? Local Setup & Development
+## ?? Local Setup & Deployment
 
 1. Clone or download the repository:
    `ash
