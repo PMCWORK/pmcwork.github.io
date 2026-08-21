@@ -4547,16 +4547,42 @@ function escapeHtml(s) {
 
 const AUDIT_LOG_CAP = 150;
 
-async function logAudit(entityType, entityId, action, before, after) {
+async function logAudit(entityType, entityIdOrAction, actionOrData, before, after) {
   if (!firebaseReady || !db) return;
   try {
+    let finalEntityType = entityType || 'general';
+    let finalEntityId = '';
+    let finalAction = 'update';
+    let finalBefore = null;
+    let finalAfter = null;
+
+    if (typeof actionOrData === 'object' && before === undefined && after === undefined) {
+      // Polymorphic signature: logAudit(entityType, action, data)
+      finalEntityId = 'sys';
+      finalAction = typeof entityIdOrAction === 'string' ? entityIdOrAction : 'update';
+      finalAfter = actionOrData;
+    } else {
+      // Standard signature: logAudit(entityType, entityId, action, before, after)
+      finalEntityId = entityIdOrAction || '';
+      finalAction = typeof actionOrData === 'string' ? actionOrData : 'update';
+      finalBefore = before || null;
+      finalAfter = after || null;
+    }
+
     const serverTs = (typeof firebase !== 'undefined' && firebase.firestore?.FieldValue)
       ? firebase.firestore.FieldValue.serverTimestamp() : null;
+    const authorName = (currentAuthUser && (currentAuthUser.displayName || currentAuthUser.email)) || 'Admin';
+
     await db.collection('audit_log').add({
-      entityType, entityId, action,
-      before: before || null, after: after || null,
-      timestamp: serverTs, timestampMillis: Date.now(),
-      by: 'local-test', undone: false
+      entityType: finalEntityType,
+      entityId: finalEntityId,
+      action: finalAction,
+      before: finalBefore,
+      after: finalAfter,
+      timestamp: serverTs,
+      timestampMillis: Date.now(),
+      by: authorName,
+      undone: false
     });
   } catch(err) { console.warn('audit log notice:', err); }
 }
@@ -6206,20 +6232,49 @@ function formatAuditTimestamp(entry) {
 }
 
 function renderAuditItemCard(entry) {
-  const type = entry.entityType || 'general';
-  const action = entry.action || 'action';
-  const b = entry.before || {};
-  const a = entry.after || {};
+  let type = entry.entityType || 'general';
+  let action = 'update';
+  let b = (entry.before && typeof entry.before === 'object') ? entry.before : {};
+  let a = (entry.after && typeof entry.after === 'object') ? entry.after : {};
+
+  if (typeof entry.action === 'string') {
+    action = entry.action;
+  } else if (entry.action && typeof entry.action === 'object') {
+    a = { ...entry.action, ...a };
+    if (entry.action.action && typeof entry.action.action === 'string') {
+      action = entry.action.action;
+    } else if (typeof entry.entityId === 'string' && entry.entityId) {
+      action = entry.entityId;
+    }
+  }
+
   const timeHTML = formatAuditTimestamp(entry);
 
   let catClass = 'audit-cat-general';
-  let iconSvg = '';
+  let iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
   let titleText = '';
-  let badgeClass = action;
-  let badgeText = action;
+  let badgeClass = typeof action === 'string' ? action.toLowerCase().replace(/\s+/g, '_') : 'update';
+  let badgeText = typeof action === 'string' ? action.toUpperCase() : 'ACTIVITY';
   let detailsHTML = '';
 
-  if (type === 'invoice') {
+  if (type === 'auth') {
+    catClass = 'audit-cat-general';
+    iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    titleText = `Staff Login · Google Authentication`;
+    badgeClass = 'create';
+    badgeText = 'Logged In';
+    const userName = a.user || a.name || entry.by || 'Authorized Staff';
+    detailsHTML = `<div style="color:var(--text-dim);">Authorized user <b>${escapeHtml(userName)}</b> successfully signed in to dashboard.</div>`;
+  } else if (type === 'settings' || type === 'backup' || type === 'database') {
+    catClass = 'audit-cat-general';
+    iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
+    const actionDesc = a.action || 'Settings / Backup Activity';
+    titleText = `${escapeHtml(actionDesc)}`;
+    badgeClass = 'update';
+    badgeText = 'Settings';
+    const rec = a.recipient || a.recipientName ? `Recipient: <b>${escapeHtml(a.recipientName || a.recipient)}</b>` : '';
+    detailsHTML = `<div style="color:var(--text-dim);">${rec ? `${rec} · ` : ''}Operation executed successfully by <b>${escapeHtml(entry.by || 'Admin')}</b>.</div>`;
+  } else if (type === 'invoice') {
     catClass = 'audit-cat-invoice';
     iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l4 4v16H6z"/><path d="M9 12h6M9 16h6M9 8h3"/></svg>`;
     if (action === 'create') {
@@ -6546,6 +6601,13 @@ function renderAuditItemCard(entry) {
           Expense of <b>${formatMoney(b.amount || 0)}</b> for <b>${catName}</b> dated ${formatDateLabel(b.date)} was removed.
         </div>`;
     }
+  }
+
+  if (!titleText) {
+    titleText = `System Activity · ${escapeHtml(type)}`;
+    badgeClass = 'update';
+    badgeText = typeof action === 'string' ? action.toUpperCase() : 'LOGGED';
+    detailsHTML = `<div style="color:var(--text-dim);">Activity recorded in <b>${escapeHtml(type)}</b> by <b>${escapeHtml(entry.by || 'Admin')}</b>.</div>`;
   }
 
   return `
