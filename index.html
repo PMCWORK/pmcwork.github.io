@@ -1961,7 +1961,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 .placeholder-card h3{ font-family:'Space Grotesk',sans-serif; margin:0 0 6px; font-size:17px; }
 .placeholder-card p{ color:var(--text-dim); font-size:13px; margin:0; }
 
-.toast{ position:fixed; bottom:26px; right:26px; background:#1c1f26; color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:500; opacity:0; transform:translateY(10px); transition:opacity .25s, transform .25s; pointer-events:none; z-index:50; box-shadow:0 12px 30px -10px rgba(0,0,0,.35); }
+.toast{ position:fixed; bottom:26px; right:26px; background:#1c1f26; color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; font-weight:500; opacity:0; transform:translateY(10px); transition:opacity .25s, transform .25s; pointer-events:none; z-index:100001; box-shadow:0 12px 30px -10px rgba(0,0,0,.35); }
 .toast.show{ opacity:1; transform:translateY(0); }
 
 .load-more-wrap{ text-align:center; margin-top:16px; }
@@ -2226,14 +2226,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         This system is restricted to authorized management &amp; staff. Sign in with your Google account to continue.
       </div>
 
-      <div class="auth-allowed-list">
-        <div class="auth-allowed-title">Authorized Roles:</div>
-        <div class="auth-allowed-tags">
-          <span>Shop Administrator (Management)</span>
-          <span>Managing Partner (Mehedi)</span>
-          <span>Sales Executive (Foyez)</span>
-        </div>
-      </div>
+      <div id="authInlineError" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:10px 14px; border-radius:8px; font-size:12px; margin-bottom:16px; text-align:left; line-height:1.45;"></div>
 
       <button type="button" id="googleSignInBtn" class="google-sign-in-btn">
         <svg viewBox="0 0 24 24" width="18" height="18">
@@ -4178,6 +4171,16 @@ function showAuthPrompt(errorMsg) {
   if ($('#authLoadingState')) $('#authLoadingState').style.display = 'none';
   if ($('#authUnauthorizedState')) $('#authUnauthorizedState').style.display = 'none';
   if ($('#authPromptState')) $('#authPromptState').style.display = 'block';
+
+  const errEl = $('#authInlineError');
+  if (errEl) {
+    if (errorMsg) {
+      errEl.textContent = errorMsg;
+      errEl.style.display = 'block';
+    } else {
+      errEl.style.display = 'none';
+    }
+  }
   if (errorMsg) toast(errorMsg);
 }
 
