@@ -7,6 +7,9 @@ junk/
 *.xlsx
 *.csv
 
+# Local documentation
+README.md
+
 # Firebase local caches
 .firebase/
 firebase-debug.log*
