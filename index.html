@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PM Computers · Tracker</title>
+<title>PMC Data Management System</title>
+<link rel="icon" type="image/svg+xml" href="Icons and logo/pmc_favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="Icons and logo/favicon-32.png">
+<link rel="icon" type="image/png" sizes="256x256" href="Icons and logo/favicon-256.png">
+<link rel="shortcut icon" href="Icons and logo/favicon.ico">
+<link rel="apple-touch-icon" href="Icons and logo/favicon-256.png">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -2211,16 +2216,14 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 <!-- AUTH OVERLAY FOR RESTRICTED ACCESS -->
 <div id="authOverlay" class="auth-overlay">
   <div class="auth-card">
-    <div class="auth-logo-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:24px;height:24px;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-    </div>
+    <img src="Icons and logo/pmc_favicon.svg" alt="PMC Logo" style="width:58px; height:58px; margin:0 auto 14px; display:block; border-radius:14px; box-shadow:0 6px 18px rgba(47,143,224,0.35);">
     <div class="auth-title">PM COMPUTERS</div>
-    <div class="auth-subtitle">Restricted Enterprise System</div>
+    <div class="auth-subtitle">Data Management System</div>
 
     <!-- Login State -->
     <div id="authPromptState">
       <div class="auth-desc">
-        This dashboard contains sensitive financial ledgers, inventory, and invoices. Sign in with an authorized Google account to continue.
+        This system is restricted to authorized management &amp; staff. Sign in with your Google account to continue.
       </div>
 
       <div class="auth-allowed-list">
@@ -2250,7 +2253,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         Access Denied
       </div>
       <div class="auth-denied-msg">
-        The account <b id="deniedEmailText" style="color:var(--danger); word-break:break-all;"></b> is not authorized to access PM Computers Dashboard.
+        The account <b id="deniedEmailText" style="color:var(--danger); word-break:break-all;"></b> is not authorized to access PMC Data Management System.
       </div>
       <div style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
         <button type="button" id="switchGoogleAccountBtn" class="btn btn-primary btn-sm" style="padding:8px 16px;">
@@ -2275,9 +2278,9 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">PM</div>
-      <div class="brand-text"><div class="name">PM Computers</div><div class="sub">Tracker</div></div>
+    <div class="brand" style="gap:11px;">
+      <img src="Icons and logo/pmc_favicon.svg" alt="PMC Logo" style="width:36px; height:36px; object-fit:contain; border-radius:8px; flex-shrink:0;">
+      <div class="brand-text"><div class="name">PM Computers</div><div class="sub">Data Management System</div></div>
     </div>
 
     <div class="theme-toggle-row">
@@ -9817,7 +9820,7 @@ function buildEmailWrapper(title, dateBadge, contentHtml) {
         
         <!-- Header -->
         <div style="background:linear-gradient(135deg, #185a95 0%, #2f8fe0 100%); padding:22px 26px; color:#ffffff;">
-          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; opacity:0.85; margin-bottom:4px;">PM Computers · Business Intelligence</div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; opacity:0.85; margin-bottom:4px;">PM Computers · Data Management System</div>
           <div style="font-size:20px; font-weight:800; margin:0; letter-spacing:-0.3px;">${title}</div>
           <div style="margin-top:8px; display:inline-block; background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:6px; font-size:11.5px; font-weight:600;">${dateBadge}</div>
         </div>
@@ -9829,7 +9832,7 @@ function buildEmailWrapper(title, dateBadge, contentHtml) {
 
         <!-- Footer -->
         <div style="background:#f6f7fa; padding:14px 26px; border-top:1px solid #ebedf2; text-align:center; font-size:11px; color:#9aa1af;">
-          Automated Report · PM Computers Management System · Mirpur, Dhaka
+          Automated Report · PMC Data Management System · Mirpur, Dhaka
         </div>
       </div>
     </div>
