@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+functions/node_modules/
+
+# Local data & temporary exports
+junk/
+*.xlsx
+*.csv
+
+# Firebase local caches
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+
+# Environment and local configs
+.env
+.env.local
+*.local
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
