@@ -2224,11 +2224,11 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       </div>
 
       <div class="auth-allowed-list">
-        <div class="auth-allowed-title">Authorized Accounts:</div>
+        <div class="auth-allowed-title">Authorized Roles:</div>
         <div class="auth-allowed-tags">
-          <span>meeeheeediii@gmail.com</span>
-          <span>pmcomputers.bd@gmail.com</span>
-          <span>pfoyez2015@gmail.com</span>
+          <span>Shop Administrator (Management)</span>
+          <span>Managing Partner (Mehedi)</span>
+          <span>Sales Executive (Foyez)</span>
         </div>
       </div>
 
@@ -4112,11 +4112,29 @@ let auth = null;
 let firebaseReady = false;
 let currentAuthUser = null;
 
-const AUTHORIZED_EMAILS = [
-  'meeeheeediii@gmail.com',
-  'pmcomputers.bd@gmail.com',
-  'pfoyez2015@gmail.com'
+const AUTHORIZED_EMAIL_HASHES = [
+  'eca75e4e1389363b55d45cc87f735f3679c37629d3dd037a26b2933e750e76ac', // Admin
+  '8b50a2e0e9c3dceadb257982fca99342e5bac8cf2eca829c2281d9b925ffdccd', // Store
+  'aed3fc6d92114d03707bb48705bbc74100e61b8f48b4f14587a353bfc9355c35'  // Partner
 ];
+
+async function hashEmail(str) {
+  if (!str) return '';
+  const clean = str.toLowerCase().trim();
+  if (window.crypto && window.crypto.subtle) {
+    const msgBuffer = new TextEncoder().encode(clean);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  return clean;
+}
+
+async function isAuthorizedEmail(email) {
+  if (!email) return false;
+  const h = await hashEmail(email);
+  return AUTHORIZED_EMAIL_HASHES.includes(h);
+}
 
 try {
   if (typeof firebase !== 'undefined' && firebase.initializeApp) {
@@ -4261,7 +4279,7 @@ async function logoutUser() {
   toast('Signed out successfully');
 }
 
-function handleAuthUser(user) {
+async function handleAuthUser(user) {
   if (!user) {
     currentAuthUser = null;
     updateUserUI(null);
@@ -4270,16 +4288,17 @@ function handleAuthUser(user) {
   }
 
   const email = (user.email || '').toLowerCase().trim();
-  if (AUTHORIZED_EMAILS.includes(email)) {
+  const authorized = await isAuthorizedEmail(email);
+  if (authorized) {
     currentAuthUser = user;
     updateUserUI(user);
     hideAuthOverlay();
-    toast(`✓ Signed in as ${user.displayName || email}`);
-    logAudit('auth', 'login', { email, name: user.displayName });
+    toast(`✓ Signed in as ${user.displayName || maskEmail(email)}`);
+    logAudit('auth', 'login', { user: user.displayName || 'Authorized User' });
   } else {
     currentAuthUser = null;
     updateUserUI(null);
-    showAuthUnauthorized(email);
+    showAuthUnauthorized(maskEmail(email));
   }
 }
 
@@ -11724,7 +11743,8 @@ async function init() {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const email = (user.email || '').toLowerCase().trim();
-        if (AUTHORIZED_EMAILS.includes(email)) {
+        const authorized = await isAuthorizedEmail(email);
+        if (authorized) {
           currentAuthUser = user;
           updateUserUI(user);
           hideAuthOverlay();
@@ -11732,7 +11752,7 @@ async function init() {
         } else {
           currentAuthUser = null;
           updateUserUI(null);
-          showAuthUnauthorized(email);
+          showAuthUnauthorized(maskEmail(email));
         }
       } else {
         currentAuthUser = null;
