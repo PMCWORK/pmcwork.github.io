@@ -1,0 +1,38 @@
+name: Daily Store Closing Summary
+
+on:
+  schedule:
+    # 17:00 UTC = 23:00 (11:00 PM) Bangladesh Standard Time (UTC+6)
+    - cron: '0 17 * * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions UI
+
+jobs:
+  send-daily-report:
+    name: Dispatch 11:00 PM Closing Summary Email
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'scripts/package.json'
+
+      - name: Install Dependencies
+        run: |
+          cd scripts
+          npm ci || npm install
+
+      - name: Execute Daily Summary Dispatcher
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+        run: |
+          node scripts/send_daily_summary.js

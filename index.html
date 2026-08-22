@@ -10377,7 +10377,7 @@ async function triggerDailySummaryNow(id) {
 
 async function checkAndSendScheduledEmails() {
   if (!notificationRecipients || !notificationRecipients.length) return;
-  const now = new Date();
+  const now = dhakaNow();
   const currentHH = pad(now.getHours());
   const currentMM = pad(now.getMinutes());
   const currentTime = `${currentHH}:${currentMM}`;

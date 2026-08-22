@@ -1,0 +1,9 @@
+{
+  "name": "pmc-daily-reporter",
+  "version": "1.0.0",
+  "description": "Automated 11:00 PM Daily Closing Summary Dispatcher for PM Computers",
+  "main": "send_daily_summary.js",
+  "dependencies": {
+    "firebase-admin": "^12.1.0"
+  }
+}
