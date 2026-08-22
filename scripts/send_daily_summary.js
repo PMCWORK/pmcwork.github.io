@@ -8,12 +8,6 @@ const EMAILJS_CONFIG = {
   publicKey: process.env.EMAILJS_PUBLIC_KEY || 'RQ_lhlIyaHqMXR2Rt'
 };
 
-const DEFAULT_RECIPIENTS = [
-  { name: 'Mehedi (Management)', email: 'meeeheeediii@gmail.com' },
-  { name: 'PM Computers (Store)', email: 'pmcomputers.bd@gmail.com' },
-  { name: 'Foyez (Sales)', email: 'pfoyez2015@gmail.com' }
-];
-
 // Helper: Calculate Dhaka Time (UTC+6)
 function getDhakaNow() {
   const now = new Date();
@@ -136,7 +130,7 @@ function buildEmailWrapper(title, dateBadge, contentHtml) {
 
 async function main() {
   console.log('==================================================');
-  console.log('🚀 PMC DAILY CLOSING EMAIL DISPATCHER (CLOUD CRON)');
+  console.log('🚀 PMC DYNAMIC CLOSING EMAIL DISPATCHER (CLOUD CRON)');
   console.log('==================================================');
 
   const dhakaNow = getDhakaNow();
@@ -145,7 +139,48 @@ async function main() {
 
   const db = initFirebase();
 
-  // 1. Fetch Sales
+  // 1. Fetch Dynamic Recipients from Firestore Settings
+  let recipientsList = [];
+  try {
+    const notifSnap = await db.collection('settings').doc('notifications').get();
+    if (notifSnap.exists) {
+      const data = notifSnap.data();
+      if (Array.isArray(data.recipients) && data.recipients.length) {
+        recipientsList = data.recipients;
+      } else if (data.email) {
+        recipientsList = [{
+          id: 'legacy_admin',
+          name: data.updatedBy || 'Store Admin',
+          email: data.email,
+          alertDaily: data.alertDaily !== false,
+          dailyIncSales: data.dailyIncSales !== false,
+          dailyIncInvoices: data.dailyIncInvoices !== false,
+          dailyIncProducts: data.dailyIncProducts !== false,
+          dailyIncBrings: data.dailyIncBrings !== false,
+          alertMonthly: data.alertMonthly !== false,
+          alertYearly: data.alertYearly !== false
+        }];
+      }
+    }
+  } catch (e) {
+    console.warn('Notice reading settings/notifications from Firestore:', e.message);
+  }
+
+  // Filter for valid recipients who have daily alerts enabled
+  const activeDailyRecipients = recipientsList.filter(r => r.email && r.alertDaily !== false);
+
+  if (!activeDailyRecipients.length) {
+    console.log('ℹ️ No active recipients configured with Daily Alerts in Settings Hub. Exiting cleanly.');
+    return;
+  }
+
+  console.log(`📋 Found ${activeDailyRecipients.length} active recipient(s) configured in Website Settings:`);
+  activeDailyRecipients.forEach((r, idx) => {
+    console.log(`   ${idx + 1}. ${r.name || 'Admin'} (${r.email}) - Schedule: ${r.dailyTiming || '23:00'}`);
+  });
+
+  // 2. Fetch Store Data
+  // Sales
   let todaySale = { sale: 0, profit: 0, cost: 0, profitPct: 0 };
   try {
     const salesSnap = await db.collection('sales').where('date', '==', todayISO).get();
@@ -156,7 +191,7 @@ async function main() {
     console.warn('Notice fetching sales:', e.message);
   }
 
-  // 2. Fetch Expenses
+  // Expenses
   let todayExpenses = [];
   let totalExpenses = 0;
   try {
@@ -170,7 +205,7 @@ async function main() {
     console.warn('Notice fetching expenses:', e.message);
   }
 
-  // 3. Fetch Invoices
+  // Invoices
   let todayInvoices = [];
   try {
     const invSnap = await db.collection('invoices').get();
@@ -184,7 +219,7 @@ async function main() {
     console.warn('Notice fetching invoices:', e.message);
   }
 
-  // 4. Fetch Products Tracker Added
+  // Products
   let todayProducts = [];
   try {
     const prodSnap = await db.collection('products').get();
@@ -198,7 +233,7 @@ async function main() {
     console.warn('Notice fetching products:', e.message);
   }
 
-  // 5. Fetch PM Brings Added
+  // PM Brings
   let todayBrings = [];
   try {
     const pmbSnap = await db.collection('pm_brings').get();
@@ -212,7 +247,7 @@ async function main() {
     console.warn('Notice fetching PM Brings:', e.message);
   }
 
-  // 6. Fetch Purchases Added
+  // Purchases
   let todayPurchases = [];
   let todayPurchasesTotal = 0;
   try {
@@ -226,107 +261,121 @@ async function main() {
     console.warn('Notice fetching purchases:', e.message);
   }
 
-  // 7. Calculate Net Profit
   const netProfit = (Number(todaySale.profit || 0)) - totalExpenses;
   const marginPct = todaySale.sale > 0 ? ((todaySale.profit / todaySale.sale) * 100).toFixed(1) : '0.0';
 
-  console.log(`📊 Numbers for ${todayISO}:`);
-  console.log(`   - Total Revenue: ${formatMoney(todaySale.sale)}`);
-  console.log(`   - Gross Profit:  ${formatMoney(todaySale.profit)} (${marginPct}%)`);
-  console.log(`   - Expenses:      ${formatMoney(totalExpenses)}`);
-  console.log(`   - Net Profit:    ${formatMoney(netProfit)}`);
-  console.log(`   - Invoices:      ${todayInvoices.length} bill(s)`);
-  console.log(`   - Products:      ${todayProducts.length} added`);
-  console.log(`   - Purchases:     ${todayPurchases.length} bill(s) (${formatMoney(todayPurchasesTotal)})`);
+  console.log(`📊 Daily Numbers for ${todayISO}:`);
+  console.log(`   - Revenue:    ${formatMoney(todaySale.sale)}`);
+  console.log(`   - Profit:     ${formatMoney(todaySale.profit)} (${marginPct}%)`);
+  console.log(`   - Expenses:   ${formatMoney(totalExpenses)}`);
+  console.log(`   - Net Profit: ${formatMoney(netProfit)}`);
+  console.log(`   - Invoices:   ${todayInvoices.length} bill(s)`);
+  console.log(`   - Products:   ${todayProducts.length} tracked`);
+  console.log(`   - PM Brings:  ${todayBrings.length} handled`);
+  console.log(`   - Purchases:  ${todayPurchases.length} bill(s) (${formatMoney(todayPurchasesTotal)})`);
 
-  // 8. Build Rich HTML Content
-  const subject = `[PMC] Daily Closing Summary · ${formatDateEmail(dhakaNow)} (Sale: ${formatMoney(todaySale.sale)})`;
   const dateBadge = `${formatDateEmail(dhakaNow)} · 11:00 PM Closing`;
 
-  const contentHtml = `
-    <!-- Top 2 KPI Cards -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
-      <tr>
-        <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">Today's Revenue</div>
-          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(todaySale.sale)}</div>
-          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatMoney(todaySale.cost)}</div>
-        </td>
-        <td width="4%"></td>
-        <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(todaySale.profit)}</div>
-          <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">${marginPct}% Margin</div>
-        </td>
-      </tr>
-    </table>
+  // 3. Dispatch to each configured recipient respecting their individual preferences
+  for (const r of activeDailyRecipients) {
+    const incSales = r.dailyIncSales !== false;
+    const incInvoices = r.dailyIncInvoices !== false;
+    const incProducts = r.dailyIncProducts !== false;
+    const incBrings = r.dailyIncBrings !== false;
 
-    <!-- Net Profit & Expenses Bar -->
-    <div style="background:#eef7ff; border:1.5px solid #bfe0f7; border-radius:10px; padding:13px 16px; margin-bottom:22px;">
-      <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td>
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Profit (After Expenses)</div>
-            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(netProfit)}</div>
-          </td>
-          <td style="text-align:right;">
-            <div style="font-size:11px; color:#6b7280;">Operating Expenses</div>
-            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatMoney(totalExpenses)}</div>
-          </td>
+    let activityRows = [];
+    if (incInvoices) {
+      activityRows.push(`
+        <tr style="border-bottom:1px solid #ebedf2;">
+          <td style="padding:8px 0; color:#6b7280;">Customer Invoices Issued</td>
+          <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayInvoices.length} bill(s)</td>
         </tr>
-      </table>
-    </div>
-
-    <!-- Activity Log List -->
-    <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#9aa1af; margin-bottom:8px;">Day's Activity Logs</div>
-    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:13px;">
+      `);
+    }
+    if (incProducts) {
+      activityRows.push(`
+        <tr style="border-bottom:1px solid #ebedf2;">
+          <td style="padding:8px 0; color:#6b7280;">Products Tracked / Added</td>
+          <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayProducts.length} item(s)</td>
+        </tr>
+      `);
+    }
+    if (incBrings) {
+      activityRows.push(`
+        <tr style="border-bottom:1px solid #ebedf2;">
+          <td style="padding:8px 0; color:#6b7280;">PM Brings Handled</td>
+          <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayBrings.length} item(s)</td>
+        </tr>
+      `);
+    }
+    // Purchases & Expenses
+    activityRows.push(`
       <tr style="border-bottom:1px solid #ebedf2;">
-        <td style="padding:8px 0; color:#6b7280;">Customer Invoices Issued</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayInvoices.length} bill(s)</td>
-      </tr>
-      <tr style="border-bottom:1px solid #ebedf2;">
-        <td style="padding:8px 0; color:#6b7280;">Inventory Items Added</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayProducts.length} item(s)</td>
-      </tr>
-      <tr style="border-bottom:1px solid #ebedf2;">
-        <td style="padding:8px 0; color:#6b7280;">PM Brings Sourced</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayBrings.length} item(s)</td>
-      </tr>
-      <tr>
         <td style="padding:8px 0; color:#6b7280;">Supplier Purchases</td>
         <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayPurchases.length} bill(s) (${formatMoney(todayPurchasesTotal)})</td>
       </tr>
-    </table>
-  `;
+      <tr>
+        <td style="padding:8px 0; color:#6b7280;">Operating Expenses</td>
+        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${todayExpenses.length} entry(s) (${formatMoney(totalExpenses)})</td>
+      </tr>
+    `);
 
-  const fullHtmlMessage = buildEmailWrapper('Daily Store Summary', dateBadge, contentHtml);
+    const salesKPIHtml = incSales ? `
+      <!-- Top 2 KPI Cards -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+        <tr>
+          <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">Today's Revenue</div>
+            <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(todaySale.sale)}</div>
+            <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatMoney(todaySale.cost)}</div>
+          </td>
+          <td width="4%"></td>
+          <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
+            <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(todaySale.profit)}</div>
+            <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">${marginPct}% Margin</div>
+          </td>
+        </tr>
+      </table>
 
-  // 9. Load Recipients from Firestore or use Defaults
-  let recipientsToSend = [...DEFAULT_RECIPIENTS];
-  try {
-    const notifSnap = await db.collection('settings').doc('notifications').get();
-    if (notifSnap.exists) {
-      const data = notifSnap.data();
-      if (Array.isArray(data.recipients) && data.recipients.length) {
-        const valid = data.recipients.filter(r => r.email && r.alertDaily !== false);
-        if (valid.length) recipientsToSend = valid;
-      }
-    }
-  } catch (e) {
-    console.warn('Notice reading custom recipients, using defaults:', e.message);
-  }
+      <!-- Net Profit & Expenses Bar -->
+      <div style="background:#eef7ff; border:1.5px solid #bfe0f7; border-radius:10px; padding:13px 16px; margin-bottom:22px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td>
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Profit (After Expenses)</div>
+              <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(netProfit)}</div>
+            </td>
+            <td style="text-align:right;">
+              <div style="font-size:11px; color:#6b7280;">Operating Expenses</div>
+              <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatMoney(totalExpenses)}</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    ` : '';
 
-  // 10. Dispatch to all recipients
-  console.log(`📬 Dispatching to ${recipientsToSend.length} recipient(s)...`);
-  for (const r of recipientsToSend) {
+    const contentHtml = `
+      ${salesKPIHtml}
+      <!-- Activity Log List -->
+      <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#9aa1af; margin-bottom:8px;">Day's Activity Logs</div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:13px;">
+        ${activityRows.join('')}
+      </table>
+    `;
+
+    const subject = `[PMC] Daily Closing Summary · ${formatDateEmail(dhakaNow)} (Sale: ${formatMoney(todaySale.sale)})`;
+    const fullHtmlMessage = buildEmailWrapper('Daily Store Summary', dateBadge, contentHtml);
+
     try {
-      await sendEmailViaEmailJS(r.email, r.name || 'Store Admin', subject, fullHtmlMessage);
+      console.log(`📬 Dispatching tailored summary to ${r.name || 'Admin'} (${r.email})...`);
+      await sendEmailViaEmailJS(r.email, r.name || 'Admin', subject, fullHtmlMessage);
     } catch (err) {
       console.error(`✗ Error delivering to ${r.email}:`, err.message);
     }
   }
 
-  console.log('🎉 Daily Summary Dispatch Complete!');
+  console.log('🎉 All Configured Daily Summaries Dispatched Successfully!');
 }
 
 main().catch(err => {
