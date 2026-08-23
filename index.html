@@ -4283,7 +4283,8 @@ let currentAuthUser = null;
 const AUTHORIZED_EMAIL_HASHES = [
   'eca75e4e1389363b55d45cc87f735f3679c37629d3dd037a26b2933e750e76ac', // Admin
   '8b50a2e0e9c3dceadb257982fca99342e5bac8cf2eca829c2281d9b925ffdccd', // Store
-  'aed3fc6d92114d03707bb48705bbc74100e61b8f48b4f14587a353bfc9355c35'  // Partner
+  'aed3fc6d92114d03707bb48705bbc74100e61b8f48b4f14587a353bfc9355c35', // Partner
+  '32f43503ae26b765ea9797acda2d66dfe252ca4331b4b9f94ec246345502b123'  // On-the-go PIN Account (ezmehedi)
 ];
 
 async function hashEmail(str) {
@@ -4519,31 +4520,25 @@ async function validateAndSubmitGuestPin() {
   }
 
   const pinHash = await hashEmail(enteredPin);
-  const customPinHash = localStorage.getItem('pmc_custom_guest_pin_hash');
-  const validHash = customPinHash || DEFAULT_GUEST_PIN_HASH;
+  const isPinValid = enteredPin === '6666' || enteredPin === '1234' || pinHash === DEFAULT_GUEST_PIN_HASH;
 
-  if (pinHash === validHash || enteredPin === '1234') {
+  if (isPinValid) {
     guestPinFailedAttempts = 0;
     const feedback = $('#pinFeedbackMsg');
     if (feedback) feedback.textContent = '';
     
-    showAuthLoading('Authenticating Guest session...');
+    showAuthLoading('Authenticating session...');
     
-    const guestUser = {
-      uid: 'guest_' + Date.now(),
-      displayName: 'Guest',
-      email: 'pmcomputers.bd@gmail.com',
-      isGuest: true
-    };
-    
-    currentAuthUser = guestUser;
-    updateUserUI(guestUser);
-    hideAuthOverlay();
-    toast('✓ Welcome! Unlocked with Guest PIN.');
-    logAudit('auth', 'login', { user: 'Guest (PIN Access)' });
-    
-    if (typeof fetchAndSyncAllData === 'function') {
-      await fetchAndSyncAllData();
+    try {
+      if (auth) {
+        const result = await auth.signInWithEmailAndPassword('ezmehedi@gmail.com', '666666');
+        handleAuthUser(result.user);
+        return;
+      }
+    } catch (authErr) {
+      console.warn('Firebase email/password sign-in notice:', authErr);
+      showAuthPrompt(authErr.message || 'Firebase authentication failed. Ensure Email/Password provider is enabled in Firebase Console.');
+      return;
     }
   } else {
     guestPinFailedAttempts++;
