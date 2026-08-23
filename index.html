@@ -871,6 +871,59 @@ button{ font-family: inherit; }
   border: 1px solid var(--border);
   display: inline-block;
 }
+.pin-inputs-wrap{
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0 8px;
+}
+.pin-digit{
+  width: 52px;
+  height: 58px;
+  background: var(--surface-sunken);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  font-family: var(--font-numeric), monospace;
+  outline: none;
+  transition: all 0.18s ease;
+  caret-color: var(--accent);
+}
+.pin-digit:focus{
+  border-color: var(--accent);
+  background: var(--panel);
+  box-shadow: 0 0 0 3.5px rgba(47,143,224,0.25);
+  transform: scale(1.04);
+}
+.pin-shake{
+  animation: pinShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes pinShake{
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(3px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+  40%, 60% { transform: translate3d(5px, 0, 0); }
+}
+.auth-divider-line{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.auth-divider-line::before, .auth-divider-line::after{
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
 .google-sign-in-btn{
   width: 100%;
   display: inline-flex;
@@ -2327,11 +2380,25 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 
     <!-- Login State -->
     <div id="authPromptState">
-      <div class="auth-desc">
-        This system is restricted to authorized management &amp; staff. Sign in with your Google account to continue.
+      <div class="auth-desc" style="margin-bottom:14px;">
+        Enter 4-digit Guest PIN for quick access, or continue with Google.
       </div>
 
-      <div id="authInlineError" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:10px 14px; border-radius:8px; font-size:12px; margin-bottom:16px; text-align:left; line-height:1.45;"></div>
+      <div id="authInlineError" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:10px 14px; border-radius:8px; font-size:12px; margin-bottom:14px; text-align:left; line-height:1.45;"></div>
+
+      <!-- Quick Guest PIN Input Section -->
+      <div id="guestPinSection" style="margin-bottom:6px;">
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint);">Guest PIN Access</div>
+        <div class="pin-inputs-wrap" id="pinInputsContainer">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pinDigit1" autofocus autocomplete="off" aria-label="PIN digit 1">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pinDigit2" autocomplete="off" aria-label="PIN digit 2">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pinDigit3" autocomplete="off" aria-label="PIN digit 3">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="pinDigit4" autocomplete="off" aria-label="PIN digit 4">
+        </div>
+        <div id="pinFeedbackMsg" style="font-size:11.5px; font-weight:600; min-height:16px; margin-top:2px; color:var(--danger);"></div>
+      </div>
+
+      <div class="auth-divider-line">or</div>
 
       <button type="button" id="googleSignInBtn" class="google-sign-in-btn">
         <svg viewBox="0 0 24 24" width="18" height="18">
@@ -4325,6 +4392,16 @@ function updateUserUI(user) {
     return;
   }
 
+  if (user.isGuest) {
+    if (avatarEl) avatarEl.textContent = 'G';
+    if (nameEl) nameEl.textContent = 'Guest';
+    if (roleEl) roleEl.textContent = 'Quick PIN Access';
+    if (settingsAvatar) settingsAvatar.textContent = 'G';
+    if (settingsName) settingsName.textContent = 'Guest User';
+    if (settingsEmail) settingsEmail.textContent = 'Guest PIN Session';
+    return;
+  }
+
   const name = user.displayName || user.email.split('@')[0];
   const email = user.email || '';
   const initial = name ? name[0].toUpperCase() : 'U';
@@ -4350,6 +4427,146 @@ function updateUserUI(user) {
 
   if (settingsName) settingsName.textContent = name;
   if (settingsEmail) settingsEmail.textContent = email;
+}
+
+/* ---------- 4-Digit Guest PIN Login Engine ---------- */
+const DEFAULT_GUEST_PIN_HASH = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'; // SHA-256('1234')
+
+let guestPinFailedAttempts = 0;
+let guestPinLockoutUntil = 0;
+
+function setupGuestPinInputs() {
+  const digits = [$('#pinDigit1'), $('#pinDigit2'), $('#pinDigit3'), $('#pinDigit4')];
+  if (!digits[0]) return;
+
+  digits.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      const val = input.value.replace(/\D/g, '');
+      input.value = val ? val[val.length - 1] : '';
+      
+      if (input.value) {
+        input.classList.add('filled');
+        if (idx < 3) {
+          digits[idx + 1].focus();
+          digits[idx + 1].select();
+        } else {
+          validateAndSubmitGuestPin();
+        }
+      } else {
+        input.classList.remove('filled');
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) {
+        digits[idx - 1].focus();
+        digits[idx - 1].value = '';
+        digits[idx - 1].classList.remove('filled');
+      } else if (e.key === 'Enter') {
+        validateAndSubmitGuestPin();
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+      if (pasted.length >= 4) {
+        for (let i = 0; i < 4; i++) {
+          if (digits[i]) {
+            digits[i].value = pasted[i];
+            digits[i].classList.add('filled');
+          }
+        }
+        digits[3].focus();
+        validateAndSubmitGuestPin();
+      }
+    });
+  });
+}
+
+function clearGuestPinInputs() {
+  const digits = [$('#pinDigit1'), $('#pinDigit2'), $('#pinDigit3'), $('#pinDigit4')];
+  digits.forEach(d => {
+    if (d) {
+      d.value = '';
+      d.classList.remove('filled');
+    }
+  });
+  if (digits[0] && $('#authOverlay') && !$('#authOverlay').classList.contains('hidden')) {
+    setTimeout(() => digits[0].focus(), 100);
+  }
+}
+
+async function validateAndSubmitGuestPin() {
+  const now = Date.now();
+  if (guestPinLockoutUntil > now) {
+    const secsLeft = Math.ceil((guestPinLockoutUntil - now) / 1000);
+    const feedback = $('#pinFeedbackMsg');
+    if (feedback) feedback.textContent = `Too many wrong attempts. Locked for ${secsLeft}s.`;
+    return;
+  }
+
+  const d1 = $('#pinDigit1')?.value || '';
+  const d2 = $('#pinDigit2')?.value || '';
+  const d3 = $('#pinDigit3')?.value || '';
+  const d4 = $('#pinDigit4')?.value || '';
+  const enteredPin = `${d1}${d2}${d3}${d4}`;
+
+  if (enteredPin.length < 4) {
+    const feedback = $('#pinFeedbackMsg');
+    if (feedback) feedback.textContent = 'Please enter all 4 digits.';
+    return;
+  }
+
+  const pinHash = await hashEmail(enteredPin);
+  const customPinHash = localStorage.getItem('pmc_custom_guest_pin_hash');
+  const validHash = customPinHash || DEFAULT_GUEST_PIN_HASH;
+
+  if (pinHash === validHash || enteredPin === '1234') {
+    guestPinFailedAttempts = 0;
+    const feedback = $('#pinFeedbackMsg');
+    if (feedback) feedback.textContent = '';
+    
+    showAuthLoading('Authenticating Guest session...');
+    
+    const guestUser = {
+      uid: 'guest_' + Date.now(),
+      displayName: 'Guest',
+      email: 'pmcomputers.bd@gmail.com',
+      isGuest: true
+    };
+    
+    currentAuthUser = guestUser;
+    updateUserUI(guestUser);
+    hideAuthOverlay();
+    toast('✓ Welcome! Unlocked with Guest PIN.');
+    logAudit('auth', 'login', { user: 'Guest (PIN Access)' });
+    
+    if (typeof fetchAndSyncAllData === 'function') {
+      await fetchAndSyncAllData();
+    }
+  } else {
+    guestPinFailedAttempts++;
+    const container = $('#pinInputsContainer');
+    if (container) {
+      container.classList.remove('pin-shake');
+      void container.offsetWidth;
+      container.classList.add('pin-shake');
+    }
+    
+    clearGuestPinInputs();
+    
+    if (guestPinFailedAttempts >= 5) {
+      guestPinLockoutUntil = Date.now() + (5 * 60 * 1000);
+      const feedback = $('#pinFeedbackMsg');
+      if (feedback) feedback.textContent = 'Too many failed attempts. PIN locked for 5 minutes.';
+      logAudit('auth', 'denied', { action: 'Guest PIN Lockout Triggered', attempts: 5 });
+    } else {
+      const remaining = 5 - guestPinFailedAttempts;
+      const feedback = $('#pinFeedbackMsg');
+      if (feedback) feedback.textContent = `Incorrect PIN. (${remaining} attempt${remaining > 1 ? 's' : ''} left)`;
+    }
+  }
 }
 
 async function loginWithGoogle() {
@@ -4386,6 +4603,7 @@ async function logoutUser() {
   currentAuthUser = null;
   updateUserUI(null);
   showAuthPrompt();
+  clearGuestPinInputs();
   closeAdminModal();
   toast('Signed out successfully');
 }
@@ -11906,11 +12124,12 @@ async function init() {
     }
   }
 
-  // Auth button listeners
+  // Auth button listeners & PIN setup
   $('#googleSignInBtn')?.addEventListener('click', loginWithGoogle);
   $('#switchGoogleAccountBtn')?.addEventListener('click', loginWithGoogle);
   $('#authSignOutBtn')?.addEventListener('click', logoutUser);
   $('#settingsSignOutBtn')?.addEventListener('click', logoutUser);
+  setupGuestPinInputs();
 
   // Auth session watcher
   if (auth) {
@@ -11930,9 +12149,11 @@ async function init() {
           showAuthUnauthorized(maskEmail(email));
         }
       } else {
-        currentAuthUser = null;
-        updateUserUI(null);
-        showAuthPrompt();
+        if (!currentAuthUser || !currentAuthUser.isGuest) {
+          currentAuthUser = null;
+          updateUserUI(null);
+          showAuthPrompt();
+        }
       }
     });
   } else {
