@@ -10174,6 +10174,8 @@ async function sendViaEmailJS(toEmail, toName, subject, message) {
     name: toName || 'Shop Admin',
     subject: subject,
     message: message,
+    message_html: message,
+    html_content: message,
     email: toEmail
   };
 

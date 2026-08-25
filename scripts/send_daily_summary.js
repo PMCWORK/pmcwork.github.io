@@ -63,9 +63,13 @@ function sendEmailViaEmailJS(toEmail, toName, subject, htmlContent) {
       user_id: EMAILJS_CONFIG.publicKey,
       template_params: {
         to_name: toName || 'Store Admin',
+        name: toName || 'Store Admin',
         to_email: toEmail,
+        email: toEmail,
         subject: subject,
-        message_html: htmlContent
+        message: htmlContent,
+        message_html: htmlContent,
+        html_content: htmlContent
       }
     });
 
@@ -134,8 +138,16 @@ async function main() {
   console.log('==================================================');
 
   const dhakaNow = getDhakaNow();
-  const todayISO = toISODate(dhakaNow);
-  console.log(`Dhaka Time: ${dhakaNow.toISOString()} (${todayISO})`);
+  
+  // Smart Closing Date Calculation:
+  // If the cloud runner executes between 00:00 (midnight) and 05:00 AM,
+  // the closing summary belongs to the previous business day!
+  let closingDate = new Date(dhakaNow.getTime());
+  if (closingDate.getHours() < 5) {
+    closingDate.setDate(closingDate.getDate() - 1);
+  }
+  const todayISO = toISODate(closingDate);
+  console.log(`Execution Dhaka Time: ${dhakaNow.toISOString()} -> Target Closing Date: ${todayISO} (${formatDateEmail(closingDate)})`);
 
   const db = initFirebase();
 
@@ -274,7 +286,7 @@ async function main() {
   console.log(`   - PM Brings:  ${todayBrings.length} handled`);
   console.log(`   - Purchases:  ${todayPurchases.length} bill(s) (${formatMoney(todayPurchasesTotal)})`);
 
-  const dateBadge = `${formatDateEmail(dhakaNow)} · 11:00 PM Closing`;
+  const dateBadge = `${formatDateEmail(closingDate)} · Daily Closing`;
 
   // 3. Dispatch to each configured recipient respecting their individual preferences
   for (const r of activeDailyRecipients) {
@@ -364,7 +376,7 @@ async function main() {
       </table>
     `;
 
-    const subject = `[PMC] Daily Closing Summary · ${formatDateEmail(dhakaNow)} (Sale: ${formatMoney(todaySale.sale)})`;
+    const subject = `[PMC] Daily Closing Summary · ${formatDateEmail(closingDate)} (Sale: ${formatMoney(todaySale.sale)})`;
     const fullHtmlMessage = buildEmailWrapper('Daily Store Summary', dateBadge, contentHtml);
 
     try {
