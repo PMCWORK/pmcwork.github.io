@@ -2491,13 +2491,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           <div class="eyebrow">Overview</div>
           <h1>Dashboard</h1>
         </div>
-        <div class="top-right" style="display:flex; align-items:center; gap:10px;">
-          <button type="button" id="endDaySummaryBtn" class="btn btn-primary btn-sm" style="font-weight:600; gap:6px; box-shadow:0 2px 8px rgba(47,143,224,0.3);" title="Send Closing Daily Summary Email to configured recipients">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-            <span>End Day &amp; Send Summary</span>
-          </button>
-          <div class="date-chip" id="dashDateChip"></div>
-        </div>
+        <div class="top-right"><div class="date-chip" id="dashDateChip"></div></div>
       </div>
 
       <div class="dash-stats">
@@ -11237,9 +11231,6 @@ function setupEventListeners() {
     const cur = document.documentElement.getAttribute('data-theme') || 'light';
     setTheme(cur === 'dark' ? 'light' : 'dark', true);
   });
-
-  // End Day & Send Summary button
-  $('#endDaySummaryBtn')?.addEventListener('click', triggerDailyClosingSummaryAll);
 
   // URL Hash routing listener
   window.addEventListener('hashchange', handleHashChange);
