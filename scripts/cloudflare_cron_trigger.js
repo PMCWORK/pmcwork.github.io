@@ -5,15 +5,6 @@
  * Cloudflare Workers run on Cloudflare edge network with 0 millisecond queue delays.
  * When scheduled at 17:00 UTC (11:00:00 PM Dhaka Time), it calls GitHub Actions workflow_dispatch API.
  * GitHub Actions starts within 3-5 seconds with zero cron queue congestion!
- * 
- * Setup in Cloudflare Dashboard (Takes 2 minutes):
- * 1. Go to https://dash.cloudflare.com/ -> Workers & Pages -> Create Application -> Create Worker.
- * 2. Name: pmc-daily-cron-trigger -> Deploy.
- * 3. Click Edit code, paste this entire file, and click Deploy.
- * 4. Under Worker Settings -> Variables -> Environment Variables, add:
- *    - GITHUB_TOKEN : <Your GitHub Fine-Grained or Personal Access Token with actions:write scope>
- * 5. Under Worker Settings -> Triggers -> Cron Triggers -> Add Cron Trigger:
- *    - Cron: 0 17 * * * (Every day at 17:00 UTC = 11:00 PM Dhaka Time)
  */
 
 export default {
@@ -38,11 +29,13 @@ async function triggerGitHubWorkflow(env) {
   const repoOwner = 'PMCWORK';
   const repoName = 'pmcwork.github.io';
   const workflowFileName = 'daily_report.yml';
-  const githubToken = env.GITHUB_TOKEN;
+  
+  // Supports both GITHUB_TOKEN and Github_Token_Fine_Grained variable names
+  const githubToken = env.GITHUB_TOKEN || env.Github_Token_Fine_Grained || env.GITHUB_TOKEN_FINE_GRAINED || env.github_token || Object.values(env)[0];
 
   if (!githubToken) {
     console.error('Missing GITHUB_TOKEN environment variable in Cloudflare Worker.');
-    return { success: false, error: 'Missing GITHUB_TOKEN' };
+    return { success: false, error: 'Missing GITHUB_TOKEN environment variable in Cloudflare' };
   }
 
   const endpoint = `https://api.github.com/repos/${repoOwner}/${repoName}/actions/workflows/${workflowFileName}/dispatches`;
