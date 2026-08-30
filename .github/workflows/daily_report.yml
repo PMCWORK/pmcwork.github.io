@@ -1,11 +1,7 @@
 name: Daily Store Closing Summary
 
 on:
-  schedule:
-    # 16:50 UTC = 22:50 (10:50 PM) Bangladesh Standard Time (UTC+6)
-    # Triggering at :50 avoids top-of-the-hour GitHub Actions runner queue congestion
-    - cron: '50 16 * * *'
-  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions UI
+  workflow_dispatch: # Triggered on-time via Cloudflare Precision Worker API (11:00 PM BST)
 
 jobs:
   send-daily-report:
