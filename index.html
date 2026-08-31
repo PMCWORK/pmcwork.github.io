@@ -10182,26 +10182,30 @@ function renderExpensesView() {
             <table style="width:100%; border-collapse:collapse; font-size:13px;">
               <thead>
                 <tr style="background:var(--surface-sunken); border-bottom:1px solid var(--border); font-size:11.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px;">
-                  <th style="padding:8px 16px; text-align:center; width:110px;">Date</th>
-                  <th style="padding:8px 16px; text-align:left; width:220px;">Category</th>
-                  <th style="padding:8px 16px; text-align:left;">Note / Details</th>
-                  <th style="padding:8px 16px; text-align:right; width:140px;">Amount (৳)</th>
-                  <th style="padding:8px 16px; text-align:center; width:90px;">Actions</th>
+                  <th style="padding:8px 16px; text-align:center; width:100px;">Date</th>
+                  <th style="padding:8px 16px; text-align:left; width:270px;">Category</th>
+                  <th style="padding:8px 24px; text-align:left;">Note / Details</th>
+                  <th style="padding:8px 16px; text-align:right; width:130px;">Amount (৳)</th>
+                  <th style="padding:8px 16px; text-align:center; width:80px;">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 ${mItems.map(e => {
                   const catBadgeColor = e.category === 'Shop Rent' ? 'var(--teal)' : e.category === 'Pias House Rent' ? '#8b5cf6' : e.category === 'Electricity Bill' ? '#eab308' : e.category === 'Pias Daily' ? '#7c3aed' : e.category === 'Daily Operating Costs' ? '#0e8c81' : 'var(--text-dim)';
-                  const billingBadge = e.billingMonth ? `<span style="font-size:11px; color:var(--accent); background:var(--accent-soft); padding:1px 6px; border-radius:4px; margin-left:6px; font-weight:600;">${formatShortMonthYear(e.billingMonth)}</span>` : '';
+                  const billingBadge = e.billingMonth ? `<span style="font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:1px 7px; border-radius:4px; font-weight:700; flex-shrink:0; letter-spacing:0.3px;">${formatShortMonthYear(e.billingMonth)}</span>` : '<span style="display:inline-block; width:52px; flex-shrink:0;"></span>';
                   return `
                     <tr style="border-bottom:1px solid var(--border-soft);">
                       <td style="padding:10px 16px; text-align:center; font-family:var(--font-numeric); font-weight:600;">${formatInvDateSlash(e.date || todayISO)}</td>
-                      <td style="padding:10px 16px; font-weight:700; color:var(--text);">
-                        <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:${catBadgeColor}; margin-right:6px;"></span>
-                        ${escapeHtml(e.title || e.category || 'Miscellaneous')}
-                        ${billingBadge}
+                      <td style="padding:10px 16px; font-weight:700; color:var(--text); width:270px; vertical-align:middle;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                          <span style="display:inline-flex; align-items:center; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:${catBadgeColor}; margin-right:8px; flex-shrink:0;"></span>
+                            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(e.title || e.category || 'Miscellaneous')}</span>
+                          </span>
+                          ${billingBadge}
+                        </div>
                       </td>
-                      <td style="padding:10px 16px; color:var(--text-dim); font-size:12.5px;">${escapeHtml(e.desc || '—')}</td>
+                      <td style="padding:10px 24px; color:var(--text-dim); font-size:12.5px;">${escapeHtml(e.desc || '—')}</td>
                       <td style="padding:10px 16px; text-align:right; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700; font-size:14px; color:var(--danger);">${formatMoney(e.amount)}</td>
                       <td style="padding:10px 16px; text-align:center;">
                         <div style="display:flex; justify-content:center; align-items:center; gap:4px;">
@@ -10419,6 +10423,7 @@ function openMonthEndWizard(targetMonth = null) {
 
   if ($('#monthEndPicker')) $('#monthEndPicker').value = targetMonth;
   if ($('#mEndRoundingDeduction')) $('#mEndRoundingDeduction').value = '';
+  if ($('#mEndSendEmailToggle')) $('#mEndSendEmailToggle').checked = false;
   
   const [yStr, mStr] = targetMonth.split('-');
   const mIdx = parseInt(mStr, 10) - 1;
@@ -10845,62 +10850,91 @@ async function sendMonthEndSettlementEmail(calc) {
 
   const [yStr, mStr] = calc.month.split('-');
   const mName = MONTHS[parseInt(mStr, 10) - 1] || calc.month;
-  const subject = `[PMC] ${mName} ${yStr} Closing Settlement & Take-Home Statement`;
+  const shortMY = formatShortMonthYear(calc.month);
+  const subject = `[PMC] ${shortMY} Settlement statement`;
 
   const contentHtml = `
-    <!-- Top KPI Cards -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+    <!-- Top Summary Cards -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:18px;">
       <tr>
-        <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">${mName} ${yStr} Revenue</div>
-          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(calc.totalRevenue)}</div>
-          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">${calc.operatingDays} Open Operating Days</div>
+        <td width="48%" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; vertical-align:top;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:0.5px;">Gross Sales Profit</div>
+          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:2px;">${formatMoney(calc.totalGrossProfit)}</div>
+          <div style="font-size:11px; color:#64748b; margin-top:3px;">Revenue: <b>${formatMoney(calc.totalRevenue)}</b> (${calc.operatingDays} Open Days)</div>
         </td>
         <td width="4%"></td>
-        <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(calc.totalGrossProfit)}</div>
-          <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">Adjustment: - ${formatMoney(calc.roundingDeduction || 0)}</div>
+        <td width="48%" style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:10px; padding:14px 16px; vertical-align:top;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#1d4ed8; letter-spacing:0.5px;">Net Distributable Profit</div>
+          <div style="font-size:22px; font-weight:800; color:#1e40af; margin-top:2px;">${formatMoney(calc.distributableProfit)}</div>
+          <div style="font-size:11px; color:#2563eb; margin-top:3px;">After 5 Deductions: <b>-${formatMoney(calc.totalDeductions)}</b></div>
         </td>
       </tr>
     </table>
 
-    <!-- Accounting Deductions Summary -->
-    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:14px 16px; margin-bottom:16px;">
-      <div style="font-size:11.5px; font-weight:800; color:#374151; text-transform:uppercase; margin-bottom:8px;">Operating &amp; Fixed Expenses Deducted</div>
-      <table width="100%" cellpadding="4" cellspacing="0" style="font-size:12px;">
-        <tr><td>1. Shop Rent</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.shopRent)}</td></tr>
-        <tr><td>2. Pias House Rent</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.houseRent)}</td></tr>
-        <tr><td>3. Electricity Bill</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.electricity)}</td></tr>
-        <tr><td>4. Pias Daily Allowance (${calc.operatingDays}d × ৳${calc.piasDailyRate})</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.piasDailyTotal)}</td></tr>
-        <tr><td>5. Daily Operating Costs (Sales Cost Box)</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.dailyOperatingCost)}</td></tr>
-        ${calc.otherExpenses > 0 ? `<tr><td>6. Other Logged Expenses</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.otherExpenses)}</td></tr>` : ''}
-        <tr style="border-top:1px dashed #d1d5db; font-weight:800;">
-          <td style="padding-top:6px; color:#dc2626;">Total Deductions</td>
-          <td style="padding-top:6px; text-align:right; color:#dc2626;">- ${formatMoney(calc.totalDeductions)}</td>
+    <!-- Complete Accounting Statement Math Box -->
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; letter-spacing:0.6px; margin-bottom:12px; border-bottom:1px solid #f1f5f9; padding-bottom:8px;">
+        Financial Settlement Statement &amp; Deductions
+      </div>
+      
+      <table width="100%" cellpadding="6" cellspacing="0" style="font-size:13px; border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#334155; font-weight:600;">Total Sales Gross Profit</td>
+          <td style="text-align:right; font-weight:700; color:#0e8c81;">${formatMoney(calc.totalGrossProfit)}</td>
+        </tr>
+        ${(Number(calc.roundingDeduction) > 0) ? `
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#64748b;">Less: Rounding / Profit Adjustment</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.roundingDeduction)}</td>
+        </tr>
+        <tr style="background:#f8fafc; font-weight:700; border-bottom:1px solid #e2e8f0;">
+          <td style="color:#1e293b;">Adjusted Gross Profit</td>
+          <td style="text-align:right; color:#1e293b;">${formatMoney(calc.adjustedGrossProfit)}</td>
+        </tr>
+        ` : ''}
+        
+        <!-- 5 Deductions -->
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#475569;">1. Shop Rent</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.shopRent)}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#475569;">2. Pias House Rent</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.houseRent)}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#475569;">3. Electricity Bill</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.electricity)}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#475569;">4. Pias Daily (${calc.operatingDays}d × ৳${calc.piasDailyRate})</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.piasDailyTotal)}</td>
+        </tr>
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#475569;">5. Daily Operating Costs (Sales Cost Box)</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.dailyOperatingCost)}</td>
+        </tr>
+        ${(Number(calc.otherExpenses) > 0) ? `
+        <tr style="border-bottom:1px solid #f8fafc;">
+          <td style="color:#475569;">6. Other Logged Expenses</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.otherExpenses)}</td>
+        </tr>
+        ` : ''}
+
+        <tr style="border-top:1.5px dashed #cbd5e1; font-weight:800; background:#fef2f2;">
+          <td style="padding:8px 6px; color:#dc2626; text-transform:uppercase; font-size:12px;">Total Deductions</td>
+          <td style="padding:8px 6px; text-align:right; color:#dc2626; font-size:14px;">- ${formatMoney(calc.totalDeductions)}</td>
         </tr>
       </table>
     </div>
 
-    <!-- Distributable Profit Banner -->
-    <div style="background:#eef7ff; border:1.5px solid #bfe0f7; border-radius:10px; padding:13px 16px; margin-bottom:18px;">
-      <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td>
-            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Distributable Profit</div>
-            <div style="font-size:22px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(calc.distributableProfit)}</div>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- Partner Take-Home Cards -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+    <!-- Partner Payout Split (55% / 45%) -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
       <tr>
         <td width="48%" style="background:#faf5ff; border:1.5px solid #d8b4fe; border-radius:12px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:13px; font-weight:800; color:#7c3aed;">Pias (${calc.piasRatio}%)</div>
-          <div style="font-size:11px; color:#6b7280; margin:4px 0 2px;">55% Base Share: <b>${formatMoney(calc.piasBaseShare)}</b></div>
-          <div style="font-size:11px; color:#6b7280; margin-bottom:8px;">Pias Daily Allowance: <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
+          <div style="font-size:13.5px; font-weight:800; color:#7c3aed;">Pias (${calc.piasRatio}%)</div>
+          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">55% Base Share: <b>${formatMoney(calc.piasBaseShare)}</b></div>
+          <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Pias Daily Allowance: <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
           <div style="border-top:1px dashed #d8b4fe; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#7c3aed;">Total Pias Take-Home</div>
             <div style="font-size:20px; font-weight:800; color:#7c3aed; margin-top:2px;">${formatMoney(calc.piasTotalTakeHome)}</div>
@@ -10908,9 +10942,9 @@ async function sendMonthEndSettlementEmail(calc) {
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#fdf2f8; border:1.5px solid #fbcfe8; border-radius:12px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:13px; font-weight:800; color:#db2777;">Mehedi (${calc.mehediRatio}%)</div>
-          <div style="font-size:11px; color:#6b7280; margin:4px 0 2px;">45% Equity Share</div>
-          <div style="font-size:11px; color:#6b7280; margin-bottom:8px;">Direct Allocation</div>
+          <div style="font-size:13.5px; font-weight:800; color:#db2777;">Mehedi (${calc.mehediRatio}%)</div>
+          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">45% Equity Share: <b>${formatMoney(calc.mehediBaseShare)}</b></div>
+          <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Direct Allocation</div>
           <div style="border-top:1px dashed #fbcfe8; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#db2777;">Total Mehedi Take-Home</div>
             <div style="font-size:20px; font-weight:800; color:#db2777; margin-top:2px;">${formatMoney(calc.mehediTotalTakeHome)}</div>
@@ -10920,9 +10954,12 @@ async function sendMonthEndSettlementEmail(calc) {
     </table>
   `;
 
+  const dateBadge = `${mName} ${yStr} (${shortMY}) · Verified & Finalized`;
+  const wrappedHtml = buildEmailWrapper(`Month-End Closing Statement · ${shortMY}`, dateBadge, contentHtml);
+
   for (const r of active) {
     try {
-      await sendViaEmailJS(r.email, r.name || 'Partner', subject, `${mName} ${yStr} Settlement Statement`, contentHtml);
+      await sendViaEmailJS(r.email, r.name || 'Partner', subject, wrappedHtml);
     } catch(e) {
       console.error(`Failed to email settlement to ${r.email}:`, e);
     }
