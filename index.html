@@ -4538,18 +4538,12 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       </div>
 
       <!-- Footer Actions -->
-      <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" id="mEndSendEmailToggle" style="cursor: pointer;">
-          <label for="mEndSendEmailToggle" style="font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text);">Email Month-End Summary Report</label>
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <button type="button" class="btn btn-ghost btn-sm" id="cancelMonthEndBtn">Close</button>
-          <button type="button" class="btn btn-primary btn-sm" id="saveMonthEndSettlementBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Save &amp; Finalize Settlement
-          </button>
-        </div>
+      <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; align-items: center; gap: 10px; background: var(--panel);">
+        <button type="button" class="btn btn-ghost btn-sm" id="cancelMonthEndBtn">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" id="saveMonthEndSettlementBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save &amp; Finalize Settlement
+        </button>
       </div>
     </div>
   </div>
@@ -10423,7 +10417,6 @@ function openMonthEndWizard(targetMonth = null) {
 
   if ($('#monthEndPicker')) $('#monthEndPicker').value = targetMonth;
   if ($('#mEndRoundingDeduction')) $('#mEndRoundingDeduction').value = '';
-  if ($('#mEndSendEmailToggle')) $('#mEndSendEmailToggle').checked = false;
   
   const [yStr, mStr] = targetMonth.split('-');
   const mIdx = parseInt(mStr, 10) - 1;
@@ -10826,10 +10819,13 @@ async function saveMonthEndSettlement() {
       else allExpenses.unshift(docItem);
     });
 
-    const shouldSendEmail = $('#mEndSendEmailToggle')?.checked;
-    if (shouldSendEmail && typeof sendMonthEndSettlementEmail === 'function') {
-      toast('Sending Month-End Settlement email...');
-      await sendMonthEndSettlementEmail(calc);
+    // Automatically send settlement email statement to all configured email recipients
+    if (typeof sendMonthEndSettlementEmail === 'function') {
+      try {
+        await sendMonthEndSettlementEmail(calc);
+      } catch(emailErr) {
+        console.warn('Month-end settlement email delivery note:', emailErr);
+      }
     }
 
     toast(`✓ ${targetMonth} Settlement finalized & 5 expenses saved!`);
