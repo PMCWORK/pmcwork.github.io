@@ -3699,12 +3699,14 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         <input type="date" class="mini-select" id="expTo" style="display:none;">
 
         <select class="mini-select" id="expCategoryFilter">
-          <option value="all">All Categories</option>
+          <option value="all" selected>All Categories</option>
           <option value="Shop Rent">Shop Rent</option>
           <option value="Pias House Rent">Pias House Rent</option>
           <option value="Electricity Bill">Electricity Bill</option>
+          <option value="Pias Daily">Pias Daily</option>
+          <option value="Daily Operating Costs">Daily Operating Costs</option>
           <option value="Miscellaneous">Miscellaneous</option>
-          <option value="custom">Custom Categories</option>
+          <option value="custom">Other Custom Categories</option>
         </select>
 
         <button class="btn btn-ghost btn-sm" type="button" id="expResetBtn">Reset filters</button>
@@ -3888,6 +3890,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
             <option value="supplier_shop">Supplier shops</option>
             <option value="purchase_payment">Supplier Payments</option>
             <option value="fixed_rates">Fixed Rates &amp; Ratios</option>
+            <option value="settings">Notification &amp; Email Settings</option>
           </select>
           <select class="mini-select" id="auditActionFilter">
             <option value="all" selected>All actions</option>
@@ -7301,28 +7304,62 @@ function renderAuditItemCard(entry) {
     const mStr = a.month || b.month || 'Settlement';
     const [sy, sm] = mStr.split('-').map(Number);
     const mName = (MONTHS[sm - 1] || mStr) + (sy ? ` ${sy}` : '');
-    titleText = `Finalized Month-End Settlement for ${mName}`;
-    badgeClass = 'create';
-    badgeText = 'Settlement Finalized';
-    detailsHTML = `
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12.5px;">
-        <span>Distributable: <b style="color:var(--accent); font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.distributableProfit || 0)}</b></span>
-        <span>·</span>
-        <span>Pias (55%+Daily): <b style="color:#7c3aed; font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.piasTotalTakeHome || 0)}</b></span>
-        <span>·</span>
-        <span>Mehedi (45%): <b style="color:#ec4899; font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.mehediTotalTakeHome || 0)}</b></span>
-        <span>·</span>
-        <span>Open Days: <b>${a.operatingDays || 0}d</b></span>
-        <span>·</span>
-        <span style="color:var(--text-dim);">Gross: ${formatMoney(a.totalGrossProfit || 0)} | Deductions: -${formatMoney(a.totalDeductions || 0)}</span>
-      </div>`;
+    
+    if (action === 'create') {
+      titleText = `Finalized Month-End Settlement for ${mName}`;
+      badgeClass = 'create';
+      badgeText = 'Settlement Finalized';
+      detailsHTML = `
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12.5px;">
+          <span>Distributable: <b style="color:var(--accent); font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.distributableProfit || 0)}</b></span>
+          <span>·</span>
+          <span>Pias (55%+Daily): <b style="color:#7c3aed; font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.piasTotalTakeHome || 0)}</b></span>
+          <span>·</span>
+          <span>Mehedi (45%): <b style="color:#ec4899; font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.mehediTotalTakeHome || 0)}</b></span>
+          <span>·</span>
+          <span>Open Days: <b>${a.operatingDays || 0}d</b></span>
+          <span>·</span>
+          <span style="color:var(--text-dim);">Gross: ${formatMoney(a.totalGrossProfit || 0)} | Deductions: -${formatMoney(a.totalDeductions || 0)}</span>
+        </div>`;
+    } else if (action === 'update') {
+      titleText = `Updated Settlement Statement for ${mName}`;
+      badgeClass = 'update';
+      badgeText = 'Settlement Modified';
+      const diffs = [];
+      if (b.distributableProfit !== a.distributableProfit) {
+        diffs.push(`Distributable: <span class="audit-diff-pill">${formatMoney(b.distributableProfit || 0)} → ${formatMoney(a.distributableProfit || 0)}</span>`);
+      }
+      if (b.roundingDeduction !== a.roundingDeduction) {
+        diffs.push(`Rounding: <span class="audit-diff-pill">${formatMoney(b.roundingDeduction || 0)} → ${formatMoney(a.roundingDeduction || 0)}</span>`);
+      }
+      if (b.piasTotalTakeHome !== a.piasTotalTakeHome) {
+        diffs.push(`Pias Take-Home: <span class="audit-diff-pill">${formatMoney(b.piasTotalTakeHome || 0)} → ${formatMoney(a.piasTotalTakeHome || 0)}</span>`);
+      }
+      if (b.mehediTotalTakeHome !== a.mehediTotalTakeHome) {
+        diffs.push(`Mehedi Take-Home: <span class="audit-diff-pill">${formatMoney(b.mehediTotalTakeHome || 0)} → ${formatMoney(a.mehediTotalTakeHome || 0)}</span>`);
+      }
+      if (b.totalDeductions !== a.totalDeductions) {
+        diffs.push(`Total Deductions: <span class="audit-diff-pill">${formatMoney(b.totalDeductions || 0)} → ${formatMoney(a.totalDeductions || 0)}</span>`);
+      }
+      detailsHTML = diffs.length ? `<div class="audit-diff-row" style="font-size:12.5px;">${diffs.join('')}</div>` : `<div style="color:var(--text-dim);">Settlement calculations and recorded deductions updated for <b>${mName}</b>.</div>`;
+    } else if (action === 'delete') {
+      titleText = `Deleted Settlement for ${mName}`;
+      badgeClass = 'delete';
+      badgeText = 'Settlement Removed';
+      detailsHTML = `<div style="color:var(--text-dim);">Finalized settlement for <b>${mName}</b> was removed.</div>`;
+    }
   } else if (type === 'fixed_rates') {
     catClass = 'audit-cat-settings';
     iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
     titleText = `Updated Fixed Rates & Partner Share Ratios`;
     badgeClass = 'update';
     badgeText = 'Rates Updated';
-    detailsHTML = `
+    const diffs = [];
+    if (b.shopRent !== a.shopRent) diffs.push(`Shop Rent: <span class="audit-diff-pill">${formatMoney(b.shopRent||0)} → ${formatMoney(a.shopRent||0)}</span>`);
+    if (b.houseRent !== a.houseRent) diffs.push(`House Rent: <span class="audit-diff-pill">${formatMoney(b.houseRent||0)} → ${formatMoney(a.houseRent||0)}</span>`);
+    if (b.piasDailyRate !== a.piasDailyRate) diffs.push(`Pias Daily: <span class="audit-diff-pill">৳${b.piasDailyRate||100} → ৳${a.piasDailyRate||100}/day</span>`);
+    if (b.piasRatio !== a.piasRatio || b.mehediRatio !== a.mehediRatio) diffs.push(`Ratios: <span class="audit-diff-pill">${b.piasRatio||55}/${b.mehediRatio||45} → ${a.piasRatio||55}/${a.mehediRatio||45}</span>`);
+    detailsHTML = diffs.length ? `<div class="audit-diff-row" style="font-size:12.5px;">${diffs.join('')}</div>` : `
       <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12.5px;">
         <span>Shop Rent: <b>${formatMoney(a.shopRent || 0)}</b></span>
         <span>·</span>
@@ -9985,11 +10022,13 @@ function loadFixedRates() {
 }
 
 async function saveFixedRates(configObj) {
+  const prev = { ...fixedRatesConfig };
   fixedRatesConfig = { ...fixedRatesConfig, ...configObj };
   try { localStorage.setItem('pmc_fixed_rates', JSON.stringify(fixedRatesConfig)); } catch(e) {}
   if (firebaseReady && db) {
     try {
       await db.collection('settings').doc('fixed_rates').set(fixedRatesConfig, { merge: true });
+      await logAudit('fixed_rates', 'rates', 'update', prev, fixedRatesConfig);
     } catch(e) { console.error('Error saving fixed_rates to Firestore:', e); }
   }
   toast('Fixed rates & partner ratios saved');
@@ -10253,23 +10292,48 @@ function renderExpensesView() {
     });
   }
 
-  // 4. Render Category Spending Breakdown Pills
+  // 4. Render Category Spending Breakdown Pills (Interactive Filter Chips)
   const catBreakdownDiv = $('#expCategoryBreakdown');
   if (catBreakdownDiv) {
+    const rangeExpenses = allExpenses.filter(e => {
+      const d = e.date || '';
+      return d >= range.from && d <= range.to;
+    });
+
     const catMap = {};
-    filtered.forEach(e => {
+    rangeExpenses.forEach(e => {
       const c = e.category || 'Miscellaneous';
       catMap[c] = (catMap[c] || 0) + (Number(e.amount) || 0);
     });
 
     const catEntries = Object.entries(catMap);
     if (catEntries.length) {
-      catBreakdownDiv.innerHTML = catEntries.map(([cat, amt]) => `
-        <div style="background:var(--panel); border:1px solid var(--border); padding:6px 12px; border-radius:8px; display:inline-flex; align-items:center; gap:8px; font-size:12.5px; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-          <span style="font-weight:600; color:var(--text);">${escapeHtml(cat)}</span>
-          <span style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700; color:var(--danger);">${formatMoney(amt)}</span>
-        </div>
-      `).join('');
+      catBreakdownDiv.innerHTML = catEntries.map(([cat, amt]) => {
+        const isSelected = (catFilter === cat);
+        return `
+          <button type="button" class="exp-cat-pill-btn" data-category="${escapeHtml(cat)}" style="background:${isSelected ? 'var(--accent)' : 'var(--panel)'}; border:1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}; color:${isSelected ? '#fff' : 'var(--text)'}; padding:5px 12px; border-radius:8px; display:inline-flex; align-items:center; gap:8px; font-size:12px; cursor:pointer; font-weight:600; transition:all 0.15s; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+            <span>${escapeHtml(cat)}</span>
+            <span style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:800; color:${isSelected ? '#fff' : 'var(--danger)'};">${formatMoney(amt)}</span>
+          </button>
+        `;
+      }).join('');
+
+      catBreakdownDiv.querySelectorAll('.exp-cat-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const clickedCat = btn.dataset.category;
+          const sel = $('#expCategoryFilter');
+          if (sel) {
+            if (sel.value === clickedCat) {
+              sel.value = 'all';
+            } else {
+              const opt = Array.from(sel.options).find(o => o.value === clickedCat);
+              if (opt) sel.value = clickedCat;
+              else sel.value = 'custom';
+            }
+          }
+          renderExpensesView();
+        });
+      });
     } else {
       catBreakdownDiv.innerHTML = '';
     }
@@ -11022,6 +11086,9 @@ async function saveMonthEndSettlement() {
       createdAtMillis: Date.now()
     };
 
+    const existingSettlement = allSettlements.find(s => s.month === targetMonth);
+    const auditAction = existingSettlement ? 'update' : 'create';
+
     if (firebaseReady && db) {
       const batch = db.batch();
       batch.set(db.collection('expenses').doc(houseRentDoc.id), houseRentDoc, { merge: true });
@@ -11029,7 +11096,7 @@ async function saveMonthEndSettlement() {
       batch.set(db.collection('expenses').doc(dailyCostDoc.id), dailyCostDoc, { merge: true });
       batch.set(db.collection('monthly_settlements').doc(targetMonth), calc, { merge: true });
       await batch.commit();
-      await logAudit('settlement', targetMonth, 'create', null, calc);
+      await logAudit('settlement', targetMonth, auditAction, existingSettlement || null, calc);
     }
 
     // Upsert into local allExpenses array
