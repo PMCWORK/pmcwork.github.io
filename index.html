@@ -3630,7 +3630,11 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           <h1>Expenses</h1>
         </div>
         <div class="top-right" style="display:flex; align-items:center; gap:10px;">
-          <button class="btn btn-outline btn-sm" id="openMonthEndWizardBtn" style="font-weight:700; gap:6px; border-color:var(--accent); color:var(--accent-deep);" title="Launch Month-End Settlement & Take-Home Calculator">
+          <button class="btn btn-ghost btn-sm" id="openSettlementHistoryBtn" style="font-weight:700; gap:6px;" title="View past finalized month-end settlement statements">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+            Settlement History
+          </button>
+          <button class="btn btn-outline btn-sm" id="openMonthEndWizardBtn" style="font-weight:700; gap:6px; border-color:var(--accent); color:var(--accent-deep);" title="Launch Month-End Settlement &amp; Take-Home Calculator">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
             Month-End Settlement
           </button>
@@ -3641,31 +3645,40 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         </div>
       </div>
 
-      <!-- Financial Overview KPI Cards (Including 55/45 Split + Pias Daily) -->
-      <div class="dash-stats" style="grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px;">
-        <div class="card stat-card" style="border-left: 3px solid var(--danger); padding: 10px 14px; border-radius: 10px;">
-          <div class="stat-label" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">Expenses</div>
-          <div id="expTotalExpenses" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:18px; font-weight:700; color:var(--danger); margin-top:3px;">৳ 0</div>
+      <!-- Financial Overview Metric Cards (Streamlined & Actionable) -->
+      <div class="dash-stats" style="grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
+        <!-- Card 1: Period Expenses -->
+        <div class="card stat-card" style="border-left: 3px solid var(--danger); padding: 12px 16px; border-radius: 10px;">
+          <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">Period Expenses</div>
+          <div id="expTotalExpenses" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:19px; font-weight:800; color:var(--danger); margin-top:3px;">৳ 0</div>
+          <div id="expTotalCountLabel" style="font-size: 11px; color: var(--text-faint); margin-top: 2px;">0 records</div>
         </div>
 
-        <div class="card stat-card" style="border-left: 3px solid var(--teal); padding: 10px 14px; border-radius: 10px;">
-          <div class="stat-label" style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim);">Sales Profit</div>
-          <div id="expGrossProfit" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:18px; font-weight:700; color:var(--teal); margin-top:3px;">৳ 0</div>
+        <!-- Card 2: Fixed Monthly Overhead -->
+        <div class="card stat-card" style="border-left: 3px solid #8b5cf6; padding: 12px 16px; border-radius: 10px;">
+          <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8b5cf6;">Fixed Overhead</div>
+          <div id="expFixedOverhead" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:19px; font-weight:800; color:var(--text); margin-top:3px;">৳ 0</div>
+          <div style="font-size: 11px; color: var(--text-faint); margin-top: 2px;">Shop, House &amp; Electricity</div>
         </div>
 
-        <div class="card stat-card" style="border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 10px;">
-          <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-deep);">Distributable</div>
-          <div id="expNetTakeHome" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:18px; font-weight:700; color:var(--accent-deep); margin-top:3px;">৳ 0</div>
+        <!-- Card 3: Daily Operating Costs -->
+        <div class="card stat-card" style="border-left: 3px solid var(--teal); padding: 12px 16px; border-radius: 10px;">
+          <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--teal);">Daily Operating Costs</div>
+          <div id="expDailyOperatingTotal" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:19px; font-weight:800; color:var(--teal); margin-top:3px;">৳ 0</div>
+          <div style="font-size: 11px; color: var(--text-faint); margin-top: 2px;">Total daily costs from sales</div>
         </div>
 
-        <div class="card stat-card" style="border-left: 3px solid #8b5cf6; padding: 10px 14px; border-radius: 10px;">
-          <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8b5cf6;">Pias (55% + Daily)</div>
-          <div id="expShare55" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:18px; font-weight:700; color:#8b5cf6; margin-top:3px;">৳ 0</div>
-        </div>
-
-        <div class="card stat-card" style="border-left: 3px solid #ec4899; padding: 10px 14px; border-radius: 10px;">
-          <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #ec4899;">Mehedi (45%)</div>
-          <div id="expShare45" style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-size:18px; font-weight:700; color:#ec4899; margin-top:3px;">৳ 0</div>
+        <!-- Card 4: Settlement Status & Action -->
+        <div class="card stat-card" style="border-left: 3px solid var(--accent); background: var(--surface-sunken); padding: 12px 16px; border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div class="stat-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-deep);">Month-End Settlement</div>
+            <div id="expSettlementStatus" style="font-size:13.5px; font-weight:800; color:var(--text); margin-top:3px; display:flex; align-items:center; gap:6px;">
+              <span style="color:var(--text-dim);">Checking...</span>
+            </div>
+          </div>
+          <div id="expSettlementActionWrap" style="margin-top:4px;">
+            <button type="button" class="btn btn-ghost btn-xs" id="expQuickSettleBtn" style="padding:2px 8px; font-size:11.5px; font-weight:700; color:var(--accent);">Launch Wizard →</button>
+          </div>
         </div>
       </div>
 
@@ -4544,6 +4557,37 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Save &amp; Finalize Settlement
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SETTLEMENT HISTORY MODAL ================= -->
+  <div class="modal-backdrop" id="settlementHistoryModalBackdrop">
+    <div class="modal-card" style="max-width: 680px; width: 95%; max-height: 85vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+      
+      <!-- Modal Header -->
+      <div style="padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px; height:16px;"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+          </div>
+          <div>
+            <h2 style="margin: 0; font-size: 17px; font-weight: 800; font-family: 'Space Grotesk', sans-serif;">Partner Settlement History</h2>
+            <div style="font-size: 11.5px; color: var(--text-dim); margin-top: 1px;">Past finalized month-end statements &amp; profit payouts</div>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeSettlementHistoryBtn" title="Close">✕</button>
+      </div>
+
+      <!-- Modal Body (Scrollable List) -->
+      <div style="padding: 18px 22px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px;" id="settlementHistoryListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding: 12px 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
+        <div style="font-size: 11.5px; color: var(--text-dim);" id="settlementHistoryCountLabel">0 settlements on record</div>
+        <button type="button" class="btn btn-ghost btn-sm" id="closeSettlementHistoryFooterBtn">Close</button>
       </div>
     </div>
   </div>
@@ -9945,7 +9989,28 @@ async function saveFixedRates(configObj) {
   renderExpensesView();
 }
 
+let allSettlements = [];
+
+async function loadSettlements() {
+  try {
+    const cached = localStorage.getItem('pmc_all_settlements');
+    if (cached) allSettlements = JSON.parse(cached);
+  } catch(e) {}
+
+  if (firebaseReady && db) {
+    try {
+      const snap = await db.collection('monthly_settlements').get();
+      allSettlements = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      allSettlements.sort((a, b) => (b.month || '').localeCompare(a.month || ''));
+      try { localStorage.setItem('pmc_all_settlements', JSON.stringify(allSettlements)); } catch(e) {}
+    } catch(err) {
+      console.error('Error loading settlements:', err);
+    }
+  }
+}
+
 async function loadExpenses() {
+  loadSettlements();
   if (!firebaseReady || !db) return;
   try {
     const snap = await db.collection('expenses').get();
@@ -9954,6 +10019,92 @@ async function loadExpenses() {
   } catch(err) {
     console.error('Error loading expenses:', err);
   }
+}
+
+function openSettlementHistoryModal() {
+  loadSettlements().then(() => {
+    renderSettlementHistory();
+  });
+  renderSettlementHistory();
+  $('#settlementHistoryModalBackdrop')?.classList.add('show');
+}
+
+function closeSettlementHistoryModal() {
+  $('#settlementHistoryModalBackdrop')?.classList.remove('show');
+}
+
+function renderSettlementHistory() {
+  const container = $('#settlementHistoryListContainer');
+  if (!container) return;
+
+  if (!allSettlements || !allSettlements.length) {
+    container.innerHTML = `
+      <div class="placeholder-card" style="padding: 40px 20px; text-align: center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:40px; height:40px; color:var(--text-faint); margin-bottom:10px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <h3 style="font-size:15px; font-weight:700; margin:0 0 6px;">No finalized settlements yet</h3>
+        <p style="font-size:12.5px; color:var(--text-dim); margin:0;">When you finalize monthly settlements using the Month-End wizard, they will be archived here for instant lookup anytime.</p>
+      </div>
+    `;
+    if ($('#settlementHistoryCountLabel')) $('#settlementHistoryCountLabel').textContent = '0 settlements on record';
+    return;
+  }
+
+  if ($('#settlementHistoryCountLabel')) {
+    $('#settlementHistoryCountLabel').textContent = `${allSettlements.length} settlement${allSettlements.length === 1 ? '' : 's'} archived`;
+  }
+
+  container.innerHTML = allSettlements.map(s => {
+    const [y, m] = (s.month || '').split('-').map(Number);
+    const mName = (MONTHS[m - 1] || s.month) + (y ? ` ${y}` : '');
+    const shortMY = formatShortMonthYear(s.month);
+    const finalizedDate = s.finalizedAt ? new Date(s.finalizedAt).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '';
+
+    return `
+      <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; gap:10px; transition:border-color 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:15px; font-weight:800; color:var(--text); font-family:'Space Grotesk',sans-serif;">${mName}</span>
+              <span style="font-size:11px; font-weight:700; color:var(--accent); background:var(--accent-soft); padding:1px 7px; border-radius:6px;">${shortMY}</span>
+              <span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 7px; border-radius:6px;">✓ Finalized</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">
+              ${s.operatingDays || 0} Open Days · Gross Profit: ${formatMoney(s.totalGrossProfit || 0)} · Deductions: -${formatMoney(s.totalDeductions || 0)}
+              ${finalizedDate ? ` · <i>Settled ${finalizedDate}</i>` : ''}
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button type="button" class="btn btn-outline btn-xs view-past-settlement-btn" data-month="${s.month}" style="padding:4px 10px; font-size:11.5px; font-weight:700; border-color:var(--accent); color:var(--accent);">
+              View Statement ↗
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Grid -->
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; background:var(--surface-sunken); padding:10px 12px; border-radius:8px; border:1px solid var(--border-soft);">
+          <div>
+            <div style="font-size:10.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Distributable Profit</div>
+            <div style="font-size:14px; font-weight:800; color:#185a95; font-family:var(--font-numeric); margin-top:1px;">${formatMoney(s.distributableProfit || 0)}</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px; font-weight:700; color:#7c3aed; text-transform:uppercase;">Pias (55%+Daily)</div>
+            <div style="font-size:14px; font-weight:800; color:#7c3aed; font-family:var(--font-numeric); margin-top:1px;">${formatMoney(s.piasTotalTakeHome || 0)}</div>
+          </div>
+          <div>
+            <div style="font-size:10.5px; font-weight:700; color:#db2777; text-transform:uppercase;">Mehedi (45%)</div>
+            <div style="font-size:14px; font-weight:800; color:#db2777; font-family:var(--font-numeric); margin-top:1px;">${formatMoney(s.mehediTotalTakeHome || 0)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.view-past-settlement-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      closeSettlementHistoryModal();
+      openMonthEndWizard(btn.dataset.month);
+    });
+  });
 }
 
 function populateExpensesYearOptions() {
@@ -10054,33 +10205,46 @@ function renderExpensesView() {
   // 2. Financial Calculations
   const totalExpenses = filtered.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
 
-  // Sales in that same date range
-  const rangeSales = allSales.filter(s => s.date && s.date >= range.from && s.date <= range.to);
-  const totalGrossProfit = rangeSales.reduce((acc, s) => acc + (Number(s.profit) || 0), 0);
+  // Fixed Overhead (Shop Rent, Pias House Rent, Electricity Bill)
+  const fixedOverhead = filtered.filter(e => ['Shop Rent', 'Pias House Rent', 'Electricity Bill'].includes(e.category)).reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
 
-  // Operating days count (unique days with sales)
-  const uniqueOperatingDays = new Set(rangeSales.map(s => s.date)).size;
-  const piasDailyRate = Number(fixedRatesConfig.piasDailyRate) || 100;
-  const totalPiasDaily = uniqueOperatingDays * piasDailyRate;
+  // Daily Operating Costs logged from sales
+  const dailyOperatingTotal = filtered.filter(e => e.category === 'Daily Operating Costs').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
 
-  // Net distributable profit
-  const netDistributable = totalGrossProfit - totalExpenses;
-  const piasRatio = (Number(fixedRatesConfig.piasRatio) || 55) / 100;
-  const mehediRatio = (Number(fixedRatesConfig.mehediRatio) || 45) / 100;
-
-  const piasBaseShare = Math.round(netDistributable * piasRatio);
-  const piasTotalTakeHome = piasBaseShare + totalPiasDaily;
-  const mehediTotalTakeHome = Math.round(netDistributable * mehediRatio);
+  // Current target month for settlement status
+  const currentSelectedMonth = range.monthKey || (($('#expMonth')?.value) || todayISO.slice(0, 7));
+  const currentMonthSettlement = allSettlements.find(s => s.month === currentSelectedMonth);
 
   // 3. Update KPI Overview Cards
   if ($('#expTotalExpenses')) $('#expTotalExpenses').textContent = formatMoney(totalExpenses);
-  if ($('#expGrossProfit')) $('#expGrossProfit').textContent = formatMoney(totalGrossProfit);
-  if ($('#expNetTakeHome')) {
-    $('#expNetTakeHome').textContent = formatMoney(netDistributable);
-    $('#expNetTakeHome').style.color = netDistributable < 0 ? '#ef4444' : 'var(--accent-deep)';
+  if ($('#expTotalCountLabel')) $('#expTotalCountLabel').textContent = `${filtered.length} record${filtered.length === 1 ? '' : 's'}`;
+  if ($('#expFixedOverhead')) $('#expFixedOverhead').textContent = formatMoney(fixedOverhead);
+  if ($('#expDailyOperatingTotal')) $('#expDailyOperatingTotal').textContent = formatMoney(dailyOperatingTotal);
+
+  if ($('#expSettlementStatus')) {
+    if (currentMonthSettlement) {
+      $('#expSettlementStatus').innerHTML = `
+        <span style="color:var(--teal); font-weight:800; font-size:13px;">✓ Finalized</span>
+        <span style="font-size:11.5px; color:var(--text-dim); font-weight:600;">(${formatMoney(currentMonthSettlement.distributableProfit || 0)})</span>
+      `;
+    } else {
+      $('#expSettlementStatus').innerHTML = `
+        <span style="color:var(--danger); font-weight:800; font-size:13px;">⏳ Pending</span>
+        <span style="font-size:11.5px; color:var(--text-dim); font-weight:600;">Not settled</span>
+      `;
+    }
   }
-  if ($('#expShare55')) $('#expShare55').textContent = formatMoney(piasTotalTakeHome);
-  if ($('#expShare45')) $('#expShare45').textContent = formatMoney(mehediTotalTakeHome);
+
+  if ($('#expSettlementActionWrap')) {
+    $('#expSettlementActionWrap').innerHTML = `
+      <button type="button" class="btn btn-ghost btn-xs" id="expQuickSettleBtn" style="padding:2px 8px; font-size:11.5px; font-weight:700; color:var(--accent);">
+        ${currentMonthSettlement ? 'View Statement ↗' : 'Launch Wizard →'}
+      </button>
+    `;
+    $('#expQuickSettleBtn')?.addEventListener('click', () => {
+      openMonthEndWizard(currentSelectedMonth);
+    });
+  }
 
   // 4. Render Category Spending Breakdown Pills
   const catBreakdownDiv = $('#expCategoryBreakdown');
@@ -10818,6 +10982,12 @@ async function saveMonthEndSettlement() {
       if (idx >= 0) allExpenses[idx] = docItem;
       else allExpenses.unshift(docItem);
     });
+
+    // Upsert into local allSettlements array
+    calc.finalizedAt = Date.now();
+    allSettlements = allSettlements.filter(s => s.month !== targetMonth);
+    allSettlements.unshift(calc);
+    try { localStorage.setItem('pmc_all_settlements', JSON.stringify(allSettlements)); } catch(e) {}
 
     // Automatically send settlement email statement to all configured email recipients
     if (typeof sendMonthEndSettlementEmail === 'function') {
@@ -13198,6 +13368,14 @@ function setupEventListeners() {
     }, 100);
   });
   $('#saveMonthEndSettlementBtn')?.addEventListener('click', saveMonthEndSettlement);
+
+  // Settlement History Modal Listeners
+  $('#openSettlementHistoryBtn')?.addEventListener('click', openSettlementHistoryModal);
+  $('#closeSettlementHistoryBtn')?.addEventListener('click', closeSettlementHistoryModal);
+  $('#closeSettlementHistoryFooterBtn')?.addEventListener('click', closeSettlementHistoryModal);
+  $('#settlementHistoryModalBackdrop')?.addEventListener('click', (e) => {
+    if (e.target.id === 'settlementHistoryModalBackdrop') closeSettlementHistoryModal();
+  });
 
   // Fixed Rates Settings Subpanel Listeners
   $('#openFixedRatesSettingsBtn')?.addEventListener('click', openFixedRatesSubpanel);
