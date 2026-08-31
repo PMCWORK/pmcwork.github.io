@@ -4515,19 +4515,19 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           <div style="background: linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 100%); border: 1.5px solid rgba(139,92,246,0.35); border-radius: 12px; padding: 14px 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <span style="font-size: 14px; font-weight: 800; color: #7c3aed;">Pias (55%)</span>
-              <span id="mEndPiasDailyBadge" style="font-size: 11px; font-weight: 700; background: rgba(139,92,246,0.15); color: #7c3aed; padding: 2px 8px; border-radius: 6px;">+ ৳0 Daily</span>
+              <span id="mEndPiasDailyBadge" style="font-size: 11px; font-weight: 700; background: rgba(139,92,246,0.15); color: #7c3aed; padding: 2px 8px; border-radius: 6px;">27×100</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text-dim); margin-bottom: 5px;">
               <span>55% Base Share:</span>
-              <span id="mEndPiasBaseShare" style="font-weight: 700; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
+              <span id="mEndPiasBaseShare" style="font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--text); text-align: right; min-width: 90px; display: inline-block;">৳ 0</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px;">
-              <span>Pias Daily Allowance:</span>
-              <span id="mEndPiasDailyTotal" style="font-weight: 700; font-family: var(--font-numeric); color: #7c3aed;">+ ৳ 0</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px;">
+              <span>Pias Daily Allowance <span id="mEndPiasDailyMath" style="font-weight:600; color:var(--text-dim);">(27×100)</span>:</span>
+              <span id="mEndPiasDailyTotal" style="font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: #7c3aed; text-align: right; min-width: 90px; display: inline-block;">+ ৳ 0</span>
             </div>
             <div style="border-top: 1px dashed rgba(139,92,246,0.3); padding-top: 8px; display: flex; justify-content: space-between; align-items: baseline;">
               <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #7c3aed;">Total Pias Take-Home</div>
-              <div id="mEndPiasTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #7c3aed; font-family: var(--font-numeric);">৳ 0</div>
+              <div id="mEndPiasTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #7c3aed; font-family: var(--font-numeric); font-variant-numeric: tabular-nums;">৳ 0</div>
             </div>
           </div>
 
@@ -4537,17 +4537,17 @@ tbody tr:hover{ background: var(--panel-2) !important; }
               <span style="font-size: 14px; font-weight: 800; color: #db2777;">Mehedi (45%)</span>
               <span style="font-size: 11px; font-weight: 700; background: rgba(236,72,153,0.15); color: #db2777; padding: 2px 8px; border-radius: 6px;">45% Equity</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text-dim); margin-bottom: 5px;">
               <span>45% Base Share:</span>
-              <span id="mEndMehediBaseShare" style="font-weight: 700; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
+              <span id="mEndMehediBaseShare" style="font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--text); text-align: right; min-width: 90px; display: inline-block;">৳ 0</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px;">
               <span>Direct Allocation:</span>
-              <span style="font-weight: 600; color: var(--text-dim);">Direct</span>
+              <span style="font-weight: 600; color: var(--text-dim); text-align: right; min-width: 90px; display: inline-block;">Direct</span>
             </div>
             <div style="border-top: 1px dashed rgba(236,72,153,0.3); padding-top: 8px; display: flex; justify-content: space-between; align-items: baseline;">
               <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #db2777;">Total Mehedi Take-Home</div>
-              <div id="mEndMehediTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #db2777; font-family: var(--font-numeric);">৳ 0</div>
+              <div id="mEndMehediTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #db2777; font-family: var(--font-numeric); font-variant-numeric: tabular-nums;">৳ 0</div>
             </div>
           </div>
         </div>
@@ -11020,9 +11020,10 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   }
 
   // Update Partner Cards UI
-  if ($('#mEndPiasDailyBadge')) $('#mEndPiasDailyBadge').textContent = `${operatingDays}x${piasDailyRate}`;
+  if ($('#mEndPiasDailyBadge')) $('#mEndPiasDailyBadge').textContent = `${operatingDays}×${piasDailyRate}`;
   if ($('#mEndPiasBaseShare')) $('#mEndPiasBaseShare').textContent = formatMoney(piasBaseShare);
-  if ($('#mEndPiasDailyTotal')) $('#mEndPiasDailyTotal').textContent = `+ ${formatMoney(piasDailyTotal)} (${operatingDays}x${piasDailyRate})`;
+  if ($('#mEndPiasDailyMath')) $('#mEndPiasDailyMath').textContent = `(${operatingDays}×${piasDailyRate})`;
+  if ($('#mEndPiasDailyTotal')) $('#mEndPiasDailyTotal').textContent = `+ ${formatMoney(piasDailyTotal)}`;
   if ($('#mEndPiasTotalTakeHome')) $('#mEndPiasTotalTakeHome').textContent = formatMoney(piasTotalTakeHome);
 
   if ($('#mEndMehediBaseShare')) $('#mEndMehediBaseShare').textContent = formatMoney(mehediBaseShare);
