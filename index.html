@@ -10992,10 +10992,10 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
     otherExpenses,
     totalDeductions,
     distributableProfit,
-    piasRatio: piasRatio * 100,
+    piasRatio: Math.round(Number(fixedRatesConfig.piasRatio) || 55),
     piasBaseShare,
     piasTotalTakeHome,
-    mehediRatio: mehediRatio * 100,
+    mehediRatio: Math.round(Number(fixedRatesConfig.mehediRatio) || 45),
     mehediBaseShare,
     mehediTotalTakeHome,
     calculatedAtMillis: Date.now()
@@ -11143,6 +11143,9 @@ async function sendMonthEndSettlementEmail(calc) {
   const shortMY = formatShortMonthYear(calc.month);
   const subject = `[PMC] ${shortMY} Settlement statement`;
 
+  const piasPct = Math.round(Number(calc.piasRatio) || (Number(fixedRatesConfig.piasRatio) || 55));
+  const mehediPct = Math.round(Number(calc.mehediRatio) || (Number(fixedRatesConfig.mehediRatio) || 45));
+
   const contentHtml = `
     <!-- Top Summary Cards -->
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:18px;">
@@ -11222,9 +11225,9 @@ async function sendMonthEndSettlementEmail(calc) {
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
       <tr>
         <td width="48%" style="background:#faf5ff; border:1.5px solid #d8b4fe; border-radius:12px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:13.5px; font-weight:800; color:#7c3aed;">Pias (${calc.piasRatio}%)</div>
-          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">55% Base Share: <b>${formatMoney(calc.piasBaseShare)}</b></div>
-          <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Pias Daily Allowance: <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
+          <div style="font-size:13.5px; font-weight:800; color:#7c3aed;">Pias (${piasPct}%)</div>
+          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">${piasPct}% Base Share: <b>${formatMoney(calc.piasBaseShare)}</b></div>
+          <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Pias Daily (${calc.operatingDays}d × ৳${calc.piasDailyRate}): <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
           <div style="border-top:1px dashed #d8b4fe; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#7c3aed;">Total Pias Take-Home</div>
             <div style="font-size:20px; font-weight:800; color:#7c3aed; margin-top:2px;">${formatMoney(calc.piasTotalTakeHome)}</div>
@@ -11232,8 +11235,8 @@ async function sendMonthEndSettlementEmail(calc) {
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#fdf2f8; border:1.5px solid #fbcfe8; border-radius:12px; padding:14px 16px; vertical-align:top;">
-          <div style="font-size:13.5px; font-weight:800; color:#db2777;">Mehedi (${calc.mehediRatio}%)</div>
-          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">45% Equity Share: <b>${formatMoney(calc.mehediBaseShare)}</b></div>
+          <div style="font-size:13.5px; font-weight:800; color:#db2777;">Mehedi (${mehediPct}%)</div>
+          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">${mehediPct}% Equity Share: <b>${formatMoney(calc.mehediBaseShare)}</b></div>
           <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Direct Allocation</div>
           <div style="border-top:1px dashed #fbcfe8; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#db2777;">Total Mehedi Take-Home</div>
