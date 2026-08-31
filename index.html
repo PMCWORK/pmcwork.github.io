@@ -320,6 +320,8 @@ button{ font-family: inherit; }
 .audit-cat-shop{ background: rgba(236, 72, 153, 0.12); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.25); }
 .audit-cat-payment{ background: rgba(20, 184, 166, 0.12); color: #14b8a6; border: 1px solid rgba(20, 184, 166, 0.25); }
 .audit-cat-expense{ background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); }
+.audit-cat-settlement{ background: rgba(59, 130, 246, 0.12); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.25); }
+.audit-cat-settings{ background: rgba(139, 92, 246, 0.12); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.25); }
 
 .audit-main{
   flex: 1 1 auto;
@@ -2913,26 +2915,31 @@ tbody tr:hover{ background: var(--panel-2) !important; }
             <form id="recipientEditForm">
               <input type="hidden" id="editRecipientId">
 
-              <div class="field-row" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+              <div class="field-row" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:8px;">
                 <div class="field" style="margin-bottom:0;">
                   <label>Recipient Name / Role</label>
-                  <input type="text" id="rName" required>
+                  <input type="text" id="rName" placeholder="e.g. Pias (Partner)" required>
+                  <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-ghost btn-xs" style="padding:2px 8px; font-size:11px; border:1px solid var(--border);" onclick="$('#rName').value='Pias (Partner)'">Pias (Partner)</button>
+                    <button type="button" class="btn btn-ghost btn-xs" style="padding:2px 8px; font-size:11px; border:1px solid var(--border);" onclick="$('#rName').value='Mehedi (Partner)'">Mehedi (Partner)</button>
+                    <button type="button" class="btn btn-ghost btn-xs" style="padding:2px 8px; font-size:11px; border:1px solid var(--border);" onclick="$('#rName').value='Admin'">Admin</button>
+                  </div>
                 </div>
                 <div class="field" style="margin-bottom:0;">
                   <label>Email Address</label>
                   <div class="email-input-mask-wrap">
-                    <input type="password" id="rEmail" autocomplete="off" required>
+                    <input type="password" id="rEmail" placeholder="partner@gmail.com" autocomplete="off" required>
                     <button type="button" class="email-mask-btn" id="toggleREmailMaskBtn" title="Show / Hide Email">
                       <svg id="rEmailEyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                       </svg>
                     </button>
                   </div>
+                  <div style="font-size:11px; color:var(--text-faint); margin-top:6px; display:flex; align-items:center; gap:4px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Masked for privacy.
+                  </div>
                 </div>
-              </div>
-              <div style="font-size:11px; color:var(--text-faint); margin-top:-6px; margin-bottom:14px; display:flex; align-items:center; gap:4px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Email is hidden by default for on-screen privacy.
               </div>
 
               <!-- Email Notification Options -->
@@ -2944,44 +2951,44 @@ tbody tr:hover{ background: var(--panel-2) !important; }
                     <div class="notify-toggle-text">
                       <div class="title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--accent);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        Daily Activity Summary
+                        Daily 11:00 PM Activity Summary
                       </div>
-                      <div class="desc">Receive a comprehensive daily digest of shop transactions and operations.</div>
+                      <div class="desc">Automated daily closing digest with today's sales profit, operating costs, invoice totals, and inventory tracker logs.</div>
                     </div>
                   </label>
 
                   <!-- Sub-details: Activities to include & Delivery timing -->
                   <div class="sub-activity-box" id="rDailySubDetailsBox">
                     <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px;">
-                      Activities to include in summary:
+                      Activities to include in daily digest:
                     </div>
                     <div class="sub-activity-grid">
                       <label class="sub-activity-item">
                         <input type="checkbox" id="rDailyIncSales" checked>
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color:var(--accent);"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                          Sale &amp; Profit
+                          Sales &amp; Gross Profit
                         </span>
                       </label>
                       <label class="sub-activity-item">
                         <input type="checkbox" id="rDailyIncInvoices" checked>
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color:var(--accent);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                          Invoices created
+                          Invoices Generated
                         </span>
                       </label>
                       <label class="sub-activity-item">
                         <input type="checkbox" id="rDailyIncProducts" checked>
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color:var(--accent);"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                          Product tracker
+                          Product Tracker Log
                         </span>
                       </label>
                       <label class="sub-activity-item">
                         <input type="checkbox" id="rDailyIncBrings" checked>
                         <span style="display:inline-flex; align-items:center; gap:5px;">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color:var(--accent);"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                          PM Brings items
+                          PM Brings Items
                         </span>
                       </label>
                     </div>
@@ -2989,15 +2996,13 @@ tbody tr:hover{ background: var(--panel-2) !important; }
                     <div class="delivery-time-row">
                       <label for="rAlertDailyTiming" style="display:flex; align-items:center; gap:5px;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;color:var(--accent);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        Delivery time:
+                        Scheduled Delivery:
                       </label>
                       <select class="mini-select" id="rAlertDailyTiming" style="font-size:12px; font-weight:600;">
-                        <option value="instant">Instant (as soon as sale is entered)</option>
-                        <option value="20:00">8:00 PM (Night)</option>
-                        <option value="21:00">9:00 PM (Night)</option>
-                        <option value="22:00">10:00 PM (Night)</option>
-                        <option value="23:00" selected>11:00 PM (Night summary)</option>
-                        <option value="00:00">12:00 AM (Midnight)</option>
+                        <option value="23:00" selected>11:00 PM (Dhaka Daily Close)</option>
+                        <option value="22:00">10:00 PM</option>
+                        <option value="20:00">8:00 PM</option>
+                        <option value="instant">Instant (Per Sale Entry)</option>
                       </select>
                     </div>
                   </div>
@@ -3010,9 +3015,9 @@ tbody tr:hover{ background: var(--panel-2) !important; }
                     <div class="notify-toggle-text">
                       <div class="title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--accent);"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                        Monthly Summary Email
+                        Month-End Partner Settlement Statement
                       </div>
-                      <div class="desc">Summary of everything that happened in that month (Sales, profit, cost, invoices, products, PM brings) with Month-over-Month comparison.</div>
+                      <div class="desc">Monthly partner closing statements with verified operating/closed days, 5 expense deductions, and 55% / 45% partner take-home payouts.</div>
                     </div>
                   </label>
                 </div>
@@ -3024,9 +3029,9 @@ tbody tr:hover{ background: var(--panel-2) !important; }
                     <div class="notify-toggle-text">
                       <div class="title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--accent);"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                        Yearly Summary Email
+                        Yearly Financial Performance Report
                       </div>
-                      <div class="desc">Summary of everything that happened in that year with Year-over-Year comparison and multi-year trajectory benchmarks.</div>
+                      <div class="desc">Annual financial performance statements with Year-over-Year revenue, gross profit, and growth benchmarks.</div>
                     </div>
                   </label>
                 </div>
@@ -3860,6 +3865,8 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         <div class="tracker-toolbar" style="margin-bottom:18px;">
           <select class="mini-select" id="auditEntityFilter">
             <option value="all" selected>All categories</option>
+            <option value="settlement">Month-End Settlements</option>
+            <option value="expense">Expenses</option>
             <option value="invoice">Invoices</option>
             <option value="sale">Sales entries</option>
             <option value="product">Product tracker</option>
@@ -3867,7 +3874,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
             <option value="purchase">Purchases</option>
             <option value="supplier_shop">Supplier shops</option>
             <option value="purchase_payment">Supplier Payments</option>
-            <option value="expense">Expenses</option>
+            <option value="fixed_rates">Fixed Rates &amp; Ratios</option>
           </select>
           <select class="mini-select" id="auditActionFilter">
             <option value="all" selected>All actions</option>
@@ -7243,6 +7250,43 @@ function renderAuditItemCard(entry) {
           Expense of <b>${formatMoney(b.amount || 0)}</b> for <b>${catName}</b> dated ${formatDateLabel(b.date)} was removed.
         </div>`;
     }
+  } else if (type === 'settlement') {
+    catClass = 'audit-cat-settlement';
+    iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
+    const mStr = a.month || b.month || 'Settlement';
+    const [sy, sm] = mStr.split('-').map(Number);
+    const mName = (MONTHS[sm - 1] || mStr) + (sy ? ` ${sy}` : '');
+    titleText = `Finalized Month-End Settlement for ${mName}`;
+    badgeClass = 'create';
+    badgeText = 'Settlement Finalized';
+    detailsHTML = `
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12.5px;">
+        <span>Distributable: <b style="color:var(--accent); font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.distributableProfit || 0)}</b></span>
+        <span>·</span>
+        <span>Pias (55%+Daily): <b style="color:#7c3aed; font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.piasTotalTakeHome || 0)}</b></span>
+        <span>·</span>
+        <span>Mehedi (45%): <b style="color:#ec4899; font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.mehediTotalTakeHome || 0)}</b></span>
+        <span>·</span>
+        <span>Open Days: <b>${a.operatingDays || 0}d</b></span>
+        <span>·</span>
+        <span style="color:var(--text-dim);">Gross: ${formatMoney(a.totalGrossProfit || 0)} | Deductions: -${formatMoney(a.totalDeductions || 0)}</span>
+      </div>`;
+  } else if (type === 'fixed_rates') {
+    catClass = 'audit-cat-settings';
+    iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
+    titleText = `Updated Fixed Rates & Partner Share Ratios`;
+    badgeClass = 'update';
+    badgeText = 'Rates Updated';
+    detailsHTML = `
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12.5px;">
+        <span>Shop Rent: <b>${formatMoney(a.shopRent || 0)}</b></span>
+        <span>·</span>
+        <span>Pias House Rent: <b>${formatMoney(a.houseRent || 0)}</b></span>
+        <span>·</span>
+        <span>Pias Daily: <b>৳${a.piasDailyRate || 100}/day</b></span>
+        <span>·</span>
+        <span>Pias/Mehedi Ratio: <b>${a.piasRatio || 55}% / ${a.mehediRatio || 45}%</b></span>
+      </div>`;
   }
 
   if (!titleText) {
@@ -10796,7 +10840,7 @@ async function saveMonthEndSettlement() {
 
 async function sendMonthEndSettlementEmail(calc) {
   if (!calc || !notificationRecipients || !notificationRecipients.length) return;
-  const active = notificationRecipients.filter(r => r.email && r.alertMonthlySummary !== false);
+  const active = notificationRecipients.filter(r => r.email && (r.alertMonthly !== false && r.alertMonthlySummary !== false));
   if (!active.length) return;
 
   const [yStr, mStr] = calc.month.split('-');
@@ -11060,21 +11104,21 @@ function renderRecipientsList() {
       badges.push(`<span class="rule-pill timing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Daily (${formatTimingLabel(r.dailyTiming)})</span>`);
 
       const activities = [];
-      if (r.dailyIncSales !== false) activities.push('Sale & Profit');
+      if (r.dailyIncSales !== false) activities.push('Sales');
       if (r.dailyIncInvoices !== false) activities.push('Invoices');
       if (r.dailyIncProducts !== false) activities.push('Products');
-      if (r.dailyIncBrings !== false) activities.push('PM Brings');
+      if (r.dailyIncBrings !== false) activities.push('Brings');
       if (activities.length) {
         badges.push(`<span class="rule-pill active">${activities.join(' · ')}</span>`);
       }
     }
 
-    if (r.alertMonthly) {
-      badges.push(`<span class="rule-pill active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Monthly (+MoM)</span>`);
+    if (r.alertMonthly || r.alertMonthlySummary) {
+      badges.push(`<span class="rule-pill active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Month-End Settlement</span>`);
     }
 
-    if (r.alertYearly) {
-      badges.push(`<span class="rule-pill active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Yearly (+YoY)</span>`);
+    if (r.alertYearly || r.alertYearlySummary) {
+      badges.push(`<span class="rule-pill active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Yearly Financials</span>`);
     }
 
     if (!badges.length) {
