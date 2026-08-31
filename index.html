@@ -4376,27 +4376,26 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <!-- Modal Body (Scrollable) -->
       <div style="padding: 18px 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 18px;">
         
-        <!-- STEP 1: Operating Days & Off-Days Verification Grid -->
+        <!-- STEP 1: Non-Operating Days & Calendar Audit -->
         <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <div>
-              <div style="font-size: 13px; font-weight: 700; color: var(--text);">1. Calendar Audit &amp; Operating Days Verification</div>
-              <div style="font-size: 11.5px; color: var(--text-dim);">Verify operating sales days, Thursday weekly off-days, and missing entries.</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div id="monthEndDaysEquation" style="font-size: 13.5px; font-weight: 700; color: var(--text);">
+              Non-operating days (<span id="mEndNonOperatingCount" style="color:var(--danger); font-family:var(--font-numeric); font-weight:800;">0</span>) + 
+              Operating days (<span id="mEndOperatingCount" style="color:var(--teal); font-family:var(--font-numeric); font-weight:800;">0</span>) = 
+              Total days (<span id="mEndTotalCount" style="color:var(--text); font-family:var(--font-numeric); font-weight:800;">0</span>)
             </div>
-            <div id="verifiedOperatingDaysBadge" style="background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12.5px;">
+            <div id="verifiedOperatingDaysBadge" style="background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px;">
               0 Operating Days
             </div>
           </div>
           
-          <div style="max-height: 160px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel);">
+          <div style="max-height: 150px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel);">
             <table style="width: 100%; border-collapse: collapse; font-size: 12px;" id="monthEndCalendarTable">
               <thead>
                 <tr style="background: var(--panel-2); border-bottom: 1px solid var(--border); color: var(--text-dim); text-align: left;">
-                  <th style="padding: 6px 10px;">Date &amp; Bangla Day</th>
-                  <th style="padding: 6px 10px; text-align: center;">Status</th>
-                  <th style="padding: 6px 10px; text-align: right;">Sale (৳)</th>
-                  <th style="padding: 6px 10px; text-align: right;">Profit (৳)</th>
-                  <th style="padding: 6px 10px; text-align: right;">Daily Cost (৳)</th>
+                  <th style="padding: 6px 12px;">Non-Operating Date &amp; Bangla Day</th>
+                  <th style="padding: 6px 12px; text-align: center;">Reason / Status</th>
+                  <th style="padding: 6px 12px; text-align: right;">Action</th>
                 </tr>
               </thead>
               <tbody id="monthEndCalendarBody"></tbody>
@@ -4404,67 +4403,87 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           </div>
         </div>
 
-        <!-- STEP 2: Monthly Expenses & Fixed Costs Breakdown -->
+        <!-- STEP 2: Monthly Expenses & Fixed Costs Breakdown (Read-only data from Expenses tab) -->
         <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px;">2. Deductions &amp; Monthly Fixed Bills</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text);">2. Monthly Expenses &amp; Bills (from Expense Log)</div>
+            <button type="button" class="btn btn-ghost btn-sm" id="mEndQuickAddExpenseBtn" style="padding: 2px 8px; font-size: 11px; color: var(--accent);">+ Record Expense in Expenses Tab</button>
+          </div>
           
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px;">
-            <div class="field">
-              <label style="font-size: 11.5px; font-weight: 600;">Shop Rent (৳) <span class="unit">(Default ৳5,000)</span></label>
-              <div style="display: flex; gap: 6px;">
-                <input type="number" id="mEndShopRent" style="font-weight: 700; font-family: var(--font-numeric); font-size: 14px;" value="5000">
-                <input type="month" id="mEndShopRentMonth" title="Bill For Month" style="width: 130px; font-size: 11px; padding: 4px 6px;">
+          <!-- 4 Required Items Status Grid -->
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+            <!-- 1. Shop Rent Card -->
+            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">1. Shop Rent</div>
+                <div id="mEndShopRentDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: var(--text);">৳ 0</div>
               </div>
+              <div id="mEndShopRentStatus"></div>
             </div>
-            <div class="field">
-              <label style="font-size: 11.5px; font-weight: 600;">Pias House Rent (৳) <span class="unit">(Default ৳7,000)</span></label>
-              <input type="number" id="mEndHouseRent" style="font-weight: 700; font-family: var(--font-numeric); font-size: 14px;" value="7000">
-            </div>
-            <div class="field">
-              <label style="font-size: 11.5px; font-weight: 600;">Electricity Bill (৳)</label>
-              <div style="display: flex; gap: 6px;">
-                <input type="number" id="mEndElectricity" style="font-weight: 700; font-family: var(--font-numeric); font-size: 14px;" value="0">
-                <input type="month" id="mEndElectricityMonth" title="Bill For Month" style="width: 130px; font-size: 11px; padding: 4px 6px;">
+
+            <!-- 2. Pias House Rent Card -->
+            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">2. Pias House Rent</div>
+                <div id="mEndHouseRentDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: var(--text);">৳ 0</div>
               </div>
+              <div id="mEndHouseRentStatus"></div>
             </div>
-            <div class="field">
-              <label style="font-size: 11.5px; font-weight: 600;">Other Logged Expenses (৳)</label>
-              <input type="number" id="mEndOtherExpenses" readonly style="font-weight: 700; font-family: var(--font-numeric); font-size: 14px; background: var(--surface-sunken);" value="0">
+
+            <!-- 3. Electricity Bill Card -->
+            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">3. Electricity Bill</div>
+                <div id="mEndElectricityDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: var(--text);">৳ 0</div>
+              </div>
+              <div id="mEndElectricityStatus"></div>
+            </div>
+
+            <!-- 4. Pias Daily (Month Name) Card -->
+            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div id="mEndPiasDailyLabel" style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">4. Pias Daily</div>
+                <div id="mEndPiasDailyDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: #7c3aed;">৳ 0</div>
+              </div>
+              <div id="mEndPiasDailyStatus"></div>
             </div>
           </div>
 
-          <!-- Manual Deduction Box -->
-          <div style="background: rgba(239,68,68,0.05); border: 1px dashed rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 12px;">
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <div style="flex: 1;">
-                <label style="font-size: 11px; font-weight: 700; color: var(--danger);">Custom Manual Deduction from Profit (৳)</label>
-                <input type="number" id="mEndManualDeduction" placeholder="0" min="0" style="font-weight: 700; font-family: var(--font-numeric); font-size: 14px; width: 100%;">
-              </div>
-              <div style="flex: 2;">
-                <label style="font-size: 11px; font-weight: 600; color: var(--text-dim);">Deduction Reason / Note</label>
-                <input type="text" id="mEndManualDeductionNote" placeholder="e.g. Equipment repair, bonus, buffer..." style="width: 100%;">
-              </div>
-            </div>
+          <!-- Other Logged Expenses Info Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px;">
+            <span style="font-size: 11.5px; font-weight: 600; color: var(--text-dim);">Other Logged Operating Expenses:</span>
+            <span id="mEndOtherExpensesDisplay" style="font-size: 13px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">৳ 0</span>
           </div>
+
+          <!-- Validation Alert Notice Bar -->
+          <div id="mEndValidationNotice" style="margin-top: 10px; padding: 9px 13px; border-radius: 8px; font-size: 11.5px; font-weight: 600; display: none;"></div>
         </div>
 
-        <!-- STEP 3: Live Financial Settlement & Take-Home Result -->
+        <!-- STEP 3: Profit, Rounding Deduction & Partner Take-Home Result -->
         <div style="background: var(--panel-2); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 18px;">
-          <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">3. Profit &amp; Partner Take-Home Breakdown</div>
+          <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">3. Profit, Rounding &amp; Partner Take-Home Breakdown</div>
           
           <!-- Summary Math Row -->
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px;">
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px;">
             <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
-              <div style="font-size: 10.5px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Total Sales Revenue</div>
-              <div id="mEndRevenue" style="font-size: 17px; font-weight: 800; color: var(--text); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
+              <div style="font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Total Sales Profit</div>
+              <div id="mEndGrossProfit" style="font-size: 16px; font-weight: 800; color: var(--teal); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
             </div>
+
+            <!-- Rounding Deduction Input -->
+            <div style="background: var(--panel); border: 1.5px dashed var(--accent); border-radius: 10px; padding: 8px 10px;">
+              <div style="font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase;">Rounding Deduction (৳)</div>
+              <input type="number" min="0" step="1" id="mEndRoundingDeduction" placeholder="0" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); width: 100%; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; padding: 3px 6px; margin-top: 3px; box-sizing: border-box;">
+            </div>
+
             <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
-              <div style="font-size: 10.5px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Total Sales Profit</div>
-              <div id="mEndGrossProfit" style="font-size: 17px; font-weight: 800; color: var(--teal); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
+              <div style="font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Total Deductions</div>
+              <div id="mEndTotalDeductions" style="font-size: 16px; font-weight: 800; color: var(--danger); font-family: var(--font-numeric); margin-top: 3px;">- ৳ 0</div>
             </div>
+
             <div style="background: var(--panel); border: 1.5px solid var(--accent); border-radius: 10px; padding: 10px 12px;">
-              <div style="font-size: 10.5px; font-weight: 700; color: var(--accent-deep); text-transform: uppercase;">Distributable Profit</div>
-              <div id="mEndDistributableProfit" style="font-size: 18px; font-weight: 800; color: var(--accent-deep); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
+              <div style="font-size: 10px; font-weight: 700; color: var(--accent-deep); text-transform: uppercase;">Distributable Profit</div>
+              <div id="mEndDistributableProfit" style="font-size: 16px; font-weight: 800; color: var(--accent-deep); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
             </div>
           </div>
 
@@ -10257,6 +10276,7 @@ function openMonthEndWizard(targetMonth = null) {
   currentMonthEndTarget = targetMonth;
 
   if ($('#monthEndPicker')) $('#monthEndPicker').value = targetMonth;
+  if ($('#mEndRoundingDeduction')) $('#mEndRoundingDeduction').value = '';
   
   const [yStr, mStr] = targetMonth.split('-');
   const mIdx = parseInt(mStr, 10) - 1;
@@ -10274,16 +10294,16 @@ function closeMonthEndWizard() {
 function renderMonthEndCalendarAudit(targetMonth) {
   const [y, m] = targetMonth.split('-').map(Number);
   const totalDays = new Date(y, m, 0).getDate();
+  const mName = MONTHS[m - 1] || targetMonth;
   const mSales = allSales.filter(s => s.date && s.date.startsWith(targetMonth));
   const sMap = {};
   mSales.forEach(s => { sMap[s.date] = s; });
 
   let operatingDaysCount = 0;
   let totalRev = 0;
-  let totalProfit = 0;
-  let totalDailyCost = 0;
+  let totalGrossProfit = 0;
 
-  const rows = [];
+  const nonOperatingRows = [];
   for (let d = 1; d <= totalDays; d++) {
     const dateISO = `${targetMonth}-${pad(d)}`;
     const dObj = new Date(dateISO + 'T00:00:00');
@@ -10294,121 +10314,198 @@ function renderMonthEndCalendarAudit(targetMonth) {
 
     if (sale) {
       operatingDaysCount++;
-      const sAmt = Number(sale.sale) || 0;
-      const pAmt = Number(sale.profit) || 0;
-      const cAmt = Number(sale.cost) || 0;
-      totalRev += sAmt;
-      totalProfit += pAmt;
-      totalDailyCost += cAmt;
-
-      const thursdayOpenBadge = isThursday ? `<span style="font-size:10px; font-weight:700; background:rgba(234,179,8,0.15); color:#b45309; padding:1px 5px; border-radius:4px; margin-left:4px;">Open Thursday</span>` : '';
-
-      rows.push(`
-        <tr style="border-bottom:1px solid var(--border-soft);">
-          <td style="padding:6px 10px; font-weight:600; color:var(--text);">
-            <span style="font-family:var(--font-numeric);">${pad(d)}</span> ${MONTHS[m-1]} (${bnDayName})
-            ${thursdayOpenBadge}
-          </td>
-          <td style="padding:6px 10px; text-align:center;">
-            <span style="display:inline-flex; align-items:center; gap:4px; color:var(--teal); font-weight:700; font-size:11.5px;">
-              <span style="width:6px; height:6px; border-radius:50%; background:var(--teal);"></span>
-              Operating
-            </span>
-          </td>
-          <td style="padding:6px 10px; text-align:right; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">${formatMoney(sAmt)}</td>
-          <td style="padding:6px 10px; text-align:right; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700; color:var(--teal);">${formatMoney(pAmt)}</td>
-          <td style="padding:6px 10px; text-align:right; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; color:var(--text-dim);">${formatMoney(cAmt)}</td>
-        </tr>
-      `);
-    } else if (isThursday) {
-      rows.push(`
-        <tr style="border-bottom:1px solid var(--border-soft); background:rgba(0,0,0,0.01);">
-          <td style="padding:6px 10px; color:var(--text-dim);">
-            <span style="font-family:var(--font-numeric);">${pad(d)}</span> ${MONTHS[m-1]} (<b style="color:var(--accent);">${bnDayName}</b>)
-          </td>
-          <td style="padding:6px 10px; text-align:center;">
-            <span style="display:inline-flex; align-items:center; gap:4px; color:var(--text-faint); font-weight:600; font-size:11px; background:var(--panel-2); padding:1px 8px; border-radius:10px;">
-              Weekly Off
-            </span>
-          </td>
-          <td colspan="3" style="padding:6px 10px; text-align:center; color:var(--text-faint); font-size:11px;">— Shop Closed —</td>
-        </tr>
-      `);
+      totalRev += (Number(sale.sale) || 0);
+      totalGrossProfit += (Number(sale.profit) || 0);
     } else {
-      // Missing / Unrecorded date
-      rows.push(`
-        <tr style="border-bottom:1px solid var(--border-soft); background:rgba(239,68,68,0.03);">
-          <td style="padding:6px 10px; font-weight:600; color:var(--danger);">
-            <span style="font-family:var(--font-numeric);">${pad(d)}</span> ${MONTHS[m-1]} (${bnDayName})
-          </td>
-          <td style="padding:6px 10px; text-align:center;">
-            <span style="display:inline-flex; align-items:center; gap:4px; color:var(--danger); font-weight:700; font-size:11px; background:rgba(239,68,68,0.1); padding:1px 8px; border-radius:10px;">
-              ⚠️ No Sale Entry
-            </span>
-          </td>
-          <td colspan="3" style="padding:6px 10px; text-align:right;">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent);">+ Add Sale</button>
-          </td>
-        </tr>
-      `);
+      // Non-operating day (Thursday or missing entry)
+      if (isThursday) {
+        nonOperatingRows.push(`
+          <tr style="border-bottom:1px solid var(--border-soft); background:rgba(0,0,0,0.01);">
+            <td style="padding:7px 12px; color:var(--text);">
+              <span style="font-family:var(--font-numeric); font-weight:700;">${pad(d)}</span> ${mName} (<b style="color:var(--accent);">${bnDayName}</b>)
+            </td>
+            <td style="padding:7px 12px; text-align:center;">
+              <span style="display:inline-flex; align-items:center; gap:4px; color:var(--text-dim); font-weight:600; font-size:11.5px; background:var(--panel-2); padding:2px 10px; border-radius:12px;">
+                Weekly Off (Thursday)
+              </span>
+            </td>
+            <td style="padding:7px 12px; text-align:right; color:var(--text-faint); font-size:11.5px;">— Shop Closed —</td>
+          </tr>
+        `);
+      } else {
+        nonOperatingRows.push(`
+          <tr style="border-bottom:1px solid var(--border-soft); background:rgba(239,68,68,0.03);">
+            <td style="padding:7px 12px; font-weight:700; color:var(--danger);">
+              <span style="font-family:var(--font-numeric);">${pad(d)}</span> ${mName} (${bnDayName})
+            </td>
+            <td style="padding:7px 12px; text-align:center;">
+              <span style="display:inline-flex; align-items:center; gap:4px; color:var(--danger); font-weight:700; font-size:11.5px; background:rgba(239,68,68,0.1); padding:2px 10px; border-radius:12px;">
+                ⚠️ No Sale Recorded
+              </span>
+            </td>
+            <td style="padding:7px 12px; text-align:right;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent);">+ Add Sale</button>
+            </td>
+          </tr>
+        `);
+      }
     }
   }
 
-  const tbody = $('#monthEndCalendarBody');
-  if (tbody) tbody.innerHTML = rows.join('');
+  const nonOperatingCount = totalDays - operatingDaysCount;
 
-  if ($('#verifiedOperatingDaysBadge')) {
-    $('#verifiedOperatingDaysBadge').textContent = `${operatingDaysCount} Operating Days`;
+  // Update Equation Header
+  if ($('#mEndNonOperatingCount')) $('#mEndNonOperatingCount').textContent = nonOperatingCount;
+  if ($('#mEndOperatingCount')) $('#mEndOperatingCount').textContent = operatingDaysCount;
+  if ($('#mEndTotalCount')) $('#mEndTotalCount').textContent = totalDays;
+  if ($('#verifiedOperatingDaysBadge')) $('#verifiedOperatingDaysBadge').textContent = `${operatingDaysCount} Operating Days`;
+
+  // Render ONLY non-operating days in calendar table
+  const tbody = $('#monthEndCalendarBody');
+  if (tbody) {
+    if (nonOperatingRows.length) {
+      tbody.innerHTML = nonOperatingRows.join('');
+    } else {
+      tbody.innerHTML = `<tr><td colspan="3" style="padding:14px; text-align:center; color:var(--text-dim);">No off-days or missing days found. The shop operated all ${totalDays} days this month!</td></tr>`;
+    }
   }
 
-  // Populate logged expenses for this month
+  // 2. Read logged expenses from Expense log for targetMonth
   const mExpenses = allExpenses.filter(e => (e.billingMonth === targetMonth) || (!e.billingMonth && e.date && e.date.startsWith(targetMonth)));
-  
-  let shopRentLogged = 0;
-  let houseRentLogged = 0;
-  let electricityLogged = 0;
-  let otherExpensesLogged = 0;
+
+  let shopRent = 0;
+  let houseRent = 0;
+  let electricity = 0;
+  let otherExpenses = 0;
 
   mExpenses.forEach(e => {
     const amt = Number(e.amount) || 0;
-    if (e.category === 'Shop Rent') shopRentLogged += amt;
-    else if (e.category === 'Pias House Rent') houseRentLogged += amt;
-    else if (e.category === 'Electricity Bill') electricityLogged += amt;
-    else otherExpensesLogged += amt;
+    if (e.category === 'Shop Rent') shopRent += amt;
+    else if (e.category === 'Pias House Rent') houseRent += amt;
+    else if (e.category === 'Electricity Bill') electricity += amt;
+    else otherExpenses += amt;
   });
 
-  if ($('#mEndShopRent')) $('#mEndShopRent').value = shopRentLogged || (fixedRatesConfig.shopRent || 5000);
-  if ($('#mEndShopRentMonth')) $('#mEndShopRentMonth').value = targetMonth;
-  if ($('#mEndHouseRent')) $('#mEndHouseRent').value = houseRentLogged || (fixedRatesConfig.houseRent || 7000);
-  if ($('#mEndElectricity')) $('#mEndElectricity').value = electricityLogged || 0;
-  if ($('#mEndElectricityMonth')) $('#mEndElectricityMonth').value = targetMonth;
-  if ($('#mEndOtherExpenses')) $('#mEndOtherExpenses').value = otherExpensesLogged || 0;
-  if ($('#mEndManualDeduction')) $('#mEndManualDeduction').value = '';
-  if ($('#mEndManualDeductionNote')) $('#mEndManualDeductionNote').value = '';
+  const piasDailyRate = Number(fixedRatesConfig.piasDailyRate) || 100;
+  const piasDailyTotal = operatingDaysCount * piasDailyRate;
 
-  calculateMonthEndSettlement(operatingDaysCount, totalRev, totalProfit);
+  // Required 4 checks
+  const hasShopRent = (shopRent > 0);
+  const hasHouseRent = (houseRent > 0);
+  const hasElectricity = (electricity > 0);
+  const hasPiasDaily = (operatingDaysCount > 0);
+
+  // Update Step 2 Card Displays
+  if ($('#mEndShopRentDisplay')) $('#mEndShopRentDisplay').textContent = formatMoney(shopRent);
+  if ($('#mEndShopRentStatus')) {
+    $('#mEndShopRentStatus').innerHTML = hasShopRent
+      ? `<span style="font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:2px 8px; border-radius:6px;">✓ Logged</span>`
+      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ Missing</span>`;
+  }
+
+  if ($('#mEndHouseRentDisplay')) $('#mEndHouseRentDisplay').textContent = formatMoney(houseRent);
+  if ($('#mEndHouseRentStatus')) {
+    $('#mEndHouseRentStatus').innerHTML = hasHouseRent
+      ? `<span style="font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:2px 8px; border-radius:6px;">✓ Logged</span>`
+      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ Missing</span>`;
+  }
+
+  if ($('#mEndElectricityDisplay')) $('#mEndElectricityDisplay').textContent = formatMoney(electricity);
+  if ($('#mEndElectricityStatus')) {
+    $('#mEndElectricityStatus').innerHTML = hasElectricity
+      ? `<span style="font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:2px 8px; border-radius:6px;">✓ Logged</span>`
+      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ Missing</span>`;
+  }
+
+  if ($('#mEndPiasDailyLabel')) $('#mEndPiasDailyLabel').textContent = `4. Pias Daily (${mName})`;
+  if ($('#mEndPiasDailyDisplay')) $('#mEndPiasDailyDisplay').textContent = `${formatMoney(piasDailyTotal)} (${operatingDaysCount}d × ৳${piasDailyRate})`;
+  if ($('#mEndPiasDailyStatus')) {
+    $('#mEndPiasDailyStatus').innerHTML = hasPiasDaily
+      ? `<span style="font-size:11px; font-weight:700; color:#7c3aed; background:rgba(139,92,246,0.15); padding:2px 8px; border-radius:6px;">✓ ${operatingDaysCount} Days</span>`
+      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ 0 Days</span>`;
+  }
+
+  if ($('#mEndOtherExpensesDisplay')) $('#mEndOtherExpensesDisplay').textContent = formatMoney(otherExpenses);
+
+  // Validation Check: All 4 must be present
+  const missingItems = [];
+  if (!hasShopRent) missingItems.push('Shop Rent');
+  if (!hasHouseRent) missingItems.push('Pias House Rent');
+  if (!hasElectricity) missingItems.push('Electricity Bill');
+  if (!hasPiasDaily) missingItems.push('Pias Daily');
+
+  const notice = $('#mEndValidationNotice');
+  const saveBtn = $('#saveMonthEndSettlementBtn');
+
+  if (missingItems.length > 0) {
+    if (notice) {
+      notice.style.display = 'block';
+      notice.style.background = 'rgba(239,68,68,0.08)';
+      notice.style.border = '1px solid rgba(239,68,68,0.25)';
+      notice.style.color = 'var(--danger)';
+      notice.innerHTML = `⚠️ <b>Action Required:</b> ${missingItems.join(', ')} must be recorded in the Expenses tab before finalizing.`;
+    }
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = '0.5';
+      saveBtn.style.cursor = 'not-allowed';
+      saveBtn.title = `Missing required records: ${missingItems.join(', ')}`;
+    }
+  } else {
+    if (notice) {
+      notice.style.display = 'block';
+      notice.style.background = 'rgba(22,163,74,0.08)';
+      notice.style.border = '1px solid rgba(22,163,74,0.25)';
+      notice.style.color = 'var(--teal)';
+      notice.innerHTML = `✓ <b>Ready to finalize:</b> All 4 required items (Shop Rent, Pias House Rent, Electricity Bill, and Pias Daily) are verified.`;
+    }
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '1';
+      saveBtn.style.cursor = 'pointer';
+      saveBtn.title = 'Save & finalize this settlement';
+    }
+  }
+
+  calculateMonthEndSettlement(operatingDaysCount, totalRev, totalGrossProfit, shopRent, houseRent, electricity, otherExpenses, piasDailyTotal);
 }
 
-function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = null) {
+function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = null, optShopRent = null, optHouseRent = null, optElec = null, optOther = null, optPiasDaily = null) {
   const targetMonth = currentMonthEndTarget || ($('#monthEndPicker')?.value) || todayISO.slice(0, 7);
+  const [yStr, mStr] = targetMonth.split('-');
+  const mName = MONTHS[parseInt(mStr, 10) - 1] || targetMonth;
+
   const mSales = allSales.filter(s => s.date && s.date.startsWith(targetMonth));
-  
   const operatingDays = (optDays !== null) ? optDays : new Set(mSales.map(s => s.date)).size;
   const totalRevenue = (optRev !== null) ? optRev : mSales.reduce((a, s) => a + (Number(s.sale) || 0), 0);
   const totalGrossProfit = (optProfit !== null) ? optProfit : mSales.reduce((a, s) => a + (Number(s.profit) || 0), 0);
 
-  const shopRent = parseFloat($('#mEndShopRent')?.value) || 0;
-  const houseRent = parseFloat($('#mEndHouseRent')?.value) || 0;
-  const electricity = parseFloat($('#mEndElectricity')?.value) || 0;
-  const otherExp = parseFloat($('#mEndOtherExpenses')?.value) || 0;
-  const manualDeduction = parseFloat($('#mEndManualDeduction')?.value) || 0;
-  const manualNote = ($('#mEndManualDeductionNote')?.value || '').trim();
+  // Read logged expenses
+  const mExpenses = allExpenses.filter(e => (e.billingMonth === targetMonth) || (!e.billingMonth && e.date && e.date.startsWith(targetMonth)));
+  let shopRent = (optShopRent !== null) ? optShopRent : 0;
+  let houseRent = (optHouseRent !== null) ? optHouseRent : 0;
+  let electricity = (optElec !== null) ? optElec : 0;
+  let otherExpenses = (optOther !== null) ? optOther : 0;
 
-  const totalDeductions = shopRent + houseRent + electricity + otherExp + manualDeduction;
-  const distributableProfit = totalGrossProfit - totalDeductions;
+  if (optShopRent === null) {
+    mExpenses.forEach(e => {
+      const amt = Number(e.amount) || 0;
+      if (e.category === 'Shop Rent') shopRent += amt;
+      else if (e.category === 'Pias House Rent') houseRent += amt;
+      else if (e.category === 'Electricity Bill') electricity += amt;
+      else otherExpenses += amt;
+    });
+  }
 
   const piasDailyRate = Number(fixedRatesConfig.piasDailyRate) || 100;
-  const piasDailyTotal = operatingDays * piasDailyRate;
+  const piasDailyTotal = (optPiasDaily !== null) ? optPiasDaily : (operatingDays * piasDailyRate);
+
+  // Rounding Deduction (subtracted from gross profit)
+  const roundingDeduction = parseFloat($('#mEndRoundingDeduction')?.value) || 0;
+  const adjustedGrossProfit = Math.max(0, totalGrossProfit - roundingDeduction);
+
+  const totalDeductions = shopRent + houseRent + electricity + otherExpenses;
+  const distributableProfit = adjustedGrossProfit - totalDeductions;
 
   const piasRatio = (Number(fixedRatesConfig.piasRatio) || 55) / 100;
   const mehediRatio = (Number(fixedRatesConfig.mehediRatio) || 45) / 100;
@@ -10422,14 +10519,12 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
     operatingDays,
     totalRevenue,
     totalGrossProfit,
+    roundingDeduction,
+    adjustedGrossProfit,
     shopRent,
-    shopRentBillingMonth: $('#mEndShopRentMonth')?.value || targetMonth,
     houseRent,
     electricity,
-    electricityBillingMonth: $('#mEndElectricityMonth')?.value || targetMonth,
-    otherExpenses: otherExp,
-    manualDeduction,
-    manualNote,
+    otherExpenses,
     totalDeductions,
     distributableProfit,
     piasRatio: piasRatio * 100,
@@ -10443,8 +10538,8 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   };
 
   // Update UI values
-  if ($('#mEndRevenue')) $('#mEndRevenue').textContent = formatMoney(totalRevenue);
   if ($('#mEndGrossProfit')) $('#mEndGrossProfit').textContent = formatMoney(totalGrossProfit);
+  if ($('#mEndTotalDeductions')) $('#mEndTotalDeductions').textContent = `- ${formatMoney(totalDeductions)}`;
   if ($('#mEndDistributableProfit')) {
     $('#mEndDistributableProfit').textContent = formatMoney(distributableProfit);
     $('#mEndDistributableProfit').style.color = distributableProfit < 0 ? '#ef4444' : 'var(--accent-deep)';
@@ -10462,6 +10557,12 @@ async function saveMonthEndSettlement() {
   if (!currentMonthEndCalculations) return;
   const calc = currentMonthEndCalculations;
   const targetMonth = calc.month;
+
+  // Validate that all 4 required records are present
+  if (calc.shopRent <= 0 || calc.houseRent <= 0 || calc.electricity <= 0 || calc.piasDailyTotal <= 0) {
+    toast('Cannot save: Shop Rent, Pias House Rent, Electricity Bill, and Pias Daily must all be recorded.');
+    return;
+  }
 
   const btn = $('#saveMonthEndSettlementBtn');
   if (btn) btn.disabled = true;
@@ -10511,7 +10612,7 @@ async function sendMonthEndSettlementEmail(calc) {
         <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
           <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(calc.totalGrossProfit)}</div>
-          <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">Deductions: ${formatMoney(calc.totalDeductions)}</div>
+          <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">Rounding / Adjustment: - ${formatMoney(calc.roundingDeduction || 0)}</div>
         </td>
       </tr>
     </table>
@@ -12789,14 +12890,18 @@ function setupEventListeners() {
   $('#openMonthEndWizardBtn')?.addEventListener('click', () => openMonthEndWizard());
   $('#closeMonthEndModalBtn')?.addEventListener('click', closeMonthEndWizard);
   $('#cancelMonthEndBtn')?.addEventListener('click', closeMonthEndWizard);
-  $('#monthEndModalBackdrop')?.addEventListener('click', (e) => {
-    if (e.target.id === 'monthEndModalBackdrop') closeMonthEndWizard();
-  });
   $('#monthEndPicker')?.addEventListener('change', (e) => {
     if (e.target.value) openMonthEndWizard(e.target.value);
   });
-  ['mEndShopRent', 'mEndHouseRent', 'mEndElectricity', 'mEndManualDeduction', 'mEndManualDeductionNote', 'mEndShopRentMonth', 'mEndElectricityMonth'].forEach(id => {
-    $('#' + id)?.addEventListener('input', () => calculateMonthEndSettlement());
+  $('#mEndRoundingDeduction')?.addEventListener('input', () => calculateMonthEndSettlement());
+  $('#mEndQuickAddExpenseBtn')?.addEventListener('click', () => {
+    const tMonth = currentMonthEndTarget || todayISO.slice(0, 7);
+    closeMonthEndWizard();
+    switchView('expenses');
+    setTimeout(() => {
+      openExpenseModal();
+      if ($('#expBillingMonthInput')) $('#expBillingMonthInput').value = tMonth;
+    }, 100);
   });
   $('#saveMonthEndSettlementBtn')?.addEventListener('click', saveMonthEndSettlement);
 
