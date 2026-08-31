@@ -9966,6 +9966,7 @@ function getExpenseDateRange() {
 }
 
 let expandedExpenseMonths = new Set();
+let expenseMonthsInitialized = false;
 
 function formatShortMonthYear(ymStr) {
   if (!ymStr || ymStr.length < 7) return ymStr || '';
@@ -10094,10 +10095,11 @@ function renderExpensesView() {
 
   const sortedMonthKeys = Object.keys(monthGroups).sort().reverse();
 
-  // If no month is expanded yet, default expand the first/active month
-  if (expandedExpenseMonths.size === 0 && sortedMonthKeys.length > 0) {
+  // Default expand the first/active month ONLY ONCE during initial page load
+  if (!expenseMonthsInitialized && sortedMonthKeys.length > 0) {
+    expenseMonthsInitialized = true;
     const defaultM = range.monthKey || sortedMonthKeys[0];
-    expandedExpenseMonths.add(defaultM);
+    if (defaultM) expandedExpenseMonths.add(defaultM);
   }
 
   container.innerHTML = sortedMonthKeys.map(mKey => {
@@ -13140,7 +13142,10 @@ function setupEventListeners() {
     renderExpensesView();
   });
 
-  $('#expMonth')?.addEventListener('change', renderExpensesView);
+  $('#expMonth')?.addEventListener('change', (e) => {
+    if (e.target.value) expandedExpenseMonths.add(e.target.value);
+    renderExpensesView();
+  });
   $('#expYear')?.addEventListener('change', renderExpensesView);
   $('#expFrom')?.addEventListener('change', renderExpensesView);
   $('#expTo')?.addEventListener('change', renderExpensesView);
