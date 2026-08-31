@@ -5149,6 +5149,7 @@ function dhakaNow() {
 function toISODate(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
 function trimNum(n) { return Math.round(Number(n)||0).toLocaleString('en-US'); }
 function formatMoney(n) { return '৳ ' + Math.round(Number(n)||0).toLocaleString('en-US'); }
+function formatEmailMoney(n) { return 'Tk ' + Math.round(Number(n)||0).toLocaleString('en-US'); }
 function formatMoneyShort(n) {
   n = Number(n)||0;
   if (Math.abs(n) >= 100000) {
@@ -11152,14 +11153,14 @@ async function sendMonthEndSettlementEmail(calc) {
       <tr>
         <td width="48%" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:0.5px;">Gross Sales Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:2px;">${formatMoney(calc.totalGrossProfit)}</div>
-          <div style="font-size:11px; color:#64748b; margin-top:3px;">Revenue: <b>${formatMoney(calc.totalRevenue)}</b> (${calc.operatingDays} Open Days)</div>
+          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:2px;">${formatEmailMoney(calc.totalGrossProfit)}</div>
+          <div style="font-size:11px; color:#64748b; margin-top:3px;">Revenue: <b>${formatEmailMoney(calc.totalRevenue)}</b> (${calc.operatingDays} Open Days)</div>
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#1d4ed8; letter-spacing:0.5px;">Net Distributable Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#1e40af; margin-top:2px;">${formatMoney(calc.distributableProfit)}</div>
-          <div style="font-size:11px; color:#2563eb; margin-top:3px;">After 5 Deductions: <b>-${formatMoney(calc.totalDeductions)}</b></div>
+          <div style="font-size:22px; font-weight:800; color:#1e40af; margin-top:2px;">${formatEmailMoney(calc.distributableProfit)}</div>
+          <div style="font-size:11px; color:#2563eb; margin-top:3px;">After 5 Deductions: <b>-${formatEmailMoney(calc.totalDeductions)}</b></div>
         </td>
       </tr>
     </table>
@@ -11173,50 +11174,50 @@ async function sendMonthEndSettlementEmail(calc) {
       <table width="100%" cellpadding="6" cellspacing="0" style="font-size:13px; border-collapse:collapse;">
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#334155; font-weight:600;">Total Sales Gross Profit</td>
-          <td style="text-align:right; font-weight:700; color:#0e8c81;">${formatMoney(calc.totalGrossProfit)}</td>
+          <td style="text-align:right; font-weight:700; color:#0e8c81;">${formatEmailMoney(calc.totalGrossProfit)}</td>
         </tr>
         ${(Number(calc.roundingDeduction) > 0) ? `
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#64748b;">Less: Rounding / Profit Adjustment</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.roundingDeduction)}</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.roundingDeduction)}</td>
         </tr>
         <tr style="background:#f8fafc; font-weight:700; border-bottom:1px solid #e2e8f0;">
           <td style="color:#1e293b;">Adjusted Gross Profit</td>
-          <td style="text-align:right; color:#1e293b;">${formatMoney(calc.adjustedGrossProfit)}</td>
+          <td style="text-align:right; color:#1e293b;">${formatEmailMoney(calc.adjustedGrossProfit)}</td>
         </tr>
         ` : ''}
         
         <!-- 5 Deductions -->
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#475569;">1. Shop Rent</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.shopRent)}</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.shopRent)}</td>
         </tr>
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#475569;">2. Pias House Rent</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.houseRent)}</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.houseRent)}</td>
         </tr>
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#475569;">3. Electricity Bill</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.electricity)}</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.electricity)}</td>
         </tr>
         <tr style="border-bottom:1px solid #f8fafc;">
-          <td style="color:#475569;">4. Pias Daily (${calc.operatingDays}d × ৳${calc.piasDailyRate})</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.piasDailyTotal)}</td>
+          <td style="color:#475569;">4. Pias Daily (${calc.operatingDays}d × Tk ${calc.piasDailyRate})</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.piasDailyTotal)}</td>
         </tr>
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#475569;">5. Daily Operating Costs (Sales Cost Box)</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.dailyOperatingCost)}</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.dailyOperatingCost)}</td>
         </tr>
         ${(Number(calc.otherExpenses) > 0) ? `
         <tr style="border-bottom:1px solid #f8fafc;">
           <td style="color:#475569;">6. Other Logged Expenses</td>
-          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.otherExpenses)}</td>
+          <td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatEmailMoney(calc.otherExpenses)}</td>
         </tr>
         ` : ''}
 
         <tr style="border-top:1.5px dashed #cbd5e1; font-weight:800; background:#fef2f2;">
           <td style="padding:8px 6px; color:#dc2626; text-transform:uppercase; font-size:12px;">Total Deductions</td>
-          <td style="padding:8px 6px; text-align:right; color:#dc2626; font-size:14px;">- ${formatMoney(calc.totalDeductions)}</td>
+          <td style="padding:8px 6px; text-align:right; color:#dc2626; font-size:14px;">- ${formatEmailMoney(calc.totalDeductions)}</td>
         </tr>
       </table>
     </div>
@@ -11226,21 +11227,21 @@ async function sendMonthEndSettlementEmail(calc) {
       <tr>
         <td width="48%" style="background:#faf5ff; border:1.5px solid #d8b4fe; border-radius:12px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:13.5px; font-weight:800; color:#7c3aed;">Pias (${piasPct}%)</div>
-          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">${piasPct}% Base Share: <b>${formatMoney(calc.piasBaseShare)}</b></div>
-          <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Pias Daily (${calc.operatingDays}d × ৳${calc.piasDailyRate}): <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
+          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">${piasPct}% Base Share: <b>${formatEmailMoney(calc.piasBaseShare)}</b></div>
+          <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Pias Daily (${calc.operatingDays}d × Tk ${calc.piasDailyRate}): <b>+ ${formatEmailMoney(calc.piasDailyTotal)}</b></div>
           <div style="border-top:1px dashed #d8b4fe; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#7c3aed;">Total Pias Take-Home</div>
-            <div style="font-size:20px; font-weight:800; color:#7c3aed; margin-top:2px;">${formatMoney(calc.piasTotalTakeHome)}</div>
+            <div style="font-size:20px; font-weight:800; color:#7c3aed; margin-top:2px;">${formatEmailMoney(calc.piasTotalTakeHome)}</div>
           </div>
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#fdf2f8; border:1.5px solid #fbcfe8; border-radius:12px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:13.5px; font-weight:800; color:#db2777;">Mehedi (${mehediPct}%)</div>
-          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">${mehediPct}% Equity Share: <b>${formatMoney(calc.mehediBaseShare)}</b></div>
+          <div style="font-size:11.5px; color:#6b7280; margin:4px 0 2px;">${mehediPct}% Equity Share: <b>${formatEmailMoney(calc.mehediBaseShare)}</b></div>
           <div style="font-size:11.5px; color:#6b7280; margin-bottom:8px;">Direct Allocation</div>
           <div style="border-top:1px dashed #fbcfe8; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#db2777;">Total Mehedi Take-Home</div>
-            <div style="font-size:20px; font-weight:800; color:#db2777; margin-top:2px;">${formatMoney(calc.mehediTotalTakeHome)}</div>
+            <div style="font-size:20px; font-weight:800; color:#db2777; margin-top:2px;">${formatEmailMoney(calc.mehediTotalTakeHome)}</div>
           </div>
         </td>
       </tr>
@@ -11752,7 +11753,7 @@ async function sendDailySummaryEmail(recipient) {
   const totalExpenses = todayExpenses.reduce((a, e) => a + (e.amount || 0), 0);
   const netProfit = (todayEntry.profit || 0) - totalExpenses;
 
-  const subject = `[PMC] Daily Summary · ${formatDateEmail(now)} (Sale: ${formatMoney(todayEntry.sale)})`;
+  const subject = `[PMC] Daily Summary · ${formatDateEmail(now)} (Sale: ${formatEmailMoney(todayEntry.sale)})`;
   const dateBadge = `${formatDateEmail(now)} · Daily Closing`;
 
   const contentHtml = `
@@ -11761,13 +11762,13 @@ async function sendDailySummaryEmail(recipient) {
       <tr>
         <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">Today's Revenue</div>
-          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(todayEntry.sale)}</div>
-          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatMoney(todayEntry.cost)}</div>
+          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatEmailMoney(todayEntry.sale)}</div>
+          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatEmailMoney(todayEntry.cost)}</div>
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(todayEntry.profit)}</div>
+          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatEmailMoney(todayEntry.profit)}</div>
           <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">${((todayEntry.profitPct || 0) * 100).toFixed(1)}% Margin</div>
         </td>
       </tr>
@@ -11779,11 +11780,11 @@ async function sendDailySummaryEmail(recipient) {
         <tr>
           <td>
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Profit (After Expenses)</div>
-            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(netProfit)}</div>
+            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatEmailMoney(netProfit)}</div>
           </td>
           <td style="text-align:right;">
             <div style="font-size:11px; color:#6b7280;">Operating Expenses</div>
-            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatMoney(totalExpenses)}</div>
+            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatEmailMoney(totalExpenses)}</div>
           </td>
         </tr>
       </table>
@@ -11855,7 +11856,7 @@ async function sendMonthlySummaryEmail(recipient, ym) {
   const totalPurchases = monthPurchases.reduce((a, p) => a + (p.totalAmount || 0), 0);
   const currentTotalDue = allPurchases.reduce((a, p) => a + (p.dueAmount || 0), 0);
 
-  const subject = `[PMC] Monthly Performance Report · ${monthTitle} (Sales: ${formatMoney(totalSale)})`;
+  const subject = `[PMC] Monthly Performance Report · ${monthTitle} (Sales: ${formatEmailMoney(totalSale)})`;
   const dateBadge = `${monthTitle} · Executive Review`;
 
   const contentHtml = `
@@ -11864,13 +11865,13 @@ async function sendMonthlySummaryEmail(recipient, ym) {
       <tr>
         <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">Monthly Revenue</div>
-          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(totalSale)}</div>
-          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatMoney(totalCost)}</div>
+          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatEmailMoney(totalSale)}</div>
+          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatEmailMoney(totalCost)}</div>
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(totalProfit)}</div>
+          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatEmailMoney(totalProfit)}</div>
           <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">${avgMargin}% Margin</div>
         </td>
       </tr>
@@ -11882,11 +11883,11 @@ async function sendMonthlySummaryEmail(recipient, ym) {
         <tr>
           <td>
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Monthly Profit</div>
-            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(netProfit)}</div>
+            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatEmailMoney(netProfit)}</div>
           </td>
           <td style="text-align:right;">
             <div style="font-size:11px; color:#6b7280;">Monthly Operating Expenses</div>
-            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatMoney(totalExpenses)}</div>
+            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatEmailMoney(totalExpenses)}</div>
           </td>
         </tr>
       </table>
@@ -11897,11 +11898,11 @@ async function sendMonthlySummaryEmail(recipient, ym) {
     <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:13px; margin-bottom:18px;">
       <tr style="border-bottom:1px solid #ebedf2;">
         <td style="padding:8px 0; color:#6b7280;">Foyez (Sales Generated)</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${formatMoney(foyezSales)}</td>
+        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${formatEmailMoney(foyezSales)}</td>
       </tr>
       <tr style="border-bottom:1px solid #ebedf2;">
         <td style="padding:8px 0; color:#6b7280;">Mehedi (Sales Generated)</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${formatMoney(mehediSales)}</td>
+        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${formatEmailMoney(mehediSales)}</td>
       </tr>
     </table>
 
@@ -11914,11 +11915,11 @@ async function sendMonthlySummaryEmail(recipient, ym) {
       </tr>
       <tr style="border-bottom:1px solid #ebedf2;">
         <td style="padding:8px 0; color:#6b7280;">Supplier Purchases Logged</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${formatMoney(totalPurchases)} (${monthPurchases.length} bills)</td>
+        <td style="padding:8px 0; text-align:right; font-weight:700; color:#191c22;">${formatEmailMoney(totalPurchases)} (${monthPurchases.length} bills)</td>
       </tr>
       <tr>
         <td style="padding:8px 0; color:#6b7280;">Current Total Supplier Due</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#d5573f;">${formatMoney(currentTotalDue)}</td>
+        <td style="padding:8px 0; text-align:right; font-weight:700; color:#d5573f;">${formatEmailMoney(currentTotalDue)}</td>
       </tr>
     </table>
   `;
@@ -11954,7 +11955,7 @@ async function sendYearlySummaryEmail(recipient, yr) {
 
   const yearInvoices = allInvoices.filter(i => i.date && i.date.startsWith(targetYear));
 
-  const subject = `[PMC] Annual Business Review · ${targetYear} (Total Sales: ${formatMoney(totalSale)})`;
+  const subject = `[PMC] Annual Business Review · ${targetYear} (Total Sales: ${formatEmailMoney(totalSale)})`;
   const dateBadge = `Fiscal Year ${targetYear}`;
 
   const contentHtml = `
@@ -11963,13 +11964,13 @@ async function sendYearlySummaryEmail(recipient, yr) {
       <tr>
         <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">Annual Revenue</div>
-          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(totalSale)}</div>
-          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatMoney(totalCost)}</div>
+          <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatEmailMoney(totalSale)}</div>
+          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">Cost: ${formatEmailMoney(totalCost)}</div>
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
-          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(totalProfit)}</div>
+          <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatEmailMoney(totalProfit)}</div>
           <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">${avgMargin}% Margin</div>
         </td>
       </tr>
@@ -11981,11 +11982,11 @@ async function sendYearlySummaryEmail(recipient, yr) {
         <tr>
           <td>
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Annual Profit</div>
-            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(netProfit)}</div>
+            <div style="font-size:20px; font-weight:800; color:#191c22; margin-top:2px;">${formatEmailMoney(netProfit)}</div>
           </td>
           <td style="text-align:right;">
             <div style="font-size:11px; color:#6b7280;">Annual Operating Expenses</div>
-            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatMoney(totalExpenses)}</div>
+            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatEmailMoney(totalExpenses)}</div>
           </td>
         </tr>
       </table>
@@ -12004,7 +12005,7 @@ async function sendYearlySummaryEmail(recipient, yr) {
       </tr>
       <tr>
         <td style="padding:8px 0; color:#6b7280;">Average Daily Revenue</td>
-        <td style="padding:8px 0; text-align:right; font-weight:700; color:#185a95;">${yearSales.length ? formatMoney(totalSale / yearSales.length) : '৳ 0'}</td>
+        <td style="padding:8px 0; text-align:right; font-weight:700; color:#185a95;">${yearSales.length ? formatEmailMoney(totalSale / yearSales.length) : 'Tk 0'}</td>
       </tr>
     </table>
   `;
