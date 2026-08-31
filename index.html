@@ -4411,93 +4411,93 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           </div>
 
           <!-- Accounting Ledger Block -->
-          <div style="display: flex; flex-direction: column; gap: 7px;">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
 
             <!-- 1. Total Sales Gross Profit -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <span style="font-size: 13px; font-weight: 700; color: var(--text);">Total Sales Gross Profit</span>
-              <span id="mEndGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--teal);">৳ 0</span>
+              <span id="mEndGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--teal); text-align: right; min-width: 120px; display: inline-block;">৳ 0</span>
             </div>
 
             <!-- 2. Rounding Deduction (Input row) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 12.5px; color: var(--text-dim);">Less: Rounding / Profit Adjustment</span>
-                <input type="number" min="0" step="1" id="mEndRoundingDeduction" placeholder="0" style="width: 90px; font-size: 12px; font-weight: 700; font-family: var(--font-numeric); padding: 3px 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; box-sizing: border-box;">
+                <input type="number" min="0" step="1" id="mEndRoundingDeduction" placeholder="0" style="width: 85px; font-size: 12px; font-weight: 700; font-family: var(--font-numeric); padding: 3px 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; box-sizing: border-box;">
               </div>
-              <span id="mEndRoundingDeductionDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndRoundingDeductionDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- 3. Adjusted Sales Profit (Subtotal Line) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-top: 1px solid var(--border); border-bottom: 1.5px solid var(--border-soft); background: var(--surface-sunken); margin: 2px 0 6px; border-radius: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-top: 1px solid var(--border); border-bottom: 1.5px solid var(--border-soft); background: var(--surface-sunken); margin: 3px 0 5px; border-radius: 6px;">
               <span style="font-size: 12.5px; font-weight: 800; color: var(--text);">Adjusted Gross Profit</span>
-              <span id="mEndAdjustedGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
+              <span id="mEndAdjustedGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--text); text-align: right; min-width: 120px; display: inline-block;">৳ 0</span>
             </div>
 
             <!-- Expense 1: Shop Rent -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 12.5px; color: var(--text);">1. Shop Rent</span>
                 <span id="mEndShopRentStatus"></span>
               </div>
-              <span id="mEndShopRentDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndShopRentDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- Expense 2: Pias House Rent -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 12.5px; color: var(--text);">2. Pias House Rent</span>
                 <span id="mEndHouseRentStatus"></span>
               </div>
-              <span id="mEndHouseRentDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndHouseRentDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- Expense 3: Electricity Bill -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span id="mEndElectricityLabel" style="font-size: 12.5px; color: var(--text);">3. Electricity Bill</span>
                 <span id="mEndElectricityStatus"></span>
               </div>
-              <span id="mEndElectricityDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndElectricityDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- Expense 4: Pias Daily (Month Name) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span id="mEndPiasDailyLabel" style="font-size: 12.5px; color: var(--text);">4. Pias Daily</span>
                 <span id="mEndPiasDailyStatus"></span>
               </div>
-              <span id="mEndPiasDailyDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndPiasDailyDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- Expense 5: Month Daily Expenses (Total everyday cost logged in sales) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span id="mEndDailyCostLabel" style="font-size: 12.5px; color: var(--text);">5. Daily Operating Costs</span>
                 <span id="mEndDailyCostStatus"></span>
               </div>
-              <span id="mEndDailyCostDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndDailyCostDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- Other Logged Expenses (if any) -->
-            <div id="mEndOtherExpensesRow" style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+            <div id="mEndOtherExpensesRow" style="display: flex; justify-content: space-between; align-items: center; padding: 5px 8px;">
               <span style="font-size: 12.5px; color: var(--text-dim);">6. Other Logged Expenses</span>
-              <span id="mEndOtherExpensesDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndOtherExpensesDisplay" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
             <!-- Total Expenses Line -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-top: 1px dashed var(--border); background: rgba(239,68,68,0.03); border-radius: 6px; margin-top: 2px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 8px; border-top: 1px dashed var(--border); background: rgba(239,68,68,0.06); border-radius: 6px; margin-top: 3px;">
               <span style="font-size: 12px; font-weight: 700; color: var(--danger); text-transform: uppercase;">Total Deductions</span>
-              <span id="mEndTotalDeductions" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+              <span id="mEndTotalDeductions" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--danger); text-align: right; min-width: 120px; display: inline-block;">- ৳ 0</span>
             </div>
 
-            <!-- Net Distributable Profit (Highlighted Balance Card) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #eef7ff; border: 1.5px solid #bfe0f7; border-radius: 10px; margin-top: 6px;">
+            <!-- Net Distributable Profit (Theme-Aware Card) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--surface-sunken); border: 1.5px solid var(--accent); border-radius: 10px; margin-top: 8px;">
               <div>
-                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #185a95; letter-spacing: 0.5px;">Net Distributable Profit</div>
+                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--accent-deep); letter-spacing: 0.5px;">Net Distributable Profit</div>
                 <div style="font-size: 11px; color: var(--text-dim); margin-top: 1px;">Available for 55% / 45% partner distribution</div>
               </div>
-              <div id="mEndDistributableProfit" style="font-size: 20px; font-weight: 900; font-family: var(--font-numeric); color: #185a95;">৳ 0</div>
+              <div id="mEndDistributableProfit" style="font-size: 21px; font-weight: 900; font-family: var(--font-numeric); font-variant-numeric: tabular-nums; color: var(--accent-deep); text-align: right; min-width: 120px; display: inline-block;">৳ 0</div>
             </div>
 
           </div>
@@ -10952,7 +10952,7 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   if ($('#mEndTotalDeductions')) $('#mEndTotalDeductions').textContent = `- ${formatMoney(totalDeductions)}`;
   if ($('#mEndDistributableProfit')) {
     $('#mEndDistributableProfit').textContent = formatMoney(distributableProfit);
-    $('#mEndDistributableProfit').style.color = distributableProfit < 0 ? '#ef4444' : '#185a95';
+    $('#mEndDistributableProfit').style.color = distributableProfit < 0 ? 'var(--danger)' : 'var(--accent-deep)';
   }
 
   // Update Partner Cards UI
