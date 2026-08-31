@@ -4362,11 +4362,8 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   <div class="modal-backdrop" id="monthEndModalBackdrop" style="z-index: 10005;">
     <div class="modal-card" style="max-width: 820px; max-height: 92vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);">
       <!-- Header -->
-      <div style="padding: 18px 24px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
-        <div>
-          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.8px;">Monthly Closing &amp; Partner Settlement</div>
-          <h2 id="monthEndTitle" style="margin: 2px 0 0; font-size: 19px; font-weight: 800; font-family: 'Space Grotesk', sans-serif;">Month-End Take-Home Settlement</h2>
-        </div>
+      <div style="padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
+        <h2 id="monthEndTitle" style="margin: 0; font-size: 18px; font-weight: 800; font-family: 'Space Grotesk', sans-serif;">Month-End Take-Home Settlement</h2>
         <div style="display: flex; align-items: center; gap: 10px;">
           <input type="month" id="monthEndPicker" class="mini-select" style="font-weight: 700; font-size: 13px; padding: 6px 12px;">
           <button type="button" class="modal-close-btn" id="closeMonthEndModalBtn" title="Close">✕</button>
@@ -4377,25 +4374,24 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <div style="padding: 18px 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 18px;">
         
         <!-- STEP 1: Non-Operating Days & Calendar Audit -->
-        <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
-            <div id="monthEndDaysEquation" style="font-size: 13.5px; font-weight: 700; color: var(--text);">
-              Non-operating days (<span id="mEndNonOperatingCount" style="color:var(--danger); font-family:var(--font-numeric); font-weight:800;">0</span>) + 
-              Operating days (<span id="mEndOperatingCount" style="color:var(--teal); font-family:var(--font-numeric); font-weight:800;">0</span>) = 
-              Total days (<span id="mEndTotalCount" style="color:var(--text); font-family:var(--font-numeric); font-weight:800;">0</span>)
+        <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div id="monthEndDaysEquation" style="font-size: 12px; font-weight: 600; color: var(--text-dim);">
+              Closed (<span id="mEndNonOperatingCount" style="color:var(--danger); font-family:var(--font-numeric); font-weight:700;">0</span>) + 
+              Open (<span id="mEndOperatingCount" style="color:var(--teal); font-family:var(--font-numeric); font-weight:700;">0</span>) = 
+              Total (<span id="mEndTotalCount" style="color:var(--text); font-family:var(--font-numeric); font-weight:700;">0</span>)
             </div>
-            <div id="verifiedOperatingDaysBadge" style="background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px;">
-              0 Operating Days
+            <div id="verifiedOperatingDaysBadge" style="background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal); padding: 3px 10px; border-radius: 16px; font-weight: 700; font-size: 11.5px;">
+              0 Open Days
             </div>
           </div>
           
-          <div style="max-height: 150px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel);">
+          <div style="max-height: 125px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel);">
             <table style="width: 100%; border-collapse: collapse; font-size: 12px;" id="monthEndCalendarTable">
               <thead>
                 <tr style="background: var(--panel-2); border-bottom: 1px solid var(--border); color: var(--text-dim); text-align: left;">
-                  <th style="padding: 6px 12px;">Non-Operating Date &amp; Bangla Day</th>
-                  <th style="padding: 6px 12px; text-align: center;">Reason / Status</th>
-                  <th style="padding: 6px 12px; text-align: right;">Action</th>
+                  <th style="padding: 5px 12px;">Non-Operating Date &amp; Bangla Day</th>
+                  <th style="padding: 5px 12px; text-align: right; width: 110px;">Action</th>
                 </tr>
               </thead>
               <tbody id="monthEndCalendarBody"></tbody>
@@ -4403,126 +4399,153 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           </div>
         </div>
 
-        <!-- STEP 2: Monthly Expenses & Fixed Costs Breakdown (Read-only data from Expenses tab) -->
-        <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text);">2. Monthly Expenses &amp; Bills (from Expense Log)</div>
-            <button type="button" class="btn btn-ghost btn-sm" id="mEndQuickAddExpenseBtn" style="padding: 2px 8px; font-size: 11px; color: var(--accent);">+ Record Expense in Expenses Tab</button>
-          </div>
-          
-          <!-- 4 Required Items Status Grid -->
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
-            <!-- 1. Shop Rent Card -->
-            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">1. Shop Rent</div>
-                <div id="mEndShopRentDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: var(--text);">৳ 0</div>
-              </div>
-              <div id="mEndShopRentStatus"></div>
-            </div>
-
-            <!-- 2. Pias House Rent Card -->
-            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">2. Pias House Rent</div>
-                <div id="mEndHouseRentDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: var(--text);">৳ 0</div>
-              </div>
-              <div id="mEndHouseRentStatus"></div>
-            </div>
-
-            <!-- 3. Electricity Bill Card -->
-            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">3. Electricity Bill</div>
-                <div id="mEndElectricityDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: var(--text);">৳ 0</div>
-              </div>
-              <div id="mEndElectricityStatus"></div>
-            </div>
-
-            <!-- 4. Pias Daily (Month Name) Card -->
-            <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div id="mEndPiasDailyLabel" style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">4. Pias Daily</div>
-                <div id="mEndPiasDailyDisplay" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); margin-top: 2px; color: #7c3aed;">৳ 0</div>
-              </div>
-              <div id="mEndPiasDailyStatus"></div>
-            </div>
+        <!-- STEP 2: Accounting Statement & Settlement Breakdown -->
+        <div style="background: var(--panel); border: 1.5px solid var(--border); border-radius: 12px; padding: 18px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div style="font-size: 13.5px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Financial Settlement Statement</div>
+            <button type="button" class="btn btn-ghost btn-sm" id="mEndQuickAddExpenseBtn" style="padding: 3px 10px; font-size: 11.5px; color: var(--accent); font-weight: 600;">+ Record Expense in Expenses Tab</button>
           </div>
 
-          <!-- Other Logged Expenses Info Bar -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px;">
-            <span style="font-size: 11.5px; font-weight: 600; color: var(--text-dim);">Other Logged Operating Expenses:</span>
-            <span id="mEndOtherExpensesDisplay" style="font-size: 13px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">৳ 0</span>
+          <!-- Accounting Ledger Block -->
+          <div style="display: flex; flex-direction: column; gap: 7px;">
+
+            <!-- 1. Total Sales Gross Profit -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text);">Total Sales Gross Profit</span>
+              <span id="mEndGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--teal);">৳ 0</span>
+            </div>
+
+            <!-- 2. Rounding Deduction (Input row) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12.5px; color: var(--text-dim);">Less: Rounding / Profit Adjustment</span>
+                <input type="number" min="0" step="1" id="mEndRoundingDeduction" placeholder="0" style="width: 90px; font-size: 12px; font-weight: 700; font-family: var(--font-numeric); padding: 3px 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; box-sizing: border-box;">
+              </div>
+              <span id="mEndRoundingDeductionDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- 3. Adjusted Sales Profit (Subtotal Line) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-top: 1px solid var(--border); border-bottom: 1.5px solid var(--border-soft); background: var(--surface-sunken); margin: 2px 0 6px; border-radius: 6px;">
+              <span style="font-size: 12.5px; font-weight: 800; color: var(--text);">Adjusted Gross Profit</span>
+              <span id="mEndAdjustedGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
+            </div>
+
+            <!-- 4. Deductions Section Header -->
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 4px;">
+              Less: Operating &amp; Fixed Expenses (5 Required Records)
+            </div>
+
+            <!-- Expense 1: Shop Rent -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12.5px; color: var(--text);">1. Shop Rent</span>
+                <span id="mEndShopRentStatus"></span>
+              </div>
+              <span id="mEndShopRentDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Expense 2: Pias House Rent -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12.5px; color: var(--text);">2. Pias House Rent</span>
+                <span id="mEndHouseRentStatus"></span>
+              </div>
+              <span id="mEndHouseRentDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Expense 3: Electricity Bill -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12.5px; color: var(--text);">3. Electricity Bill</span>
+                <span id="mEndElectricityStatus"></span>
+              </div>
+              <span id="mEndElectricityDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Expense 4: Pias Daily (Month Name) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="mEndPiasDailyLabel" style="font-size: 12.5px; color: var(--text);">4. Pias Daily</span>
+                <span id="mEndPiasDailyStatus"></span>
+              </div>
+              <span id="mEndPiasDailyDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Expense 5: Month Daily Expenses (Total everyday cost logged in sales) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="mEndDailyCostLabel" style="font-size: 12.5px; color: var(--text);">5. Daily Operating Costs</span>
+                <span id="mEndDailyCostStatus"></span>
+              </div>
+              <span id="mEndDailyCostDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Other Logged Expenses (if any) -->
+            <div id="mEndOtherExpensesRow" style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+              <span style="font-size: 12.5px; color: var(--text-dim);">6. Other Logged Expenses</span>
+              <span id="mEndOtherExpensesDisplay" style="font-size: 13.5px; font-weight: 700; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Total Expenses Line -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-top: 1px dashed var(--border); background: rgba(239,68,68,0.03); border-radius: 6px; margin-top: 2px;">
+              <span style="font-size: 12px; font-weight: 700; color: var(--danger); text-transform: uppercase;">Total Deductions</span>
+              <span id="mEndTotalDeductions" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--danger);">- ৳ 0</span>
+            </div>
+
+            <!-- Net Distributable Profit (Highlighted Balance Card) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #eef7ff; border: 1.5px solid #bfe0f7; border-radius: 10px; margin-top: 6px;">
+              <div>
+                <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #185a95; letter-spacing: 0.5px;">Net Distributable Profit</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 1px;">Available for 55% / 45% partner distribution</div>
+              </div>
+              <div id="mEndDistributableProfit" style="font-size: 20px; font-weight: 900; font-family: var(--font-numeric); color: #185a95;">৳ 0</div>
+            </div>
+
           </div>
 
           <!-- Validation Alert Notice Bar -->
-          <div id="mEndValidationNotice" style="margin-top: 10px; padding: 9px 13px; border-radius: 8px; font-size: 11.5px; font-weight: 600; display: none;"></div>
+          <div id="mEndValidationNotice" style="margin-top: 12px; padding: 9px 13px; border-radius: 8px; font-size: 11.5px; font-weight: 600; display: none;"></div>
         </div>
 
-        <!-- STEP 3: Profit, Rounding Deduction & Partner Take-Home Result -->
-        <div style="background: var(--panel-2); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 18px;">
-          <div style="font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">3. Profit, Rounding &amp; Partner Take-Home Breakdown</div>
-          
-          <!-- Summary Math Row -->
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px;">
-            <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
-              <div style="font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Total Sales Profit</div>
-              <div id="mEndGrossProfit" style="font-size: 16px; font-weight: 800; color: var(--teal); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
+        <!-- STEP 3: 55% / 45% Partner Take-Home Cards -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
+          <!-- Pias Card (55%) -->
+          <div style="background: linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 100%); border: 1.5px solid rgba(139,92,246,0.35); border-radius: 12px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 14px; font-weight: 800; color: #7c3aed;">Pias (55%)</span>
+              <span id="mEndPiasDailyBadge" style="font-size: 11px; font-weight: 700; background: rgba(139,92,246,0.15); color: #7c3aed; padding: 2px 8px; border-radius: 6px;">+ ৳0 Daily</span>
             </div>
-
-            <!-- Rounding Deduction Input -->
-            <div style="background: var(--panel); border: 1.5px dashed var(--accent); border-radius: 10px; padding: 8px 10px;">
-              <div style="font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase;">Rounding Deduction (৳)</div>
-              <input type="number" min="0" step="1" id="mEndRoundingDeduction" placeholder="0" style="font-size: 14px; font-weight: 700; font-family: var(--font-numeric); width: 100%; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); border-radius: 6px; padding: 3px 6px; margin-top: 3px; box-sizing: border-box;">
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 4px;">
+              <span>55% Base Share:</span>
+              <span id="mEndPiasBaseShare" style="font-weight: 700; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
             </div>
-
-            <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;">
-              <div style="font-size: 10px; font-weight: 600; color: var(--text-dim); text-transform: uppercase;">Total Deductions</div>
-              <div id="mEndTotalDeductions" style="font-size: 16px; font-weight: 800; color: var(--danger); font-family: var(--font-numeric); margin-top: 3px;">- ৳ 0</div>
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px;">
+              <span>Pias Daily Allowance:</span>
+              <span id="mEndPiasDailyTotal" style="font-weight: 700; font-family: var(--font-numeric); color: #7c3aed;">+ ৳ 0</span>
             </div>
-
-            <div style="background: var(--panel); border: 1.5px solid var(--accent); border-radius: 10px; padding: 10px 12px;">
-              <div style="font-size: 10px; font-weight: 700; color: var(--accent-deep); text-transform: uppercase;">Distributable Profit</div>
-              <div id="mEndDistributableProfit" style="font-size: 16px; font-weight: 800; color: var(--accent-deep); font-family: var(--font-numeric); margin-top: 3px;">৳ 0</div>
+            <div style="border-top: 1px dashed rgba(139,92,246,0.3); padding-top: 8px; display: flex; justify-content: space-between; align-items: baseline;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #7c3aed;">Total Pias Take-Home</div>
+              <div id="mEndPiasTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #7c3aed; font-family: var(--font-numeric);">৳ 0</div>
             </div>
           </div>
 
-          <!-- Partner Take-Home Cards -->
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-            <!-- Pias Card -->
-            <div style="background: linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 100%); border: 1.5px solid rgba(139,92,246,0.35); border-radius: 12px; padding: 14px 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 14px; font-weight: 800; color: #7c3aed;">Pias (55%)</span>
-                <span id="mEndPiasDailyBadge" style="font-size: 11px; font-weight: 700; background: rgba(139,92,246,0.15); color: #7c3aed; padding: 2px 8px; border-radius: 6px;">+ ৳0 Daily</span>
-              </div>
-              <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 4px;">
-                55% Base Share: <span id="mEndPiasBaseShare" style="font-weight: 700; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
-              </div>
-              <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">
-                Pias Daily (<span id="mEndPiasDaysCount">0</span> days × ৳100): <span id="mEndPiasDailyTotal" style="font-weight: 700; font-family: var(--font-numeric); color: #7c3aed;">৳ 0</span>
-              </div>
-              <div style="border-top: 1px dashed rgba(139,92,246,0.3); padding-top: 6px;">
-                <div style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: #7c3aed;">Total Pias Take-Home</div>
-                <div id="mEndPiasTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #7c3aed; font-family: var(--font-numeric); margin-top: 2px;">৳ 0</div>
-              </div>
+          <!-- Mehedi Card (45%) -->
+          <div style="background: linear-gradient(135deg, rgba(236,72,153,0.08) 0%, rgba(236,72,153,0.02) 100%); border: 1.5px solid rgba(236,72,153,0.35); border-radius: 12px; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 14px; font-weight: 800; color: #db2777;">Mehedi (45%)</span>
+              <span style="font-size: 11px; font-weight: 700; background: rgba(236,72,153,0.15); color: #db2777; padding: 2px 8px; border-radius: 6px;">45% Equity</span>
             </div>
-
-            <!-- Mehedi Card -->
-            <div style="background: linear-gradient(135deg, rgba(236,72,153,0.08) 0%, rgba(236,72,153,0.02) 100%); border: 1.5px solid rgba(236,72,153,0.35); border-radius: 12px; padding: 14px 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 14px; font-weight: 800; color: #db2777;">Mehedi (45%)</span>
-                <span style="font-size: 11px; font-weight: 700; background: rgba(236,72,153,0.15); color: #db2777; padding: 2px 8px; border-radius: 6px;">45% Equity</span>
-              </div>
-              <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 4px;">
-                45% Distributable Share
-              </div>
-              <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">
-                Direct Partner Allocation
-              </div>
-              <div style="border-top: 1px dashed rgba(236,72,153,0.3); padding-top: 6px;">
-                <div style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: #db2777;">Total Mehedi Take-Home</div>
-                <div id="mEndMehediTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #db2777; font-family: var(--font-numeric); margin-top: 2px;">৳ 0</div>
-              </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 4px;">
+              <span>45% Base Share:</span>
+              <span id="mEndMehediBaseShare" style="font-weight: 700; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 8px;">
+              <span>Direct Allocation:</span>
+              <span style="font-weight: 600; color: var(--text-dim);">Direct</span>
+            </div>
+            <div style="border-top: 1px dashed rgba(236,72,153,0.3); padding-top: 8px; display: flex; justify-content: space-between; align-items: baseline;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #db2777;">Total Mehedi Take-Home</div>
+              <div id="mEndMehediTotalTakeHome" style="font-size: 20px; font-weight: 800; color: #db2777; font-family: var(--font-numeric);">৳ 0</div>
             </div>
           </div>
         </div>
@@ -10281,7 +10304,7 @@ function openMonthEndWizard(targetMonth = null) {
   const [yStr, mStr] = targetMonth.split('-');
   const mIdx = parseInt(mStr, 10) - 1;
   const mName = MONTHS[mIdx] || targetMonth;
-  if ($('#monthEndTitle')) $('#monthEndTitle').textContent = `${mName} ${yStr} Settlement Review`;
+  if ($('#monthEndTitle')) $('#monthEndTitle').textContent = `${mName} ${yStr} Settlement Statement`;
 
   renderMonthEndCalendarAudit(targetMonth);
   $('#monthEndModalBackdrop')?.classList.add('show');
@@ -10302,6 +10325,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
   let operatingDaysCount = 0;
   let totalRev = 0;
   let totalGrossProfit = 0;
+  let totalDailyCost = 0;
 
   const nonOperatingRows = [];
   for (let d = 1; d <= totalDays; d++) {
@@ -10316,34 +10340,25 @@ function renderMonthEndCalendarAudit(targetMonth) {
       operatingDaysCount++;
       totalRev += (Number(sale.sale) || 0);
       totalGrossProfit += (Number(sale.profit) || 0);
+      totalDailyCost += (Number(sale.cost) || 0);
     } else {
       // Non-operating day (Thursday or missing entry)
       if (isThursday) {
         nonOperatingRows.push(`
           <tr style="border-bottom:1px solid var(--border-soft); background:rgba(0,0,0,0.01);">
-            <td style="padding:7px 12px; color:var(--text);">
+            <td style="padding:6px 12px; color:var(--text);">
               <span style="font-family:var(--font-numeric); font-weight:700;">${pad(d)}</span> ${mName} (<b style="color:var(--accent);">${bnDayName}</b>)
             </td>
-            <td style="padding:7px 12px; text-align:center;">
-              <span style="display:inline-flex; align-items:center; gap:4px; color:var(--text-dim); font-weight:600; font-size:11.5px; background:var(--panel-2); padding:2px 10px; border-radius:12px;">
-                Weekly Off (Thursday)
-              </span>
-            </td>
-            <td style="padding:7px 12px; text-align:right; color:var(--text-faint); font-size:11.5px;">— Shop Closed —</td>
+            <td style="padding:6px 12px; text-align:right;"></td>
           </tr>
         `);
       } else {
         nonOperatingRows.push(`
           <tr style="border-bottom:1px solid var(--border-soft); background:rgba(239,68,68,0.03);">
-            <td style="padding:7px 12px; font-weight:700; color:var(--danger);">
+            <td style="padding:6px 12px; font-weight:700; color:var(--danger);">
               <span style="font-family:var(--font-numeric);">${pad(d)}</span> ${mName} (${bnDayName})
             </td>
-            <td style="padding:7px 12px; text-align:center;">
-              <span style="display:inline-flex; align-items:center; gap:4px; color:var(--danger); font-weight:700; font-size:11.5px; background:rgba(239,68,68,0.1); padding:2px 10px; border-radius:12px;">
-                ⚠️ No Sale Recorded
-              </span>
-            </td>
-            <td style="padding:7px 12px; text-align:right;">
+            <td style="padding:6px 12px; text-align:right;">
               <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent);">+ Add Sale</button>
             </td>
           </tr>
@@ -10354,11 +10369,11 @@ function renderMonthEndCalendarAudit(targetMonth) {
 
   const nonOperatingCount = totalDays - operatingDaysCount;
 
-  // Update Equation Header
+  // Update Equation Header: Closed (4) + Open (27) = Total (31)
   if ($('#mEndNonOperatingCount')) $('#mEndNonOperatingCount').textContent = nonOperatingCount;
   if ($('#mEndOperatingCount')) $('#mEndOperatingCount').textContent = operatingDaysCount;
   if ($('#mEndTotalCount')) $('#mEndTotalCount').textContent = totalDays;
-  if ($('#verifiedOperatingDaysBadge')) $('#verifiedOperatingDaysBadge').textContent = `${operatingDaysCount} Operating Days`;
+  if ($('#verifiedOperatingDaysBadge')) $('#verifiedOperatingDaysBadge').textContent = `${operatingDaysCount} Open Days`;
 
   // Render ONLY non-operating days in calendar table
   const tbody = $('#monthEndCalendarBody');
@@ -10366,7 +10381,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
     if (nonOperatingRows.length) {
       tbody.innerHTML = nonOperatingRows.join('');
     } else {
-      tbody.innerHTML = `<tr><td colspan="3" style="padding:14px; text-align:center; color:var(--text-dim);">No off-days or missing days found. The shop operated all ${totalDays} days this month!</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="2" style="padding:12px; text-align:center; color:var(--text-dim);">No off-days or missing days found. The shop operated all ${totalDays} days this month!</td></tr>`;
     }
   }
 
@@ -10389,50 +10404,57 @@ function renderMonthEndCalendarAudit(targetMonth) {
   const piasDailyRate = Number(fixedRatesConfig.piasDailyRate) || 100;
   const piasDailyTotal = operatingDaysCount * piasDailyRate;
 
-  // Required 4 checks
+  // Required 5 checks
   const hasShopRent = (shopRent > 0);
   const hasHouseRent = (houseRent > 0);
   const hasElectricity = (electricity > 0);
   const hasPiasDaily = (operatingDaysCount > 0);
+  const hasDailyCost = (operatingDaysCount > 0);
 
-  // Update Step 2 Card Displays
-  if ($('#mEndShopRentDisplay')) $('#mEndShopRentDisplay').textContent = formatMoney(shopRent);
+  // Update Status Badges in Accounting Statement
   if ($('#mEndShopRentStatus')) {
     $('#mEndShopRentStatus').innerHTML = hasShopRent
-      ? `<span style="font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:2px 8px; border-radius:6px;">✓ Logged</span>`
-      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ Missing</span>`;
+      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Logged</span>`
+      : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ Missing</span>`;
   }
 
-  if ($('#mEndHouseRentDisplay')) $('#mEndHouseRentDisplay').textContent = formatMoney(houseRent);
   if ($('#mEndHouseRentStatus')) {
     $('#mEndHouseRentStatus').innerHTML = hasHouseRent
-      ? `<span style="font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:2px 8px; border-radius:6px;">✓ Logged</span>`
-      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ Missing</span>`;
+      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Logged</span>`
+      : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ Missing</span>`;
   }
 
-  if ($('#mEndElectricityDisplay')) $('#mEndElectricityDisplay').textContent = formatMoney(electricity);
   if ($('#mEndElectricityStatus')) {
     $('#mEndElectricityStatus').innerHTML = hasElectricity
-      ? `<span style="font-size:11px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:2px 8px; border-radius:6px;">✓ Logged</span>`
-      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ Missing</span>`;
+      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Logged</span>`
+      : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ Missing</span>`;
   }
 
   if ($('#mEndPiasDailyLabel')) $('#mEndPiasDailyLabel').textContent = `4. Pias Daily (${mName})`;
-  if ($('#mEndPiasDailyDisplay')) $('#mEndPiasDailyDisplay').textContent = `${formatMoney(piasDailyTotal)} (${operatingDaysCount}d × ৳${piasDailyRate})`;
   if ($('#mEndPiasDailyStatus')) {
     $('#mEndPiasDailyStatus').innerHTML = hasPiasDaily
-      ? `<span style="font-size:11px; font-weight:700; color:#7c3aed; background:rgba(139,92,246,0.15); padding:2px 8px; border-radius:6px;">✓ ${operatingDaysCount} Days</span>`
-      : `<span style="font-size:11px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:2px 8px; border-radius:6px;">⚠️ 0 Days</span>`;
+      ? `<span style="font-size:10.5px; font-weight:700; color:#7c3aed; background:rgba(139,92,246,0.15); padding:1px 6px; border-radius:4px;">✓ ${operatingDaysCount}d × ৳${piasDailyRate}</span>`
+      : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ 0 Days</span>`;
   }
 
-  if ($('#mEndOtherExpensesDisplay')) $('#mEndOtherExpensesDisplay').textContent = formatMoney(otherExpenses);
+  if ($('#mEndDailyCostLabel')) $('#mEndDailyCostLabel').textContent = `5. ${mName} Daily Operating Costs (${operatingDaysCount} Days)`;
+  if ($('#mEndDailyCostStatus')) {
+    $('#mEndDailyCostStatus').innerHTML = hasDailyCost
+      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Sales Cost Box</span>`
+      : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ 0 Days</span>`;
+  }
 
-  // Validation Check: All 4 must be present
+  if ($('#mEndOtherExpensesRow')) {
+    $('#mEndOtherExpensesRow').style.display = otherExpenses > 0 ? 'flex' : 'none';
+  }
+
+  // Validation Check: All 5 must be present
   const missingItems = [];
   if (!hasShopRent) missingItems.push('Shop Rent');
   if (!hasHouseRent) missingItems.push('Pias House Rent');
   if (!hasElectricity) missingItems.push('Electricity Bill');
   if (!hasPiasDaily) missingItems.push('Pias Daily');
+  if (!hasDailyCost) missingItems.push(`${mName} Daily Operating Costs`);
 
   const notice = $('#mEndValidationNotice');
   const saveBtn = $('#saveMonthEndSettlementBtn');
@@ -10443,7 +10465,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
       notice.style.background = 'rgba(239,68,68,0.08)';
       notice.style.border = '1px solid rgba(239,68,68,0.25)';
       notice.style.color = 'var(--danger)';
-      notice.innerHTML = `⚠️ <b>Action Required:</b> ${missingItems.join(', ')} must be recorded in the Expenses tab before finalizing.`;
+      notice.innerHTML = `⚠️ <b>Action Required:</b> Missing required records: <b>${missingItems.join(', ')}</b>. Record in the Expenses tab before finalizing.`;
     }
     if (saveBtn) {
       saveBtn.disabled = true;
@@ -10457,7 +10479,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
       notice.style.background = 'rgba(22,163,74,0.08)';
       notice.style.border = '1px solid rgba(22,163,74,0.25)';
       notice.style.color = 'var(--teal)';
-      notice.innerHTML = `✓ <b>Ready to finalize:</b> All 4 required items (Shop Rent, Pias House Rent, Electricity Bill, and Pias Daily) are verified.`;
+      notice.innerHTML = `✓ <b>Ready to finalize:</b> All 5 required expense items for ${mName} are present &amp; verified.`;
     }
     if (saveBtn) {
       saveBtn.disabled = false;
@@ -10467,10 +10489,10 @@ function renderMonthEndCalendarAudit(targetMonth) {
     }
   }
 
-  calculateMonthEndSettlement(operatingDaysCount, totalRev, totalGrossProfit, shopRent, houseRent, electricity, otherExpenses, piasDailyTotal);
+  calculateMonthEndSettlement(operatingDaysCount, totalRev, totalGrossProfit, shopRent, houseRent, electricity, otherExpenses, piasDailyTotal, totalDailyCost);
 }
 
-function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = null, optShopRent = null, optHouseRent = null, optElec = null, optOther = null, optPiasDaily = null) {
+function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = null, optShopRent = null, optHouseRent = null, optElec = null, optOther = null, optPiasDaily = null, optDailyCost = null) {
   const targetMonth = currentMonthEndTarget || ($('#monthEndPicker')?.value) || todayISO.slice(0, 7);
   const [yStr, mStr] = targetMonth.split('-');
   const mName = MONTHS[parseInt(mStr, 10) - 1] || targetMonth;
@@ -10479,6 +10501,7 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   const operatingDays = (optDays !== null) ? optDays : new Set(mSales.map(s => s.date)).size;
   const totalRevenue = (optRev !== null) ? optRev : mSales.reduce((a, s) => a + (Number(s.sale) || 0), 0);
   const totalGrossProfit = (optProfit !== null) ? optProfit : mSales.reduce((a, s) => a + (Number(s.profit) || 0), 0);
+  const totalDailyCost = (optDailyCost !== null) ? optDailyCost : mSales.reduce((a, s) => a + (Number(s.cost) || 0), 0);
 
   // Read logged expenses
   const mExpenses = allExpenses.filter(e => (e.billingMonth === targetMonth) || (!e.billingMonth && e.date && e.date.startsWith(targetMonth)));
@@ -10504,7 +10527,8 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   const roundingDeduction = parseFloat($('#mEndRoundingDeduction')?.value) || 0;
   const adjustedGrossProfit = Math.max(0, totalGrossProfit - roundingDeduction);
 
-  const totalDeductions = shopRent + houseRent + electricity + otherExpenses;
+  // 5 Required Expenses + Other Logged Expenses
+  const totalDeductions = shopRent + houseRent + electricity + piasDailyTotal + totalDailyCost + otherExpenses;
   const distributableProfit = adjustedGrossProfit - totalDeductions;
 
   const piasRatio = (Number(fixedRatesConfig.piasRatio) || 55) / 100;
@@ -10512,7 +10536,8 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
 
   const piasBaseShare = Math.round(distributableProfit * piasRatio);
   const piasTotalTakeHome = piasBaseShare + piasDailyTotal;
-  const mehediTotalTakeHome = Math.round(distributableProfit * mehediRatio);
+  const mehediBaseShare = Math.round(distributableProfit * mehediRatio);
+  const mehediTotalTakeHome = mehediBaseShare;
 
   currentMonthEndCalculations = {
     month: targetMonth,
@@ -10524,32 +10549,46 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
     shopRent,
     houseRent,
     electricity,
+    piasDailyRate,
+    piasDailyTotal,
+    dailyOperatingCost: totalDailyCost,
     otherExpenses,
     totalDeductions,
     distributableProfit,
     piasRatio: piasRatio * 100,
     piasBaseShare,
-    piasDailyRate,
-    piasDailyTotal,
     piasTotalTakeHome,
     mehediRatio: mehediRatio * 100,
+    mehediBaseShare,
     mehediTotalTakeHome,
     calculatedAtMillis: Date.now()
   };
 
-  // Update UI values
+  // Update Accounting Ledger UI
   if ($('#mEndGrossProfit')) $('#mEndGrossProfit').textContent = formatMoney(totalGrossProfit);
+  if ($('#mEndRoundingDeductionDisplay')) $('#mEndRoundingDeductionDisplay').textContent = `- ${formatMoney(roundingDeduction)}`;
+  if ($('#mEndAdjustedGrossProfit')) $('#mEndAdjustedGrossProfit').textContent = formatMoney(adjustedGrossProfit);
+  
+  if ($('#mEndShopRentDisplay')) $('#mEndShopRentDisplay').textContent = `- ${formatMoney(shopRent)}`;
+  if ($('#mEndHouseRentDisplay')) $('#mEndHouseRentDisplay').textContent = `- ${formatMoney(houseRent)}`;
+  if ($('#mEndElectricityDisplay')) $('#mEndElectricityDisplay').textContent = `- ${formatMoney(electricity)}`;
+  if ($('#mEndPiasDailyDisplay')) $('#mEndPiasDailyDisplay').textContent = `- ${formatMoney(piasDailyTotal)}`;
+  if ($('#mEndDailyCostDisplay')) $('#mEndDailyCostDisplay').textContent = `- ${formatMoney(totalDailyCost)}`;
+  if ($('#mEndOtherExpensesDisplay')) $('#mEndOtherExpensesDisplay').textContent = `- ${formatMoney(otherExpenses)}`;
+  
   if ($('#mEndTotalDeductions')) $('#mEndTotalDeductions').textContent = `- ${formatMoney(totalDeductions)}`;
   if ($('#mEndDistributableProfit')) {
     $('#mEndDistributableProfit').textContent = formatMoney(distributableProfit);
-    $('#mEndDistributableProfit').style.color = distributableProfit < 0 ? '#ef4444' : 'var(--accent-deep)';
+    $('#mEndDistributableProfit').style.color = distributableProfit < 0 ? '#ef4444' : '#185a95';
   }
 
-  if ($('#mEndPiasDaysCount')) $('#mEndPiasDaysCount').textContent = operatingDays;
+  // Update Partner Cards UI
   if ($('#mEndPiasDailyBadge')) $('#mEndPiasDailyBadge').textContent = `+ ৳${piasDailyTotal.toLocaleString('en-US')} Daily`;
   if ($('#mEndPiasBaseShare')) $('#mEndPiasBaseShare').textContent = formatMoney(piasBaseShare);
-  if ($('#mEndPiasDailyTotal')) $('#mEndPiasDailyTotal').textContent = formatMoney(piasDailyTotal);
+  if ($('#mEndPiasDailyTotal')) $('#mEndPiasDailyTotal').textContent = `+ ${formatMoney(piasDailyTotal)}`;
   if ($('#mEndPiasTotalTakeHome')) $('#mEndPiasTotalTakeHome').textContent = formatMoney(piasTotalTakeHome);
+
+  if ($('#mEndMehediBaseShare')) $('#mEndMehediBaseShare').textContent = formatMoney(mehediBaseShare);
   if ($('#mEndMehediTotalTakeHome')) $('#mEndMehediTotalTakeHome').textContent = formatMoney(mehediTotalTakeHome);
 }
 
@@ -10558,7 +10597,7 @@ async function saveMonthEndSettlement() {
   const calc = currentMonthEndCalculations;
   const targetMonth = calc.month;
 
-  // Validate that all 4 required records are present
+  // Validate that all 5 required records are present
   if (calc.shopRent <= 0 || calc.houseRent <= 0 || calc.electricity <= 0 || calc.piasDailyTotal <= 0) {
     toast('Cannot save: Shop Rent, Pias House Rent, Electricity Bill, and Pias Daily must all be recorded.');
     return;
@@ -10600,22 +10639,39 @@ async function sendMonthEndSettlementEmail(calc) {
   const subject = `[PMC] ${mName} ${yStr} Closing Settlement & Take-Home Statement`;
 
   const contentHtml = `
-    <!-- Top 2 KPI Cards -->
+    <!-- Top KPI Cards -->
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
       <tr>
         <td width="48%" style="background:#f6f7fa; border:1px solid #ebedf2; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#6b7280; letter-spacing:0.5px;">${mName} ${yStr} Revenue</div>
           <div style="font-size:22px; font-weight:800; color:#185a95; margin-top:3px;">${formatMoney(calc.totalRevenue)}</div>
-          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">${calc.operatingDays} Operating Days Verified</div>
+          <div style="font-size:11px; color:#9aa1af; margin-top:2px;">${calc.operatingDays} Open Operating Days</div>
         </td>
         <td width="4%"></td>
         <td width="48%" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#166534; letter-spacing:0.5px;">Gross Profit</div>
           <div style="font-size:22px; font-weight:800; color:#0e8c81; margin-top:3px;">${formatMoney(calc.totalGrossProfit)}</div>
-          <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">Rounding / Adjustment: - ${formatMoney(calc.roundingDeduction || 0)}</div>
+          <div style="font-size:11px; color:#15803d; margin-top:2px; font-weight:600;">Adjustment: - ${formatMoney(calc.roundingDeduction || 0)}</div>
         </td>
       </tr>
     </table>
+
+    <!-- Accounting Deductions Summary -->
+    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:14px 16px; margin-bottom:16px;">
+      <div style="font-size:11.5px; font-weight:800; color:#374151; text-transform:uppercase; margin-bottom:8px;">Operating &amp; Fixed Expenses Deducted</div>
+      <table width="100%" cellpadding="4" cellspacing="0" style="font-size:12px;">
+        <tr><td>1. Shop Rent</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.shopRent)}</td></tr>
+        <tr><td>2. Pias House Rent</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.houseRent)}</td></tr>
+        <tr><td>3. Electricity Bill</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.electricity)}</td></tr>
+        <tr><td>4. Pias Daily Allowance (${calc.operatingDays}d × ৳${calc.piasDailyRate})</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.piasDailyTotal)}</td></tr>
+        <tr><td>5. Daily Operating Costs (Sales Cost Box)</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.dailyOperatingCost)}</td></tr>
+        ${calc.otherExpenses > 0 ? `<tr><td>6. Other Logged Expenses</td><td style="text-align:right; font-weight:700; color:#dc2626;">- ${formatMoney(calc.otherExpenses)}</td></tr>` : ''}
+        <tr style="border-top:1px dashed #d1d5db; font-weight:800;">
+          <td style="padding-top:6px; color:#dc2626;">Total Deductions</td>
+          <td style="padding-top:6px; text-align:right; color:#dc2626;">- ${formatMoney(calc.totalDeductions)}</td>
+        </tr>
+      </table>
+    </div>
 
     <!-- Distributable Profit Banner -->
     <div style="background:#eef7ff; border:1.5px solid #bfe0f7; border-radius:10px; padding:13px 16px; margin-bottom:18px;">
@@ -10624,10 +10680,6 @@ async function sendMonthEndSettlementEmail(calc) {
           <td>
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#185a95;">Net Distributable Profit</div>
             <div style="font-size:22px; font-weight:800; color:#191c22; margin-top:2px;">${formatMoney(calc.distributableProfit)}</div>
-          </td>
-          <td style="text-align:right;">
-            <div style="font-size:11px; color:#6b7280;">Fixed &amp; Operating Bills</div>
-            <div style="font-size:14px; font-weight:700; color:#d5573f; margin-top:2px;">- ${formatMoney(calc.totalDeductions)}</div>
           </td>
         </tr>
       </table>
@@ -10638,8 +10690,8 @@ async function sendMonthEndSettlementEmail(calc) {
       <tr>
         <td width="48%" style="background:#faf5ff; border:1.5px solid #d8b4fe; border-radius:12px; padding:14px 16px; vertical-align:top;">
           <div style="font-size:13px; font-weight:800; color:#7c3aed;">Pias (${calc.piasRatio}%)</div>
-          <div style="font-size:11px; color:#6b7280; margin:4px 0 2px;">55% Base: <b>${formatMoney(calc.piasBaseShare)}</b></div>
-          <div style="font-size:11px; color:#6b7280; margin-bottom:8px;">Pias Daily (${calc.operatingDays}d × ৳${calc.piasDailyRate}): <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
+          <div style="font-size:11px; color:#6b7280; margin:4px 0 2px;">55% Base Share: <b>${formatMoney(calc.piasBaseShare)}</b></div>
+          <div style="font-size:11px; color:#6b7280; margin-bottom:8px;">Pias Daily Allowance: <b>+ ${formatMoney(calc.piasDailyTotal)}</b></div>
           <div style="border-top:1px dashed #d8b4fe; padding-top:6px;">
             <div style="font-size:10px; font-weight:700; text-transform:uppercase; color:#7c3aed;">Total Pias Take-Home</div>
             <div style="font-size:20px; font-weight:800; color:#7c3aed; margin-top:2px;">${formatMoney(calc.piasTotalTakeHome)}</div>
