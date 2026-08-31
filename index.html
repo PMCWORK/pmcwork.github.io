@@ -4551,12 +4551,19 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       </div>
 
       <!-- Footer Actions -->
-      <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; align-items: center; gap: 10px; background: var(--panel);">
-        <button type="button" class="btn btn-ghost btn-sm" id="cancelMonthEndBtn">Close</button>
-        <button type="button" class="btn btn-primary btn-sm" id="saveMonthEndSettlementBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save &amp; Finalize Settlement
-        </button>
+      <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
+        <div id="mEndModalStatusBadge" style="font-size:12px; font-weight:700; color:var(--text-dim);"></div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button type="button" class="btn btn-ghost btn-sm" id="cancelMonthEndBtn">Close</button>
+          <button type="button" class="btn btn-outline btn-sm" id="editMonthEndSettlementBtn" style="display:none; gap:6px; font-weight:700; border-color:var(--accent); color:var(--accent);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Edit Settlement
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="saveMonthEndSettlementBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span id="saveMonthEndBtnText">Save &amp; Finalize Settlement</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -10571,6 +10578,51 @@ async function handleDeleteExpense(id) {
    ============================================================ */
 let currentMonthEndTarget = '';
 let currentMonthEndCalculations = null;
+let isMonthEndEditMode = false;
+
+function setMonthEndModalMode(mode = 'view') {
+  const existing = allSettlements.find(s => s.month === currentMonthEndTarget);
+  const editBtn = $('#editMonthEndSettlementBtn');
+  const saveBtn = $('#saveMonthEndSettlementBtn');
+  const saveBtnText = $('#saveMonthEndBtnText');
+  const roundingInput = $('#mEndRoundingDeduction');
+  const statusBadge = $('#mEndModalStatusBadge');
+
+  if (existing && mode === 'view') {
+    // Settled month in view mode
+    isMonthEndEditMode = false;
+    if (roundingInput) roundingInput.disabled = true;
+    if (editBtn) editBtn.style.display = 'inline-flex';
+    if (saveBtn) saveBtn.style.display = 'none';
+    if (statusBadge) {
+      statusBadge.innerHTML = `<span style="color:var(--teal); background:var(--teal-soft); padding:3px 10px; border-radius:12px; font-weight:700;">✓ Finalized Statement</span>`;
+    }
+  } else if (existing && mode === 'edit') {
+    // Settled month unlocked for edit
+    isMonthEndEditMode = true;
+    if (roundingInput) roundingInput.disabled = false;
+    if (editBtn) editBtn.style.display = 'none';
+    if (saveBtn) {
+      saveBtn.style.display = 'inline-flex';
+      if (saveBtnText) saveBtnText.textContent = 'Save & Update Settlement';
+    }
+    if (statusBadge) {
+      statusBadge.innerHTML = `<span style="color:var(--accent); background:var(--accent-soft); padding:3px 10px; border-radius:12px; font-weight:700;">✏️ Edit Mode Active</span>`;
+    }
+  } else {
+    // New / pending settlement month
+    isMonthEndEditMode = true;
+    if (roundingInput) roundingInput.disabled = false;
+    if (editBtn) editBtn.style.display = 'none';
+    if (saveBtn) {
+      saveBtn.style.display = 'inline-flex';
+      if (saveBtnText) saveBtnText.textContent = 'Save & Finalize Settlement';
+    }
+    if (statusBadge) {
+      statusBadge.innerHTML = `<span style="color:var(--danger); background:rgba(239,68,68,0.08); padding:3px 10px; border-radius:12px; font-weight:700;">⏳ Pending Finalization</span>`;
+    }
+  }
+}
 
 function openMonthEndWizard(targetMonth = null) {
   if (!targetMonth) {
@@ -10579,8 +10631,11 @@ function openMonthEndWizard(targetMonth = null) {
   }
   currentMonthEndTarget = targetMonth;
 
+  const existing = allSettlements.find(s => s.month === targetMonth);
   if ($('#monthEndPicker')) $('#monthEndPicker').value = targetMonth;
-  if ($('#mEndRoundingDeduction')) $('#mEndRoundingDeduction').value = '';
+  if ($('#mEndRoundingDeduction')) {
+    $('#mEndRoundingDeduction').value = (existing && existing.roundingDeduction) ? existing.roundingDeduction : '';
+  }
   
   const [yStr, mStr] = targetMonth.split('-');
   const mIdx = parseInt(mStr, 10) - 1;
@@ -10588,6 +10643,7 @@ function openMonthEndWizard(targetMonth = null) {
   if ($('#monthEndTitle')) $('#monthEndTitle').textContent = `${mName} ${yStr} Settlement Statement`;
 
   renderMonthEndCalendarAudit(targetMonth);
+  setMonthEndModalMode('view');
   $('#monthEndModalBackdrop')?.classList.add('show');
 }
 
@@ -13368,6 +13424,7 @@ function setupEventListeners() {
     }, 100);
   });
   $('#saveMonthEndSettlementBtn')?.addEventListener('click', saveMonthEndSettlement);
+  $('#editMonthEndSettlementBtn')?.addEventListener('click', () => setMonthEndModalMode('edit'));
 
   // Settlement History Modal Listeners
   $('#openSettlementHistoryBtn')?.addEventListener('click', openSettlementHistoryModal);
