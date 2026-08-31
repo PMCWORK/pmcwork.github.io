@@ -10411,41 +10411,46 @@ function renderMonthEndCalendarAudit(targetMonth) {
   const hasPiasDaily = (operatingDaysCount > 0);
   const hasDailyCost = (operatingDaysCount > 0);
 
-  // Update Status Badges in Accounting Statement
+  // Update Status Badges in Accounting Statement (Green tick only when logged)
   if ($('#mEndShopRentStatus')) {
     $('#mEndShopRentStatus').innerHTML = hasShopRent
-      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Logged</span>`
+      ? `<span style="font-size:11.5px; font-weight:800; color:var(--teal); background:var(--teal-soft); padding:1px 7px; border-radius:4px;" title="Shop Rent Logged">✓</span>`
       : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ Missing</span>`;
   }
 
   if ($('#mEndHouseRentStatus')) {
     $('#mEndHouseRentStatus').innerHTML = hasHouseRent
-      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Logged</span>`
+      ? `<span style="font-size:11.5px; font-weight:800; color:var(--teal); background:var(--teal-soft); padding:1px 7px; border-radius:4px;" title="Pias House Rent Logged">✓</span>`
       : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ Missing</span>`;
   }
 
   if ($('#mEndElectricityStatus')) {
     $('#mEndElectricityStatus').innerHTML = hasElectricity
-      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Logged</span>`
+      ? `<span style="font-size:11.5px; font-weight:800; color:var(--teal); background:var(--teal-soft); padding:1px 7px; border-radius:4px;" title="Electricity Bill Logged">✓</span>`
       : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ Missing</span>`;
   }
 
-  if ($('#mEndPiasDailyLabel')) $('#mEndPiasDailyLabel').textContent = `4. Pias Daily (${mName})`;
+  if ($('#mEndPiasDailyLabel')) $('#mEndPiasDailyLabel').textContent = '4. Pias Daily';
   if ($('#mEndPiasDailyStatus')) {
     $('#mEndPiasDailyStatus').innerHTML = hasPiasDaily
-      ? `<span style="font-size:10.5px; font-weight:700; color:#7c3aed; background:rgba(139,92,246,0.15); padding:1px 6px; border-radius:4px;">✓ ${operatingDaysCount}d × ৳${piasDailyRate}</span>`
+      ? `<span style="font-size:11px; font-weight:800; font-family:var(--font-numeric); color:#7c3aed; background:rgba(139,92,246,0.15); padding:1px 6px; border-radius:4px;">${operatingDaysCount}x${piasDailyRate}</span>`
       : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ 0 Days</span>`;
   }
 
-  if ($('#mEndDailyCostLabel')) $('#mEndDailyCostLabel').textContent = `5. ${mName} Daily Operating Costs (${operatingDaysCount} Days)`;
+  if ($('#mEndDailyCostLabel')) $('#mEndDailyCostLabel').textContent = '5. Daily Operating Costs';
   if ($('#mEndDailyCostStatus')) {
     $('#mEndDailyCostStatus').innerHTML = hasDailyCost
-      ? `<span style="font-size:10.5px; font-weight:700; color:var(--teal); background:var(--teal-soft); padding:1px 6px; border-radius:4px;">✓ Sales Cost Box</span>`
+      ? `<span style="font-size:11.5px; font-weight:800; color:var(--teal); background:var(--teal-soft); padding:1px 7px; border-radius:4px;" title="Sales Cost Box Total">✓</span>`
       : `<span style="font-size:10.5px; font-weight:700; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px;">⚠️ 0 Days</span>`;
   }
 
+  const otherExpList = mExpenses.filter(e => e.category !== 'Shop Rent' && e.category !== 'Pias House Rent' && e.category !== 'Electricity Bill');
   if ($('#mEndOtherExpensesRow')) {
     $('#mEndOtherExpensesRow').style.display = otherExpenses > 0 ? 'flex' : 'none';
+    if (otherExpenses > 0 && $('#mEndOtherExpensesRow').querySelector('span')) {
+      $('#mEndOtherExpensesRow').querySelector('span').textContent = `6. Other Logged Expenses (${otherExpList.length} in Expenses tab)`;
+      $('#mEndOtherExpensesRow').title = otherExpList.map(e => `${e.title || e.category || 'Expense'}: ৳${Number(e.amount)||0}`).join('\n');
+    }
   }
 
   // Validation Check: All 5 must be present
@@ -10454,7 +10459,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
   if (!hasHouseRent) missingItems.push('Pias House Rent');
   if (!hasElectricity) missingItems.push('Electricity Bill');
   if (!hasPiasDaily) missingItems.push('Pias Daily');
-  if (!hasDailyCost) missingItems.push(`${mName} Daily Operating Costs`);
+  if (!hasDailyCost) missingItems.push('Daily Operating Costs');
 
   const notice = $('#mEndValidationNotice');
   const saveBtn = $('#saveMonthEndSettlementBtn');
@@ -10583,9 +10588,9 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   }
 
   // Update Partner Cards UI
-  if ($('#mEndPiasDailyBadge')) $('#mEndPiasDailyBadge').textContent = `+ ৳${piasDailyTotal.toLocaleString('en-US')} Daily`;
+  if ($('#mEndPiasDailyBadge')) $('#mEndPiasDailyBadge').textContent = `${operatingDays}x${piasDailyRate}`;
   if ($('#mEndPiasBaseShare')) $('#mEndPiasBaseShare').textContent = formatMoney(piasBaseShare);
-  if ($('#mEndPiasDailyTotal')) $('#mEndPiasDailyTotal').textContent = `+ ${formatMoney(piasDailyTotal)}`;
+  if ($('#mEndPiasDailyTotal')) $('#mEndPiasDailyTotal').textContent = `+ ${formatMoney(piasDailyTotal)} (${operatingDays}x${piasDailyRate})`;
   if ($('#mEndPiasTotalTakeHome')) $('#mEndPiasTotalTakeHome').textContent = formatMoney(piasTotalTakeHome);
 
   if ($('#mEndMehediBaseShare')) $('#mEndMehediBaseShare').textContent = formatMoney(mehediBaseShare);
