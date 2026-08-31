@@ -4414,11 +4414,6 @@ tbody tr:hover{ background: var(--panel-2) !important; }
               <span id="mEndAdjustedGrossProfit" style="font-size: 15px; font-weight: 800; font-family: var(--font-numeric); color: var(--text);">৳ 0</span>
             </div>
 
-            <!-- 4. Deductions Section Header -->
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 4px;">
-              Less: Operating &amp; Fixed Expenses (5 Required Records)
-            </div>
-
             <!-- Expense 1: Shop Rent -->
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -10585,7 +10580,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
       notice.style.background = 'rgba(22,163,74,0.08)';
       notice.style.border = '1px solid rgba(22,163,74,0.25)';
       notice.style.color = 'var(--teal)';
-      notice.innerHTML = `✓ <b>Ready to finalize:</b> All required expense items for ${mName} are present &amp; verified.`;
+      notice.innerHTML = `✓ <b>Ready to finalize</b>`;
     }
     if (saveBtn) {
       saveBtn.disabled = false;
