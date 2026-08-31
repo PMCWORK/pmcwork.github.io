@@ -3688,12 +3688,12 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <!-- Filter Toolbar -->
       <div class="tracker-toolbar" style="margin-bottom:14px;">
         <select class="mini-select" id="expPeriodMode">
-          <option value="month" selected>Month</option>
+          <option value="any" selected>All time</option>
+          <option value="month">Month</option>
           <option value="year">Year</option>
           <option value="range">Date Range</option>
-          <option value="any">All time</option>
         </select>
-        <input type="month" class="mini-select" id="expMonth">
+        <input type="month" class="mini-select" id="expMonth" style="display:none;">
         <select class="mini-select" id="expYear" style="display:none;"></select>
         <input type="date" class="mini-select" id="expFrom" style="display:none;">
         <input type="date" class="mini-select" id="expTo" style="display:none;">
@@ -10180,7 +10180,7 @@ function populateExpensesFilterOptions() {
 }
 
 function getExpenseDateRange() {
-  const mode = $('#expPeriodMode')?.value || 'month';
+  const mode = $('#expPeriodMode')?.value || 'any';
   if (mode === 'month') {
     const m = $('#expMonth')?.value || `${today.getFullYear()}-${pad(today.getMonth() + 1)}`;
     return { from: `${m}-01`, to: `${m}-31`, label: m, monthKey: m };
@@ -13577,10 +13577,10 @@ function setupEventListeners() {
   $('#expSearch')?.addEventListener('input', renderExpensesView);
 
   $('#expResetBtn')?.addEventListener('click', () => {
-    if ($('#expPeriodMode')) $('#expPeriodMode').value = 'month';
+    if ($('#expPeriodMode')) $('#expPeriodMode').value = 'any';
     if ($('#expMonth')) {
       $('#expMonth').value = `${today.getFullYear()}-${pad(today.getMonth() + 1)}`;
-      $('#expMonth').style.display = 'inline-block';
+      $('#expMonth').style.display = 'none';
     }
     if ($('#expYear')) $('#expYear').style.display = 'none';
     if ($('#expFrom')) $('#expFrom').style.display = 'none';
