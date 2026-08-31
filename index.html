@@ -9989,10 +9989,9 @@ function renderExpensesView() {
   const catFilter = $('#expCategoryFilter')?.value || 'all';
   const searchQ = ($('#expSearch')?.value || '').trim().toLowerCase();
 
-  // 1. Filter expenses
+  // 1. Filter expenses (strictly by payment date)
   let filtered = allExpenses.filter(e => {
     const d = e.date || '';
-    const m = (e.billingMonth && e.billingMonth.length >= 7) ? e.billingMonth : d.slice(0, 7);
     if (d < range.from || d > range.to) return false;
 
     if (catFilter !== 'all') {
@@ -10071,7 +10070,7 @@ function renderExpensesView() {
     }
   }
 
-  // 5. Group Filtered Expenses by Month (e.g. YYYY-MM)
+  // 5. Group Filtered Expenses by Payment Month (e.date YYYY-MM)
   const container = $('#expensesMonthlyContainer');
   if (!container) return;
 
@@ -10087,7 +10086,8 @@ function renderExpensesView() {
 
   const monthGroups = {};
   filtered.forEach(e => {
-    const mKey = (e.billingMonth && e.billingMonth.length >= 7) ? e.billingMonth : (e.date ? e.date.slice(0, 7) : todayISO.slice(0, 7));
+    // Payment date (when money was paid) strictly determines the month folder
+    const mKey = (e.date && e.date.length >= 7) ? e.date.slice(0, 7) : (e.billingMonth || todayISO.slice(0, 7));
     if (!monthGroups[mKey]) monthGroups[mKey] = [];
     monthGroups[mKey].push(e);
   });
@@ -10463,8 +10463,8 @@ function renderMonthEndCalendarAudit(targetMonth) {
     }
   }
 
-  // 2. Read logged expenses from Expense log for targetMonth
-  const mExpenses = allExpenses.filter(e => (e.billingMonth === targetMonth) || (!e.billingMonth && e.date && e.date.startsWith(targetMonth)));
+  // 2. Read logged expenses strictly by payment date in targetMonth (when money was paid)
+  const mExpenses = allExpenses.filter(e => e.date && e.date.startsWith(targetMonth));
 
   let shopRent = 0;
   // Pias House Rent is auto-applied from Fixed Rates (auto-saved into expenses on settlement save)
@@ -10607,8 +10607,8 @@ function calculateMonthEndSettlement(optDays = null, optRev = null, optProfit = 
   const totalGrossProfit = (optProfit !== null) ? optProfit : mSales.reduce((a, s) => a + (Number(s.profit) || 0), 0);
   const totalDailyCost = (optDailyCost !== null) ? optDailyCost : mSales.reduce((a, s) => a + (Number(s.cost) || 0), 0);
 
-  // Read logged expenses
-  const mExpenses = allExpenses.filter(e => (e.billingMonth === targetMonth) || (!e.billingMonth && e.date && e.date.startsWith(targetMonth)));
+  // Read logged expenses strictly by payment date in targetMonth
+  const mExpenses = allExpenses.filter(e => e.date && e.date.startsWith(targetMonth));
   let shopRent = (optShopRent !== null) ? optShopRent : 0;
   let houseRent = (optHouseRent !== null) ? optHouseRent : (Number(fixedRatesConfig.houseRent) || 7000);
   let electricity = (optElec !== null) ? optElec : 0;
