@@ -1263,26 +1263,45 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 .search-wrap input:focus{ border-color:var(--accent); box-shadow:var(--input-focus-shadow); background:var(--panel); }
 
 /* ---------- Price List & Elegant Form Styling ---------- */
-.pl-card{
+.pl-form-card{
+  display: none;
   background: var(--panel);
   border: 1.5px solid var(--border);
   border-radius: 16px;
-  padding: 22px 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  padding: 22px 26px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   margin-bottom: 24px;
+  max-width: 520px;
 }
-.pl-form-grid{
-  display: grid;
-  grid-template-columns: minmax(180px, 1.2fr) minmax(220px, 1.8fr) minmax(140px, 1fr) minmax(180px, 1.4fr) 140px;
+.pl-form-card.open{
+  display: block;
+  animation: plSlideDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes plSlideDown{
+  from{ opacity: 0; transform: translateY(-8px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+.pl-vertical-form{
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  align-items: flex-end;
 }
-@media (max-width: 1180px){
-  .pl-form-grid{ grid-template-columns: 1fr 1fr; }
-  .pl-form-grid .pl-btn-cell{ grid-column: 1 / -1; }
+.pl-form-group{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pl-form-actions{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
 }
 @media (max-width: 640px){
-  .pl-form-grid{ grid-template-columns: 1fr; }
+  .pl-form-card{ max-width: 100%; padding: 18px 16px; }
 }
 .pl-label{
   display: flex;
@@ -3515,6 +3534,10 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           <h1>Price List</h1>
         </div>
         <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn btn-primary btn-sm" type="button" id="toggleAddPriceBtn" style="display:inline-flex; align-items:center; gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path id="togglePriceIcon" d="M12 5v14M5 12h14"/></svg>
+            Add Product Price
+          </button>
           <button class="btn btn-ghost btn-sm" type="button" id="plManageBrandsBtn" style="display:inline-flex; align-items:center; gap:6px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             Manage Brands
@@ -3526,59 +3549,59 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         </div>
       </div>
 
-      <!-- Data Entry Card -->
-      <div class="pl-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <div style="width:28px; height:28px; border-radius:7px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:15px; height:15px;"><path d="M12 5v14M5 12h14"/></svg>
+      <!-- Add Product Price Card (collapsible vertical form, hidden under button) -->
+      <div class="card pl-form-card" id="priceListFormCard">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--border-soft);">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:32px; height:32px; border-radius:8px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:16px; height:16px;"><path d="M12 5v14M5 12h14"/></svg>
             </div>
             <div>
-              <h3 style="margin:0; font-size:15px; font-weight:700; color:var(--text);">Add Product Price</h3>
+              <h3 style="margin:0; font-size:15.5px; font-weight:700; color:var(--text);">Add Product Price</h3>
+              <div style="font-size:12px; color:var(--text-dim); margin-top:2px;">Brand is optional · Set product name and pricing</div>
             </div>
           </div>
-          <span style="font-size:12px; color:var(--text-dim);">Brand is optional · Defaults to generic if unselected</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="closePriceListFormBtn" style="padding:4px 10px; font-size:12.5px; color:var(--text-dim);">✕ Close</button>
         </div>
 
-        <form id="priceListEntryForm">
-          <div class="pl-form-grid">
-            <div>
-              <div class="pl-label">
-                <span>Brand</span>
-                <button type="button" id="plQuickAddBrandBtn" class="btn-link" style="font-size:11.5px; padding:0; text-decoration:none; color:var(--accent); font-weight:700; cursor:pointer; background:none; border:none;">+ New Brand</button>
-              </div>
-              <select class="pl-select" id="plEntryBrand">
-                <option value="" selected>— No Brand / Generic —</option>
-              </select>
+        <form id="priceListEntryForm" class="pl-vertical-form">
+          <div class="pl-form-group">
+            <div class="pl-label">
+              <span>Brand</span>
+              <button type="button" id="plQuickAddBrandBtn" class="btn-link" style="font-size:11.5px; padding:0; text-decoration:none; color:var(--accent); font-weight:700; cursor:pointer; background:none; border:none;">+ New Brand</button>
             </div>
+            <select class="pl-select" id="plEntryBrand">
+              <option value="" selected>— No Brand / Generic —</option>
+            </select>
+          </div>
 
-            <div>
-              <div class="pl-label">
-                <span>Model / Product Name <span style="color:var(--danger);">*</span></span>
-              </div>
-              <input type="text" class="pl-input" id="plEntryModel" required>
+          <div class="pl-form-group">
+            <div class="pl-label">
+              <span>Model / Product Name <span style="color:var(--danger);">*</span></span>
             </div>
+            <input type="text" class="pl-input" id="plEntryModel" required autocomplete="off">
+          </div>
 
-            <div>
-              <div class="pl-label">
-                <span>Price (Tk) <span style="color:var(--danger);">*</span></span>
-              </div>
-              <input type="number" class="pl-input" id="plEntryPrice" min="0" step="1" required style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">
+          <div class="pl-form-group">
+            <div class="pl-label">
+              <span>Price (Tk) <span style="color:var(--danger);">*</span></span>
             </div>
+            <input type="number" class="pl-input" id="plEntryPrice" min="0" step="1" required style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">
+          </div>
 
-            <div>
-              <div class="pl-label">
-                <span>Notes / Specs</span>
-              </div>
-              <input type="text" class="pl-input" id="plEntryNotes">
+          <div class="pl-form-group">
+            <div class="pl-label">
+              <span>Notes / Specs</span>
             </div>
+            <input type="text" class="pl-input" id="plEntryNotes">
+          </div>
 
-            <div class="pl-btn-cell">
-              <button type="submit" class="btn btn-primary" id="plSaveBtn" style="width:100%; height:40px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px; height:15px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Save Price
-              </button>
-            </div>
+          <div class="pl-form-actions">
+            <button type="button" class="btn btn-ghost btn-sm" id="cancelPriceListBtn" style="font-weight:600; padding:8px 16px;">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="plSaveBtn" style="font-weight:700; padding:8px 22px; display:inline-flex; align-items:center; gap:6px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Price
+            </button>
           </div>
         </form>
       </div>
@@ -8470,6 +8493,37 @@ function renderManageBrandsList() {
   });
 }
 
+function setPriceListFormOpen(open) {
+  const card = $('#priceListFormCard');
+  const btn = $('#toggleAddPriceBtn');
+  if (!card) return;
+  if (open) {
+    card.classList.add('open');
+    if (btn) {
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path id="togglePriceIcon" d="M5 12h14"/></svg>
+        Close Form
+      `;
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-outline');
+    }
+    setTimeout(() => {
+      $('#plEntryModel')?.focus();
+    }, 60);
+  } else {
+    card.classList.remove('open');
+    if (btn) {
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path id="togglePriceIcon" d="M12 5v14M5 12h14"/></svg>
+        Add Product Price
+      `;
+      btn.classList.remove('btn-outline');
+      btn.classList.add('btn-primary');
+    }
+    $('#priceListEntryForm')?.reset();
+  }
+}
+
 async function handleSavePriceListEntry(e) {
   if (e) e.preventDefault();
   const brand = ($('#plEntryBrand')?.value || '').trim();
@@ -8522,11 +8576,8 @@ async function handleSavePriceListEntry(e) {
 
     toast(`✓ Added "${model}" (${formatEmailMoney(price)})`);
     
-    // Clear form inputs
-    if ($('#plEntryModel')) $('#plEntryModel').value = '';
-    if ($('#plEntryPrice')) $('#plEntryPrice').value = '';
-    if ($('#plEntryNotes')) $('#plEntryNotes').value = '';
-    $('#plEntryModel')?.focus();
+    // Clear and close form
+    setPriceListFormOpen(false);
 
     populatePriceListBrandDropdowns();
     renderPriceListView();
@@ -8812,9 +8863,16 @@ function renderPriceListView() {
       <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:14px; padding:48px 24px; text-align:center; color:var(--text-faint);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:42px; height:42px; margin-bottom:12px; opacity:0.5; color:var(--accent);"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
         <div style="font-weight:700; font-size:15px; color:var(--text);">${searchQ ? 'No products match your search' : 'No products listed yet'}</div>
-        <div style="font-size:12.5px; color:var(--text-dim); margin-top:5px;">${searchQ ? 'Try searching for a different brand or model name' : 'Use the form above to add your first product and price.'}</div>
+        <div style="font-size:12.5px; color:var(--text-dim); margin-top:5px;">${searchQ ? 'Try searching for a different brand or model name' : 'Click "Add Product Price" above to add your first product and price.'}</div>
+        ${!searchQ ? `
+          <button type="button" class="btn btn-primary btn-sm" id="plEmptyAddBtn" style="margin-top:16px; display:inline-flex; align-items:center; gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path d="M12 5v14M5 12h14"/></svg>
+            Add Product Price
+          </button>
+        ` : ''}
       </div>
     `;
+    $('#plEmptyAddBtn')?.addEventListener('click', () => setPriceListFormOpen(true));
     return;
   }
 
@@ -14932,6 +14990,14 @@ function setupEventListeners() {
 
   $('#plSortOption')?.addEventListener('change', renderPriceListView);
   $('#plSearchInput')?.addEventListener('input', renderPriceListView);
+
+  // Toggle / Open / Close Add Product Price Form Card
+  $('#toggleAddPriceBtn')?.addEventListener('click', () => {
+    const isOpen = $('#priceListFormCard')?.classList.contains('open');
+    setPriceListFormOpen(!isOpen);
+  });
+  $('#closePriceListFormBtn')?.addEventListener('click', () => setPriceListFormOpen(false));
+  $('#cancelPriceListBtn')?.addEventListener('click', () => setPriceListFormOpen(false));
 
   // Quick Price Modal Listeners
   $('#quickPriceForm')?.addEventListener('submit', handleSaveQuickPrice);
