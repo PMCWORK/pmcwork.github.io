@@ -66,6 +66,7 @@
   --opt-input-bg: rgba(248, 250, 252, 0.75);
   --opt-input-border: #94a3b8;
   --table-row-alt: rgba(0, 0, 0, 0.022);
+  --surface-sunken: var(--panel-2);
 }
 
 :root[data-theme="dark"]{
@@ -1260,6 +1261,108 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   transition:border-color .15s, box-shadow .15s, background-color .15s;
 }
 .search-wrap input:focus{ border-color:var(--accent); box-shadow:var(--input-focus-shadow); background:var(--panel); }
+
+/* ---------- Price List & Elegant Form Styling ---------- */
+.pl-card{
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  margin-bottom: 24px;
+}
+.pl-form-grid{
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(220px, 1.8fr) minmax(140px, 1fr) minmax(180px, 1.4fr) 140px;
+  gap: 14px;
+  align-items: flex-end;
+}
+@media (max-width: 1180px){
+  .pl-form-grid{ grid-template-columns: 1fr 1fr; }
+  .pl-form-grid .pl-btn-cell{ grid-column: 1 / -1; }
+}
+@media (max-width: 640px){
+  .pl-form-grid{ grid-template-columns: 1fr; }
+}
+.pl-label{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.pl-input, .form-control{
+  width: 100%;
+  height: 40px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 9px;
+  padding: 0 13px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--text);
+  box-shadow: var(--input-shadow);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+.pl-input:hover, .form-control:hover{
+  border-color: var(--border);
+}
+.pl-input:focus, .form-control:focus{
+  border-color: var(--accent);
+  background: var(--panel);
+  box-shadow: var(--input-focus-shadow);
+}
+.pl-input::placeholder, .form-control::placeholder{
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+/* Elegant Custom Select Dropdowns */
+.pl-select, select.form-control{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: 40px;
+  background-color: var(--input-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px 14px;
+  border: 1.5px solid var(--input-border);
+  border-radius: 9px;
+  padding: 0 34px 0 13px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  box-shadow: var(--input-shadow);
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+:root[data-theme="dark"] .pl-select, :root[data-theme="dark"] select.form-control{
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa3b2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.pl-select:hover, select.form-control:hover{
+  border-color: var(--accent);
+}
+.pl-select:focus, select.form-control:focus{
+  border-color: var(--accent);
+  background-color: var(--panel);
+  box-shadow: var(--input-focus-shadow);
+}
+.pl-select option, select.form-control option{
+  background: var(--panel);
+  color: var(--text);
+  padding: 8px 12px;
+}
 
 .add-form-card.compact{ padding:18px 20px; margin-bottom:18px; }
 .pf-head{ margin-bottom:12px; }
@@ -3423,94 +3526,80 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         </div>
       </div>
 
-      <!-- KPI Summary Cards -->
-      <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); margin-bottom:20px;">
-        <div class="kpi-card">
-          <div class="label">Total Products Listed</div>
-          <div class="val" id="plTotalCount" style="color:var(--accent);">0</div>
-          <div class="sub" id="plTotalBrandsSub">Across 0 brands</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">Active Brands</div>
-          <div class="val" id="plActiveBrandsCount" style="color:var(--teal);">0</div>
-          <div class="sub">Catalog brands available</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">Average Item Price</div>
-          <div class="val" id="plAvgPrice">Tk 0</div>
-          <div class="sub" id="plPriceRangeSub">Range: Tk 0 – Tk 0</div>
-        </div>
-      </div>
-
       <!-- Data Entry Card -->
-      <div class="panel" style="margin-bottom:22px; padding:20px 22px; border-radius:14px; border:1.5px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.03);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h3 style="margin:0; font-size:15px; font-weight:800; display:inline-flex; align-items:center; gap:8px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px; color:var(--accent);"><path d="M12 5v14M5 12h14"/></svg>
-            Add New Product Price
-          </h3>
-          <span style="font-size:11.5px; color:var(--text-dim);">Brand is optional (empty if not selected)</span>
+      <div class="pl-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:28px; height:28px; border-radius:7px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:15px; height:15px;"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div>
+              <h3 style="margin:0; font-size:15px; font-weight:700; color:var(--text);">Add Product Price</h3>
+            </div>
+          </div>
+          <span style="font-size:12px; color:var(--text-dim);">Brand is optional · Defaults to generic if unselected</span>
         </div>
 
-        <form id="priceListEntryForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)) 130px; gap:12px; align-items:flex-end;">
-          <div>
-            <label class="form-label" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span>Brand (Optional)</span>
-              <button type="button" id="plQuickAddBrandBtn" class="btn-link" style="font-size:11px; padding:0; text-decoration:none; color:var(--accent); font-weight:700; cursor:pointer;">+ New Brand</button>
-            </label>
-            <select class="form-control" id="plEntryBrand" style="width:100%; height:38px;">
-              <option value="" selected>— No Brand / Generic —</option>
-            </select>
-          </div>
+        <form id="priceListEntryForm">
+          <div class="pl-form-grid">
+            <div>
+              <div class="pl-label">
+                <span>Brand</span>
+                <button type="button" id="plQuickAddBrandBtn" class="btn-link" style="font-size:11.5px; padding:0; text-decoration:none; color:var(--accent); font-weight:700; cursor:pointer; background:none; border:none;">+ New Brand</button>
+              </div>
+              <select class="pl-select" id="plEntryBrand">
+                <option value="" selected>— No Brand / Generic —</option>
+              </select>
+            </div>
 
-          <div>
-            <label class="form-label" style="margin-bottom:4px;">Model / Product Name <span style="color:var(--danger);">*</span></label>
-            <input type="text" class="form-control" id="plEntryModel" placeholder="e.g. iPhone 15 Pro, Inspiron 15 3520..." required style="width:100%; height:38px;">
-          </div>
+            <div>
+              <div class="pl-label">
+                <span>Model / Product Name <span style="color:var(--danger);">*</span></span>
+              </div>
+              <input type="text" class="pl-input" id="plEntryModel" required>
+            </div>
 
-          <div>
-            <label class="form-label" style="margin-bottom:4px;">Price (Tk) <span style="color:var(--danger);">*</span></label>
-            <input type="number" class="form-control" id="plEntryPrice" placeholder="e.g. 85000" min="0" step="1" required style="width:100%; height:38px; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">
-          </div>
+            <div>
+              <div class="pl-label">
+                <span>Price (Tk) <span style="color:var(--danger);">*</span></span>
+              </div>
+              <input type="number" class="pl-input" id="plEntryPrice" min="0" step="1" required style="font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">
+            </div>
 
-          <div>
-            <label class="form-label" style="margin-bottom:4px;">Notes / Specs (Optional)</label>
-            <input type="text" class="form-control" id="plEntryNotes" placeholder="e.g. 8/128GB, official warranty..." style="width:100%; height:38px;">
-          </div>
+            <div>
+              <div class="pl-label">
+                <span>Notes / Specs</span>
+              </div>
+              <input type="text" class="pl-input" id="plEntryNotes">
+            </div>
 
-          <div>
-            <button type="submit" class="btn btn-primary" id="plSaveBtn" style="width:100%; height:38px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px; height:15px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Save Price
-            </button>
+            <div class="pl-btn-cell">
+              <button type="submit" class="btn btn-primary" id="plSaveBtn" style="width:100%; height:40px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px; height:15px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Price
+              </button>
+            </div>
           </div>
         </form>
       </div>
 
-      <!-- Interactive Brand Filter Chips -->
-      <div id="plBrandFilterChips" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;"></div>
+      <!-- Toolbar: Sort & Search -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint);">Sort</span>
+          <select class="pl-select" id="plSortOption" style="min-width:190px; height:38px; font-size:13px;">
+            <option value="brand_asc" selected>Brand: A → Z</option>
+            <option value="model_asc">Model Name: A → Z</option>
+            <option value="price_asc">Price: Low → High</option>
+            <option value="price_desc">Price: High → Low</option>
+            <option value="updated_desc">Recently Updated</option>
+          </select>
+          <span id="plProductCountBadge" style="font-size:12px; font-weight:600; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--border); padding:4px 10px; border-radius:8px;">0 products</span>
+        </div>
 
-      <!-- Search & Sort Toolbar -->
-      <div class="tracker-toolbar" style="margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-        <select class="mini-select" id="plFilterBrandSelect" style="min-width:150px;">
-          <option value="all" selected>All Brands</option>
-          <option value="__none__">No Brand / Generic</option>
-        </select>
-
-        <select class="mini-select" id="plSortOption" style="min-width:180px;">
-          <option value="price_desc" selected>Price: High to Low (↓)</option>
-          <option value="price_asc">Price: Low to High (↑)</option>
-          <option value="brand_asc">Brand: A to Z</option>
-          <option value="model_asc">Model Name: A to Z</option>
-          <option value="updated_desc">Recently Updated</option>
-          <option value="created_asc">Oldest Listed</option>
-        </select>
-
-        <button class="btn btn-ghost btn-sm" type="button" id="plResetFiltersBtn">Reset filters</button>
-
-        <div class="search-wrap" style="max-width:300px; margin-left:auto;">
+        <div class="search-wrap" style="max-width:320px; width:100%; margin:0;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="plSearchInput" placeholder="Search model, brand, specs...">
+          <input type="text" id="plSearchInput" placeholder="Search products, brand, model..." style="height:38px; font-size:13px;">
         </div>
       </div>
 
@@ -4767,7 +4856,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
           <label class="form-label" style="margin-bottom:6px;">New Price (Tk) <span style="color:var(--danger);">*</span></label>
           <div style="position:relative;">
             <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--text-dim); font-size:14px;">Tk</span>
-            <input type="number" id="quickPriceInput" class="form-control" placeholder="0" min="0" step="1" required style="padding-left:36px; font-size:17px; font-weight:800; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; height:42px;">
+            <input type="number" id="quickPriceInput" class="form-control" min="0" step="1" required style="padding-left:36px; font-size:17px; font-weight:800; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; height:42px;">
           </div>
           <div id="quickPriceOldPriceSub" style="font-size:11.5px; color:var(--text-dim); margin-top:5px;">Current: Tk 0</div>
         </div>
@@ -4809,8 +4898,8 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         </div>
 
         <div style="margin-bottom:18px;">
-          <label class="form-label" style="margin-bottom:4px;">Notes / Specs (Optional)</label>
-          <input type="text" class="form-control" id="editPriceListNotes" placeholder="e.g. 8/128GB, warranty..." style="width:100%; height:38px;">
+          <label class="form-label" style="margin-bottom:4px;">Notes / Specs</label>
+          <input type="text" class="form-control" id="editPriceListNotes" style="width:100%; height:38px;">
         </div>
 
         <div style="display:flex; justify-content:flex-end; gap:8px;">
@@ -4834,7 +4923,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 
       <div style="padding:16px 20px; border-bottom:1px solid var(--border); background:var(--surface-sunken);">
         <form id="addNewBrandForm" style="display:flex; gap:8px; align-items:center;">
-          <input type="text" id="newBrandInput" class="form-control" placeholder="Enter new brand name (e.g. Sony, JBL, Lenovo)..." required style="flex:1; height:36px; font-size:13px;">
+          <input type="text" id="newBrandInput" class="form-control" placeholder="Enter brand name..." required style="flex:1; height:36px; font-size:13px;">
           <button type="submit" class="btn btn-primary btn-sm" style="height:36px; font-weight:700; white-space:nowrap; padding:0 14px;">+ Add Brand</button>
         </form>
       </div>
@@ -8168,7 +8257,6 @@ let allPriceListBrands = [
   'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Anker', 'Baseus', 'Havit', 'A4Tech',
   'Logitech', 'TP-Link', 'SanDisk', 'Transcend', 'Gigabyte', 'MSI', 'Corsair'
 ];
-let activePriceListBrandFilter = 'all';
 let editingPriceListItemId = null;
 let editingQuickPriceItemId = null;
 
@@ -8282,30 +8370,6 @@ function populatePriceListBrandDropdowns() {
     if (curVal) editSel.value = curVal;
   }
 
-  // 3. Filter Brand select
-  const filterSel = $('#plFilterBrandSelect');
-  if (filterSel) {
-    const curVal = filterSel.value || 'all';
-    
-    // Calculate counts per brand
-    const brandCounts = {};
-    let noBrandCount = 0;
-    allPriceListItems.forEach(it => {
-      if (!it.brand || !it.brand.trim()) {
-        noBrandCount++;
-      } else {
-        const b = it.brand.trim();
-        brandCounts[b] = (brandCounts[b] || 0) + 1;
-      }
-    });
-
-    filterSel.innerHTML = `
-      <option value="all">All Brands (${allPriceListItems.length})</option>
-      <option value="__none__">No Brand / Generic (${noBrandCount})</option>
-      ${brandList.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)} (${brandCounts[b] || 0})</option>`).join('')}
-    `;
-    filterSel.value = curVal;
-  }
 }
 
 async function handleAddCustomBrand(brandName, autoSelectInEntry = true) {
@@ -8702,21 +8766,10 @@ function renderPriceListView() {
   if (!container) return;
 
   const searchQ = ($('#plSearchInput')?.value || '').trim().toLowerCase();
-  const sortMode = $('#plSortOption')?.value || 'price_desc';
-  const brandFilter = activePriceListBrandFilter || 'all';
+  const sortMode = $('#plSortOption')?.value || 'brand_asc';
 
-  // 1. Filter
+  // 1. Filter by search query
   let filtered = allPriceListItems.filter(it => {
-    // Brand filter
-    if (brandFilter !== 'all') {
-      if (brandFilter === '__none__') {
-        if (it.brand && it.brand.trim()) return false;
-      } else {
-        if ((it.brand || '').toLowerCase() !== brandFilter.toLowerCase()) return false;
-      }
-    }
-
-    // Search query
     if (searchQ) {
       const matchModel = (it.model || '').toLowerCase().includes(searchQ);
       const matchBrand = (it.brand || '').toLowerCase().includes(searchQ);
@@ -8729,109 +8782,47 @@ function renderPriceListView() {
 
   // 2. Sort
   filtered.sort((a, b) => {
-    if (sortMode === 'price_desc') {
-      return (b.price || 0) - (a.price || 0) || a.model.localeCompare(b.model);
-    } else if (sortMode === 'price_asc') {
-      return (a.price || 0) - (b.price || 0) || a.model.localeCompare(b.model);
-    } else if (sortMode === 'brand_asc') {
+    if (sortMode === 'brand_asc') {
       const brandA = (a.brand || '').trim();
       const brandB = (b.brand || '').trim();
       if (!brandA && brandB) return 1;
       if (brandA && !brandB) return -1;
-      return brandA.localeCompare(brandB) || a.model.localeCompare(b.model);
+      return brandA.localeCompare(brandB) || (a.model || '').localeCompare(b.model || '');
     } else if (sortMode === 'model_asc') {
-      return a.model.localeCompare(b.model);
+      return (a.model || '').localeCompare(b.model || '');
+    } else if (sortMode === 'price_asc') {
+      return (a.price || 0) - (b.price || 0) || (a.model || '').localeCompare(b.model || '');
+    } else if (sortMode === 'price_desc') {
+      return (b.price || 0) - (a.price || 0) || (a.model || '').localeCompare(b.model || '');
     } else if (sortMode === 'updated_desc') {
       return (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '') || (b.price || 0) - (a.price || 0);
-    } else if (sortMode === 'created_asc') {
-      return (a.createdAt || '').localeCompare(b.createdAt || '');
     }
-    return (b.price || 0) - (a.price || 0);
+    return 0;
   });
 
-  // 3. Update Summary Cards
-  const totalCount = allPriceListItems.length;
-  const brandSet = new Set(allPriceListItems.map(x => (x.brand || '').trim()).filter(Boolean));
-  const prices = allPriceListItems.map(x => Number(x.price) || 0);
-  const avgPrice = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0;
-  const minPrice = prices.length ? Math.min(...prices) : 0;
-  const maxPrice = prices.length ? Math.max(...prices) : 0;
-
-  if ($('#plTotalCount')) $('#plTotalCount').textContent = `${totalCount} item${totalCount === 1 ? '' : 's'}`;
-  if ($('#plTotalBrandsSub')) $('#plTotalBrandsSub').textContent = `Across ${brandSet.size} active brand${brandSet.size === 1 ? '' : 's'}`;
-  if ($('#plActiveBrandsCount')) $('#plActiveBrandsCount').textContent = String(allPriceListBrands.length);
-  if ($('#plAvgPrice')) $('#plAvgPrice').textContent = formatEmailMoney(avgPrice);
-  if ($('#plPriceRangeSub')) $('#plPriceRangeSub').textContent = totalCount ? `Range: ${formatEmailMoney(minPrice)} – ${formatEmailMoney(maxPrice)}` : 'No items listed';
-
-  // 4. Render Interactive Brand Filter Chips
-  const chipsContainer = $('#plBrandFilterChips');
-  if (chipsContainer) {
-    const brandCounts = {};
-    let noBrandCount = 0;
-    allPriceListItems.forEach(it => {
-      if (!it.brand || !it.brand.trim()) {
-        noBrandCount++;
-      } else {
-        const b = it.brand.trim();
-        brandCounts[b] = (brandCounts[b] || 0) + 1;
-      }
-    });
-
-    const activeBrandsInUse = Object.keys(brandCounts).sort((a, b) => a.localeCompare(b));
-    
-    let chipsHtml = `
-      <button type="button" class="pl-brand-chip ${brandFilter === 'all' ? 'active' : ''}" data-brand="all" style="background:${brandFilter === 'all' ? 'var(--accent)' : 'var(--panel)'}; color:${brandFilter === 'all' ? '#fff' : 'var(--text)'}; border:1.5px solid ${brandFilter === 'all' ? 'var(--accent)' : 'var(--border)'}; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s;">
-        <span>All Brands</span>
-        <span style="opacity:0.85; font-size:11px;">(${totalCount})</span>
-      </button>
-    `;
-
-    if (noBrandCount > 0) {
-      chipsHtml += `
-        <button type="button" class="pl-brand-chip ${brandFilter === '__none__' ? 'active' : ''}" data-brand="__none__" style="background:${brandFilter === '__none__' ? 'var(--accent)' : 'var(--panel)'}; color:${brandFilter === '__none__' ? '#fff' : 'var(--text)'}; border:1.5px solid ${brandFilter === '__none__' ? 'var(--accent)' : 'var(--border)'}; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s;">
-          <span>No Brand</span>
-          <span style="opacity:0.85; font-size:11px;">(${noBrandCount})</span>
-        </button>
-      `;
-    }
-
-    activeBrandsInUse.forEach(b => {
-      const isSelected = (brandFilter.toLowerCase() === b.toLowerCase());
-      chipsHtml += `
-        <button type="button" class="pl-brand-chip ${isSelected ? 'active' : ''}" data-brand="${escapeHtml(b)}" style="background:${isSelected ? 'var(--accent)' : 'var(--panel)'}; color:${isSelected ? '#fff' : 'var(--text)'}; border:1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s;">
-          <span>${escapeHtml(b)}</span>
-          <span style="opacity:0.85; font-size:11px;">(${brandCounts[b]})</span>
-        </button>
-      `;
-    });
-
-    chipsContainer.innerHTML = chipsHtml;
-    chipsContainer.querySelectorAll('.pl-brand-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activePriceListBrandFilter = btn.dataset.brand;
-        if ($('#plFilterBrandSelect')) $('#plFilterBrandSelect').value = activePriceListBrandFilter;
-        renderPriceListView();
-      });
-    });
+  // 3. Update count badge
+  const countBadge = $('#plProductCountBadge');
+  if (countBadge) {
+    countBadge.textContent = `${filtered.length} product${filtered.length === 1 ? '' : 's'}${searchQ ? ' found' : ''}`;
   }
 
-  // 5. Render Table / List
+  // 4. Render Table / List
   if (!filtered.length) {
     container.innerHTML = `
-      <div style="background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:40px 20px; text-align:center; color:var(--text-faint);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px; height:40px; margin-bottom:10px; opacity:0.5;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        <div style="font-weight:700; font-size:14.5px; color:var(--text-dim);">${searchQ || brandFilter !== 'all' ? 'No products match current filters' : 'No products listed in price catalog yet'}</div>
-        <div style="font-size:12px; margin-top:4px;">${searchQ || brandFilter !== 'all' ? 'Try adjusting your search query or brand filter' : 'Use the entry box above to add your first product and price.'}</div>
+      <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:14px; padding:48px 24px; text-align:center; color:var(--text-faint);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:42px; height:42px; margin-bottom:12px; opacity:0.5; color:var(--accent);"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <div style="font-weight:700; font-size:15px; color:var(--text);">${searchQ ? 'No products match your search' : 'No products listed yet'}</div>
+        <div style="font-size:12.5px; color:var(--text-dim); margin-top:5px;">${searchQ ? 'Try searching for a different brand or model name' : 'Use the form above to add your first product and price.'}</div>
       </div>
     `;
     return;
   }
 
   container.innerHTML = `
-    <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.03);">
+    <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.03);">
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:13px;">
         <thead>
-          <tr style="background:var(--surface-sunken); border-bottom:1px solid var(--border); font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim);">
+          <tr style="background:var(--panel-2); border-bottom:1px solid var(--border); font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-dim);">
             <th style="padding:12px 16px; text-align:left; width:130px;">Brand</th>
             <th style="padding:12px 16px; text-align:left;">Model / Product Name</th>
             <th style="padding:12px 16px; text-align:left;">Notes / Specs</th>
@@ -8844,9 +8835,9 @@ function renderPriceListView() {
             const hasBrand = Boolean(it.brand && it.brand.trim());
             const brandLabel = hasBrand ? it.brand.trim() : 'Generic';
             return `
-              <tr style="border-bottom:1px solid var(--border); transition:background 0.1s;" class="pl-table-row">
+              <tr style="border-bottom:1px solid var(--border-soft); transition:background 0.1s;" class="pl-table-row">
                 <td style="padding:12px 16px; vertical-align:middle;">
-                  <span style="display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:6px; background:${hasBrand ? 'rgba(14,140,129,0.12)' : 'var(--surface-sunken)'}; color:${hasBrand ? 'var(--teal)' : 'var(--text-dim)'}; border:1px solid ${hasBrand ? 'rgba(14,140,129,0.25)' : 'var(--border)'};">
+                  <span style="display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:6px; background:${hasBrand ? 'rgba(14,140,129,0.12)' : 'var(--panel-2)'}; color:${hasBrand ? 'var(--teal)' : 'var(--text-dim)'}; border:1px solid ${hasBrand ? 'rgba(14,140,129,0.25)' : 'var(--border)'};">
                     ${escapeHtml(brandLabel)}
                   </span>
                 </td>
@@ -8857,7 +8848,7 @@ function renderPriceListView() {
                   ${it.notes ? escapeHtml(it.notes) : '<span style="opacity:0.4;">—</span>'}
                 </td>
                 <td style="padding:12px 16px; text-align:right; vertical-align:middle;">
-                  <div class="pl-quick-price-trigger" data-id="${it.id}" style="cursor:pointer; display:inline-block; font-size:15px; font-weight:900; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; color:var(--accent); background:rgba(24,90,149,0.08); padding:3px 9px; border-radius:6px; border:1px solid rgba(24,90,149,0.18);" title="Click to quick-edit price">
+                  <div class="pl-quick-price-trigger" data-id="${it.id}" style="cursor:pointer; display:inline-block; font-size:15px; font-weight:900; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; color:var(--accent); background:var(--accent-soft); padding:3px 9px; border-radius:6px; border:1px solid var(--accent-dim);" title="Click to quick-edit price">
                     ${formatEmailMoney(it.price || 0)}
                   </div>
                 </td>
@@ -14939,19 +14930,8 @@ function setupEventListeners() {
 
   $('#plExportCsvBtn')?.addEventListener('click', exportPriceListCsv);
 
-  $('#plFilterBrandSelect')?.addEventListener('change', (e) => {
-    activePriceListBrandFilter = e.target.value;
-    renderPriceListView();
-  });
   $('#plSortOption')?.addEventListener('change', renderPriceListView);
   $('#plSearchInput')?.addEventListener('input', renderPriceListView);
-  $('#plResetFiltersBtn')?.addEventListener('click', () => {
-    activePriceListBrandFilter = 'all';
-    if ($('#plFilterBrandSelect')) $('#plFilterBrandSelect').value = 'all';
-    if ($('#plSortOption')) $('#plSortOption').value = 'price_desc';
-    if ($('#plSearchInput')) $('#plSearchInput').value = '';
-    renderPriceListView();
-  });
 
   // Quick Price Modal Listeners
   $('#quickPriceForm')?.addEventListener('submit', handleSaveQuickPrice);
