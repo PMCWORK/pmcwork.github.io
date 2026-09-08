@@ -3551,16 +3551,16 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 
       <!-- Toolbar: Sort & Search -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint);">Sort</span>
-          <select class="pl-select" id="plSortOption" style="min-width:190px; height:38px; font-size:13px;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint); white-space:nowrap;">Sort</span>
+          <select class="pl-select" id="plSortOption" style="min-width:180px; width:auto; height:38px; font-size:13px;">
             <option value="brand_asc" selected>Brand: A → Z</option>
             <option value="model_asc">Model Name: A → Z</option>
             <option value="price_asc">Price: Low → High</option>
             <option value="price_desc">Price: High → Low</option>
             <option value="updated_desc">Recently Updated</option>
           </select>
-          <span id="plProductCountBadge" style="font-size:12px; font-weight:600; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--border); padding:4px 10px; border-radius:8px;">0 products</span>
+          <span id="plProductCountBadge" style="white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; font-size:12px; font-weight:600; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--border); padding:4px 10px; border-radius:8px; height:32px; line-height:1;">0 products</span>
         </div>
 
         <div class="search-wrap" style="max-width:320px; width:100%; margin:0;">
