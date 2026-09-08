@@ -2417,6 +2417,20 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   background: var(--panel-2) !important;
 }
 
+/* Price List styles */
+.pl-table-row:hover td{
+  background: var(--panel-2) !important;
+}
+.pl-brand-chip:hover{
+  border-color: var(--accent) !important;
+  transform: translateY(-1px);
+}
+.pl-quick-price-trigger:hover{
+  background: rgba(24,90,149,0.16) !important;
+  border-color: var(--accent) !important;
+  transform: scale(1.02);
+}
+
 @media (max-width: 1180px){
   .grid,.export-grid,.charts-grid{ grid-template-columns:1fr; }
   .stats,.dash-stats{ grid-template-columns:repeat(2,1fr); }
@@ -2515,6 +2529,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <a href="#add-sale" data-view="addsale" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Add sale</a>
       <a href="#history" data-view="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>History</a>
       <a href="#tracker" data-view="tracker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg>Product tracker</a>
+      <a href="#price-list" data-view="pricelist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Price list</a>
       <a href="#pm-brings" data-view="pmbrings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"/><path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg>PM Brings</a>
       <a href="#purchases" data-view="purchases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2l2.6 12.4A2 2 0 0 0 8.5 17H18a2 2 0 0 0 2-1.6L21.5 7H6"/></svg>Purchases</a>
       <a href="#expenses" data-view="expenses"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 14h4"/></svg>Expenses</a>
@@ -3371,6 +3386,120 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <div id="productList"></div>
     </section>
 
+    <!-- ================= PRICE LIST ================= -->
+    <section class="view" id="view-pricelist">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">Catalog &amp; Pricing</div>
+          <h1>Price List</h1>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="btn btn-ghost btn-sm" type="button" id="plManageBrandsBtn" style="display:inline-flex; align-items:center; gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Manage Brands
+          </button>
+          <button class="btn btn-ghost btn-sm" type="button" id="plExportCsvBtn" style="display:inline-flex; align-items:center; gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); margin-bottom:20px;">
+        <div class="kpi-card">
+          <div class="label">Total Products Listed</div>
+          <div class="val" id="plTotalCount" style="color:var(--accent);">0</div>
+          <div class="sub" id="plTotalBrandsSub">Across 0 brands</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Active Brands</div>
+          <div class="val" id="plActiveBrandsCount" style="color:var(--teal);">0</div>
+          <div class="sub">Catalog brands available</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Average Item Price</div>
+          <div class="val" id="plAvgPrice">Tk 0</div>
+          <div class="sub" id="plPriceRangeSub">Range: Tk 0 – Tk 0</div>
+        </div>
+      </div>
+
+      <!-- Data Entry Card -->
+      <div class="panel" style="margin-bottom:22px; padding:20px 22px; border-radius:14px; border:1.5px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="margin:0; font-size:15px; font-weight:800; display:inline-flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px; color:var(--accent);"><path d="M12 5v14M5 12h14"/></svg>
+            Add New Product Price
+          </h3>
+          <span style="font-size:11.5px; color:var(--text-dim);">Brand is optional (empty if not selected)</span>
+        </div>
+
+        <form id="priceListEntryForm" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)) 130px; gap:12px; align-items:flex-end;">
+          <div>
+            <label class="form-label" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span>Brand (Optional)</span>
+              <button type="button" id="plQuickAddBrandBtn" class="btn-link" style="font-size:11px; padding:0; text-decoration:none; color:var(--accent); font-weight:700; cursor:pointer;">+ New Brand</button>
+            </label>
+            <select class="form-control" id="plEntryBrand" style="width:100%; height:38px;">
+              <option value="" selected>— No Brand / Generic —</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" style="margin-bottom:4px;">Model / Product Name <span style="color:var(--danger);">*</span></label>
+            <input type="text" class="form-control" id="plEntryModel" placeholder="e.g. iPhone 15 Pro, Inspiron 15 3520..." required style="width:100%; height:38px;">
+          </div>
+
+          <div>
+            <label class="form-label" style="margin-bottom:4px;">Price (Tk) <span style="color:var(--danger);">*</span></label>
+            <input type="number" class="form-control" id="plEntryPrice" placeholder="e.g. 85000" min="0" step="1" required style="width:100%; height:38px; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">
+          </div>
+
+          <div>
+            <label class="form-label" style="margin-bottom:4px;">Notes / Specs (Optional)</label>
+            <input type="text" class="form-control" id="plEntryNotes" placeholder="e.g. 8/128GB, official warranty..." style="width:100%; height:38px;">
+          </div>
+
+          <div>
+            <button type="submit" class="btn btn-primary" id="plSaveBtn" style="width:100%; height:38px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px; height:15px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Price
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Interactive Brand Filter Chips -->
+      <div id="plBrandFilterChips" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;"></div>
+
+      <!-- Search & Sort Toolbar -->
+      <div class="tracker-toolbar" style="margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+        <select class="mini-select" id="plFilterBrandSelect" style="min-width:150px;">
+          <option value="all" selected>All Brands</option>
+          <option value="__none__">No Brand / Generic</option>
+        </select>
+
+        <select class="mini-select" id="plSortOption" style="min-width:180px;">
+          <option value="price_desc" selected>Price: High to Low (↓)</option>
+          <option value="price_asc">Price: Low to High (↑)</option>
+          <option value="brand_asc">Brand: A to Z</option>
+          <option value="model_asc">Model Name: A to Z</option>
+          <option value="updated_desc">Recently Updated</option>
+          <option value="created_asc">Oldest Listed</option>
+        </select>
+
+        <button class="btn btn-ghost btn-sm" type="button" id="plResetFiltersBtn">Reset filters</button>
+
+        <div class="search-wrap" style="max-width:300px; margin-left:auto;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="plSearchInput" placeholder="Search model, brand, specs...">
+        </div>
+      </div>
+
+      <!-- Price List Table Container -->
+      <div id="priceListTableContainer" style="min-height:360px;"></div>
+    </section>
+
     <!-- ================= PM BRINGS ================= -->
     <section class="view" id="view-pmbrings">
       <div class="topbar">
@@ -3880,6 +4009,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         <div class="tracker-toolbar" style="margin-bottom:18px;">
           <select class="mini-select" id="auditEntityFilter">
             <option value="all" selected>All categories</option>
+            <option value="price_list">Price List</option>
             <option value="settlement">Month-End Settlements</option>
             <option value="expense">Expenses</option>
             <option value="invoice">Invoices</option>
@@ -4598,6 +4728,106 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <div style="padding: 12px 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);">
         <div style="font-size: 11.5px; color: var(--text-dim);" id="settlementHistoryCountLabel">0 settlements on record</div>
         <button type="button" class="btn btn-ghost btn-sm" id="closeSettlementHistoryFooterBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= QUICK EDIT PRICE MODAL ================= -->
+  <div class="modal-backdrop" id="quickPriceModalBackdrop">
+    <div class="modal-card" style="max-width:380px; padding:22px 24px; border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+        <div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--accent); letter-spacing:0.5px;">Update Price</div>
+          <h3 id="quickPriceItemTitle" style="margin:2px 0 0; font-size:16px; font-weight:800; color:var(--text);">Product Model</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeQuickPriceModalBtn">✕</button>
+      </div>
+
+      <form id="quickPriceForm">
+        <input type="hidden" id="quickPriceItemId">
+        <div style="margin-bottom:18px;">
+          <label class="form-label" style="margin-bottom:6px;">New Price (Tk) <span style="color:var(--danger);">*</span></label>
+          <div style="position:relative;">
+            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--text-dim); font-size:14px;">Tk</span>
+            <input type="number" id="quickPriceInput" class="form-control" placeholder="0" min="0" step="1" required style="padding-left:36px; font-size:17px; font-weight:800; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; height:42px;">
+          </div>
+          <div id="quickPriceOldPriceSub" style="font-size:11.5px; color:var(--text-dim); margin-top:5px;">Current: Tk 0</div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button type="button" class="btn btn-ghost btn-sm" id="cancelQuickPriceBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveQuickPriceBtn" style="font-weight:700;">Save Price</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= EDIT PRICE LIST ITEM MODAL ================= -->
+  <div class="modal-backdrop" id="editPriceListModalBackdrop">
+    <div class="modal-card" style="max-width:480px; padding:22px 24px; border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+        <h2 style="margin:0; font-size:17px; font-weight:800; font-family:'Space Grotesk', sans-serif;">Edit Product Details</h2>
+        <button type="button" class="modal-close-btn" id="closeEditPriceListModalBtn">✕</button>
+      </div>
+
+      <form id="editPriceListForm">
+        <input type="hidden" id="editPriceListItemId">
+        
+        <div style="margin-bottom:12px;">
+          <label class="form-label" style="margin-bottom:4px;">Brand (Optional)</label>
+          <select class="form-control" id="editPriceListBrand" style="width:100%; height:38px;">
+            <option value="">— No Brand / Generic —</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label class="form-label" style="margin-bottom:4px;">Model / Product Name <span style="color:var(--danger);">*</span></label>
+          <input type="text" class="form-control" id="editPriceListModel" required style="width:100%; height:38px;">
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label class="form-label" style="margin-bottom:4px;">Price (Tk) <span style="color:var(--danger);">*</span></label>
+          <input type="number" class="form-control" id="editPriceListPrice" min="0" step="1" required style="width:100%; height:38px; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; font-weight:700;">
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <label class="form-label" style="margin-bottom:4px;">Notes / Specs (Optional)</label>
+          <input type="text" class="form-control" id="editPriceListNotes" placeholder="e.g. 8/128GB, warranty..." style="width:100%; height:38px;">
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button type="button" class="btn btn-ghost btn-sm" id="cancelEditPriceListBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="saveEditPriceListBtn" style="font-weight:700;">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MANAGE BRANDS MODAL ================= -->
+  <div class="modal-backdrop" id="manageBrandsModalBackdrop">
+    <div class="modal-card" style="max-width:520px; max-height:85vh; display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:14px; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+      <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--panel);">
+        <div>
+          <h2 style="margin:0; font-size:16px; font-weight:800;">Manage Brands Catalog</h2>
+          <div style="font-size:11.5px; color:var(--text-dim); margin-top:1px;">Add, search, or remove custom product brands</div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeManageBrandsModalBtn">✕</button>
+      </div>
+
+      <div style="padding:16px 20px; border-bottom:1px solid var(--border); background:var(--surface-sunken);">
+        <form id="addNewBrandForm" style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="newBrandInput" class="form-control" placeholder="Enter new brand name (e.g. Sony, JBL, Lenovo)..." required style="flex:1; height:36px; font-size:13px;">
+          <button type="submit" class="btn btn-primary btn-sm" style="height:36px; font-weight:700; white-space:nowrap; padding:0 14px;">+ Add Brand</button>
+        </form>
+      </div>
+
+      <div style="padding:16px 20px; overflow-y:auto; flex:1;" id="manageBrandsListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--panel);">
+        <span id="manageBrandsCountLabel" style="font-size:12px; color:var(--text-dim);">0 brands</span>
+        <button type="button" class="btn btn-ghost btn-sm" id="closeManageBrandsFooterBtn">Done</button>
       </div>
     </div>
   </div>
@@ -5375,6 +5605,9 @@ const VIEW_HASH_MAP = {
   'sales-history': 'history',
   'tracker': 'tracker',
   'product-tracker': 'tracker',
+  'pricelist': 'pricelist',
+  'price-list': 'pricelist',
+  'prices': 'pricelist',
   'pmbrings': 'pmbrings',
   'pm-brings': 'pmbrings',
   'purchases': 'purchases',
@@ -5393,6 +5626,7 @@ const VIEW_CANONICAL_HASH = {
   'addsale': 'add-sale',
   'history': 'history',
   'tracker': 'tracker',
+  'pricelist': 'price-list',
   'pmbrings': 'pm-brings',
   'purchases': 'purchases',
   'expenses': 'expenses',
@@ -5432,6 +5666,9 @@ function switchView(viewName, updateHash = true) {
       renderHistory();
     } else if (viewName === 'tracker') {
       renderProductList();
+    } else if (viewName === 'pricelist') {
+      populatePriceListBrandDropdowns();
+      renderPriceListView();
     } else if (viewName === 'pmbrings') {
       populatePmBringsFilterOptions();
       renderPmBringsList();
@@ -7370,6 +7607,44 @@ function renderAuditItemCard(entry) {
         <span>·</span>
         <span>Pias/Mehedi Ratio: <b>${a.piasRatio || 55}% / ${a.mehediRatio || 45}%</b></span>
       </div>`;
+  } else if (type === 'price_list') {
+    catClass = 'audit-cat-product';
+    iconSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`;
+    const model = escapeHtml(a.model || b.model || a.brand || 'Product');
+    const brand = escapeHtml(a.brand || b.brand || '');
+    const brandStr = brand ? `[${brand}] ` : '';
+    if (action === 'create') {
+      titleText = a.action ? escapeHtml(a.action) : `Added Product: ${brandStr}${model}`;
+      badgeClass = 'create';
+      badgeText = a.brand && !a.model ? 'Brand Added' : 'Product Added';
+      detailsHTML = `
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          ${a.price !== undefined ? `<span>Price: <b style="color:var(--accent); font-family:var(--font-numeric); font-variant-numeric:tabular-nums;">${formatMoney(a.price || 0)}</b></span><span>·</span>` : ''}
+          ${brand ? `<span>Brand: <b>${brand}</b></span><span>·</span>` : ''}
+          <span>Model: <b>${model}</b></span>
+          ${a.notes ? `<span>·</span><span>Notes: <i>${escapeHtml(a.notes)}</i></span>` : ''}
+        </div>`;
+    } else if (action === 'update') {
+      titleText = a.action ? escapeHtml(a.action) : `Updated Price: ${brandStr}${model}`;
+      badgeClass = 'update';
+      badgeText = 'Price Updated';
+      const diffs = [];
+      if (b.price !== undefined && a.price !== undefined && b.price !== a.price) {
+        diffs.push(`Price: <span class="audit-diff-pill">${formatMoney(b.price || 0)} → ${formatMoney(a.price || 0)}</span>`);
+      }
+      if (b.model && a.model && b.model !== a.model) {
+        diffs.push(`Model: <span class="audit-diff-pill">${escapeHtml(b.model)} → ${escapeHtml(a.model)}</span>`);
+      }
+      if (b.brand !== undefined && a.brand !== undefined && b.brand !== a.brand) {
+        diffs.push(`Brand: <span class="audit-diff-pill">${escapeHtml(b.brand || 'None')} → ${escapeHtml(a.brand || 'None')}</span>`);
+      }
+      detailsHTML = diffs.length ? `<div class="audit-diff-row" style="font-size:12.5px;">${diffs.join('')}</div>` : `<div style="color:var(--text-dim);">Product pricing details updated.</div>`;
+    } else if (action === 'delete') {
+      titleText = a.action ? escapeHtml(a.action) : `Deleted Product: ${brandStr}${model}`;
+      badgeClass = 'delete';
+      badgeText = a.brand && !a.model ? 'Brand Removed' : 'Product Deleted';
+      detailsHTML = `<div style="color:var(--text-dim);">${brandStr}<b>${model}</b> ${b.price ? `(${formatMoney(b.price)})` : ''} was removed from the price list.</div>`;
+    }
   }
 
   if (!titleText) {
@@ -7824,6 +8099,770 @@ async function setProductStatus(id, status) {
     renderProductList();
     toast('Status updated: ' + status);
   } catch(err) { console.error(err); toast('Update failed'); }
+}
+
+/* ============================================================
+   PRICE LIST MODULE (Product Catalog & Dynamic Pricing)
+   ============================================================ */
+let allPriceListItems = [];
+let allPriceListBrands = [
+  'Apple', 'Samsung', 'Xiaomi', 'Realme', 'Vivo', 'Oppo', 'OnePlus', 'Google Pixel',
+  'Dell', 'HP', 'Lenovo', 'Asus', 'Acer', 'Anker', 'Baseus', 'Havit', 'A4Tech',
+  'Logitech', 'TP-Link', 'SanDisk', 'Transcend', 'Gigabyte', 'MSI', 'Corsair'
+];
+let activePriceListBrandFilter = 'all';
+let editingPriceListItemId = null;
+let editingQuickPriceItemId = null;
+
+async function loadPriceList() {
+  try {
+    const cached = localStorage.getItem('pmc_price_list');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed)) allPriceListItems = parsed;
+    }
+  } catch(e) {}
+
+  if (firebaseReady && db) {
+    try {
+      const snap = await db.collection('price_list').get();
+      allPriceListItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      try {
+        localStorage.setItem('pmc_price_list', JSON.stringify(allPriceListItems));
+      } catch(e) {}
+    } catch(err) {
+      console.warn('loadPriceList notice:', err);
+    }
+  }
+
+  await loadPriceListBrands();
+  populatePriceListBrandDropdowns();
+  renderPriceListView();
+}
+
+async function loadPriceListBrands() {
+  try {
+    const cached = localStorage.getItem('pmc_price_list_brands');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length) {
+        allPriceListBrands = Array.from(new Set([...allPriceListBrands, ...parsed]));
+      }
+    }
+  } catch(e) {}
+
+  if (firebaseReady && db) {
+    try {
+      const doc = await db.collection('settings').doc('price_list_brands').get();
+      if (doc.exists) {
+        const data = doc.data() || {};
+        if (Array.isArray(data.brands) && data.brands.length) {
+          allPriceListBrands = Array.from(new Set([...allPriceListBrands, ...data.brands]));
+          try {
+            localStorage.setItem('pmc_price_list_brands', JSON.stringify(allPriceListBrands));
+          } catch(e) {}
+        }
+      }
+    } catch(err) {
+      console.warn('loadPriceListBrands notice:', err);
+    }
+  }
+
+  // Also include any brands currently present in existing products
+  allPriceListItems.forEach(it => {
+    if (it.brand && it.brand.trim()) {
+      const trimmed = it.brand.trim();
+      if (!allPriceListBrands.some(b => b.toLowerCase() === trimmed.toLowerCase())) {
+        allPriceListBrands.push(trimmed);
+      }
+    }
+  });
+
+  allPriceListBrands.sort((a, b) => a.localeCompare(b));
+}
+
+async function savePriceListBrands() {
+  allPriceListBrands.sort((a, b) => a.localeCompare(b));
+  try {
+    localStorage.setItem('pmc_price_list_brands', JSON.stringify(allPriceListBrands));
+  } catch(e) {}
+
+  if (firebaseReady && db) {
+    try {
+      await db.collection('settings').doc('price_list_brands').set({
+        brands: allPriceListBrands,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch(err) {
+      console.warn('savePriceListBrands notice:', err);
+    }
+  }
+}
+
+function populatePriceListBrandDropdowns() {
+  const brandList = [...allPriceListBrands].sort((a, b) => a.localeCompare(b));
+  
+  // 1. Entry Brand select
+  const entrySel = $('#plEntryBrand');
+  if (entrySel) {
+    const curVal = entrySel.value;
+    entrySel.innerHTML = `
+      <option value="">— No Brand / Generic —</option>
+      ${brandList.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('')}
+    `;
+    if (curVal) entrySel.value = curVal;
+  }
+
+  // 2. Edit Modal Brand select
+  const editSel = $('#editPriceListBrand');
+  if (editSel) {
+    const curVal = editSel.value;
+    editSel.innerHTML = `
+      <option value="">— No Brand / Generic —</option>
+      ${brandList.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('')}
+    `;
+    if (curVal) editSel.value = curVal;
+  }
+
+  // 3. Filter Brand select
+  const filterSel = $('#plFilterBrandSelect');
+  if (filterSel) {
+    const curVal = filterSel.value || 'all';
+    
+    // Calculate counts per brand
+    const brandCounts = {};
+    let noBrandCount = 0;
+    allPriceListItems.forEach(it => {
+      if (!it.brand || !it.brand.trim()) {
+        noBrandCount++;
+      } else {
+        const b = it.brand.trim();
+        brandCounts[b] = (brandCounts[b] || 0) + 1;
+      }
+    });
+
+    filterSel.innerHTML = `
+      <option value="all">All Brands (${allPriceListItems.length})</option>
+      <option value="__none__">No Brand / Generic (${noBrandCount})</option>
+      ${brandList.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)} (${brandCounts[b] || 0})</option>`).join('')}
+    `;
+    filterSel.value = curVal;
+  }
+}
+
+async function handleAddCustomBrand(brandName, autoSelectInEntry = true) {
+  if (!brandName || !brandName.trim()) return false;
+  const trimmed = brandName.trim();
+  const existing = allPriceListBrands.find(b => b.toLowerCase() === trimmed.toLowerCase());
+  
+  if (!existing) {
+    allPriceListBrands.push(trimmed);
+    await savePriceListBrands();
+    populatePriceListBrandDropdowns();
+    logAudit('price_list', 'create', {
+      action: 'Added Brand to Catalog',
+      brand: trimmed
+    });
+    toast(`✓ Brand "${trimmed}" added to catalog`);
+  }
+
+  const finalName = existing || trimmed;
+  if (autoSelectInEntry && $('#plEntryBrand')) {
+    $('#plEntryBrand').value = finalName;
+  }
+  return finalName;
+}
+
+async function handleDeleteCustomBrand(brandName) {
+  if (!brandName) return;
+  const countInUse = allPriceListItems.filter(it => (it.brand || '').toLowerCase() === brandName.toLowerCase()).length;
+  
+  const confirmed = await appConfirm({
+    title: `Remove Brand "${brandName}"?`,
+    message: countInUse > 0
+      ? `"${brandName}" is currently used on ${countInUse} product(s). Removing it from the list will not delete those products, but it won't appear in the brand dropdown. Proceed?`
+      : `Are you sure you want to remove "${brandName}" from your brand catalog?`,
+    confirmText: 'Remove Brand',
+    danger: true
+  });
+  if (!confirmed) return;
+
+  allPriceListBrands = allPriceListBrands.filter(b => b.toLowerCase() !== brandName.toLowerCase());
+  await savePriceListBrands();
+  populatePriceListBrandDropdowns();
+  renderManageBrandsList();
+  renderPriceListView();
+  logAudit('price_list', 'delete', {
+    action: 'Removed Brand from Catalog',
+    brand: brandName
+  });
+  toast(`Brand "${brandName}" removed`);
+}
+
+function openManageBrandsModal() {
+  renderManageBrandsList();
+  const modal = $('#manageBrandsModalBackdrop');
+  if (modal) {
+    modal.classList.add('show');
+    $('#newBrandInput')?.focus();
+  }
+}
+
+function closeManageBrandsModal() {
+  $('#manageBrandsModalBackdrop')?.classList.remove('show');
+  $('#newBrandInput') && ($('#newBrandInput').value = '');
+}
+
+function renderManageBrandsList() {
+  const container = $('#manageBrandsListContainer');
+  const countLabel = $('#manageBrandsCountLabel');
+  if (!container) return;
+
+  const brands = [...allPriceListBrands].sort((a, b) => a.localeCompare(b));
+  if (countLabel) countLabel.textContent = `${brands.length} brand${brands.length === 1 ? '' : 's'} registered`;
+
+  if (!brands.length) {
+    container.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-dim); font-size:13px;">No brands registered yet. Add one above.</div>`;
+    return;
+  }
+
+  container.innerHTML = brands.map(b => {
+    const countInUse = allPriceListItems.filter(it => (it.brand || '').toLowerCase() === b.toLowerCase()).length;
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--panel); border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-weight:700; font-size:13.5px; color:var(--text);">${escapeHtml(b)}</span>
+          <span style="font-size:11px; color:var(--text-dim); background:var(--surface-sunken); padding:2px 8px; border-radius:12px;">${countInUse} item${countInUse === 1 ? '' : 's'}</span>
+        </div>
+        <button type="button" class="btn btn-ghost btn-xs pl-delete-brand-btn" data-brand="${escapeHtml(b)}" style="color:var(--danger); padding:4px 8px;" title="Remove Brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px; height:13px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.pl-delete-brand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      handleDeleteCustomBrand(btn.dataset.brand);
+    });
+  });
+}
+
+async function handleSavePriceListEntry(e) {
+  if (e) e.preventDefault();
+  const brand = ($('#plEntryBrand')?.value || '').trim();
+  const model = ($('#plEntryModel')?.value || '').trim();
+  const price = parseFloat($('#plEntryPrice')?.value);
+  const notes = ($('#plEntryNotes')?.value || '').trim();
+
+  if (!model) {
+    toast('Please enter a product/model name');
+    $('#plEntryModel')?.focus();
+    return;
+  }
+  if (isNaN(price) || price < 0) {
+    toast('Please enter a valid price');
+    $('#plEntryPrice')?.focus();
+    return;
+  }
+
+  const btn = $('#plSaveBtn');
+  if (btn) btn.disabled = true;
+
+  const nowISO = new Date().toISOString();
+  const docId = `pl_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+  const newItem = {
+    id: docId,
+    brand: brand || '',
+    model,
+    price: Math.round(price),
+    notes: notes || '',
+    createdAt: nowISO,
+    updatedAt: nowISO
+  };
+
+  try {
+    if (firebaseReady && db) {
+      await db.collection('price_list').doc(docId).set(newItem);
+    }
+    allPriceListItems.unshift(newItem);
+    try {
+      localStorage.setItem('pmc_price_list', JSON.stringify(allPriceListItems));
+    } catch(e) {}
+
+    logAudit('price_list', 'create', {
+      action: 'Added Product to Price List',
+      model,
+      brand: brand || 'No Brand',
+      price: Math.round(price),
+      notes: notes || ''
+    });
+
+    toast(`✓ Added "${model}" (${formatEmailMoney(price)})`);
+    
+    // Clear form inputs
+    if ($('#plEntryModel')) $('#plEntryModel').value = '';
+    if ($('#plEntryPrice')) $('#plEntryPrice').value = '';
+    if ($('#plEntryNotes')) $('#plEntryNotes').value = '';
+    $('#plEntryModel')?.focus();
+
+    populatePriceListBrandDropdowns();
+    renderPriceListView();
+  } catch(err) {
+    console.error('Error saving price list item:', err);
+    toast('Failed to save: ' + err.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function openQuickPriceModal(id) {
+  const item = allPriceListItems.find(x => x.id === id);
+  if (!item) return;
+  editingQuickPriceItemId = id;
+
+  if ($('#quickPriceItemId')) $('#quickPriceItemId').value = id;
+  if ($('#quickPriceItemTitle')) {
+    const brandStr = item.brand ? `[${item.brand}] ` : '';
+    $('#quickPriceItemTitle').textContent = `${brandStr}${item.model}`;
+  }
+  if ($('#quickPriceInput')) {
+    $('#quickPriceInput').value = item.price || 0;
+  }
+  if ($('#quickPriceOldPriceSub')) {
+    $('#quickPriceOldPriceSub').textContent = `Current: ${formatEmailMoney(item.price || 0)}`;
+  }
+
+  const modal = $('#quickPriceModalBackdrop');
+  if (modal) {
+    modal.classList.add('show');
+    setTimeout(() => {
+      $('#quickPriceInput')?.focus();
+      $('#quickPriceInput')?.select();
+    }, 100);
+  }
+}
+
+function closeQuickPriceModal() {
+  $('#quickPriceModalBackdrop')?.classList.remove('show');
+  editingQuickPriceItemId = null;
+}
+
+async function handleSaveQuickPrice(e) {
+  if (e) e.preventDefault();
+  const id = $('#quickPriceItemId')?.value || editingQuickPriceItemId;
+  const item = allPriceListItems.find(x => x.id === id);
+  if (!item) return;
+
+  const newPrice = parseFloat($('#quickPriceInput')?.value);
+  if (isNaN(newPrice) || newPrice < 0) {
+    toast('Please enter a valid price');
+    return;
+  }
+
+  const oldPrice = item.price;
+  const roundedNewPrice = Math.round(newPrice);
+
+  if (oldPrice === roundedNewPrice) {
+    closeQuickPriceModal();
+    return;
+  }
+
+  const btn = $('#saveQuickPriceBtn');
+  if (btn) btn.disabled = true;
+
+  try {
+    const nowISO = new Date().toISOString();
+    item.price = roundedNewPrice;
+    item.updatedAt = nowISO;
+
+    if (firebaseReady && db) {
+      await db.collection('price_list').doc(id).update({
+        price: roundedNewPrice,
+        updatedAt: nowISO
+      });
+    }
+
+    try {
+      localStorage.setItem('pmc_price_list', JSON.stringify(allPriceListItems));
+    } catch(e) {}
+
+    logAudit('price_list', 'update', {
+      action: 'Updated Product Price',
+      model: item.model,
+      brand: item.brand || 'No Brand',
+      before: { price: oldPrice },
+      after: { price: roundedNewPrice }
+    });
+
+    closeQuickPriceModal();
+    renderPriceListView();
+    toast(`✓ Price updated for "${item.model}": ${formatEmailMoney(oldPrice)} → ${formatEmailMoney(roundedNewPrice)}`);
+  } catch(err) {
+    console.error('Error updating quick price:', err);
+    toast('Failed to update price: ' + err.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function openEditPriceListModal(id) {
+  const item = allPriceListItems.find(x => x.id === id);
+  if (!item) return;
+  editingPriceListItemId = id;
+
+  populatePriceListBrandDropdowns();
+
+  if ($('#editPriceListItemId')) $('#editPriceListItemId').value = id;
+  if ($('#editPriceListBrand')) $('#editPriceListBrand').value = item.brand || '';
+  if ($('#editPriceListModel')) $('#editPriceListModel').value = item.model || '';
+  if ($('#editPriceListPrice')) $('#editPriceListPrice').value = item.price || 0;
+  if ($('#editPriceListNotes')) $('#editPriceListNotes').value = item.notes || '';
+
+  const modal = $('#editPriceListModalBackdrop');
+  if (modal) {
+    modal.classList.add('show');
+    $('#editPriceListModel')?.focus();
+  }
+}
+
+function closeEditPriceListModal() {
+  $('#editPriceListModalBackdrop')?.classList.remove('show');
+  editingPriceListItemId = null;
+}
+
+async function handleSaveEditPriceList(e) {
+  if (e) e.preventDefault();
+  const id = $('#editPriceListItemId')?.value || editingPriceListItemId;
+  const item = allPriceListItems.find(x => x.id === id);
+  if (!item) return;
+
+  const brand = ($('#editPriceListBrand')?.value || '').trim();
+  const model = ($('#editPriceListModel')?.value || '').trim();
+  const price = parseFloat($('#editPriceListPrice')?.value);
+  const notes = ($('#editPriceListNotes')?.value || '').trim();
+
+  if (!model) {
+    toast('Please enter a model name');
+    return;
+  }
+  if (isNaN(price) || price < 0) {
+    toast('Please enter a valid price');
+    return;
+  }
+
+  const btn = $('#saveEditPriceListBtn');
+  if (btn) btn.disabled = true;
+
+  const beforeState = { ...item };
+  const roundedPrice = Math.round(price);
+  const nowISO = new Date().toISOString();
+
+  item.brand = brand || '';
+  item.model = model;
+  item.price = roundedPrice;
+  item.notes = notes || '';
+  item.updatedAt = nowISO;
+
+  try {
+    if (firebaseReady && db) {
+      await db.collection('price_list').doc(id).set({
+        brand: item.brand,
+        model: item.model,
+        price: item.price,
+        notes: item.notes,
+        createdAt: item.createdAt || nowISO,
+        updatedAt: nowISO
+      }, { merge: true });
+    }
+
+    try {
+      localStorage.setItem('pmc_price_list', JSON.stringify(allPriceListItems));
+    } catch(e) {}
+
+    logAudit('price_list', 'update', {
+      action: 'Edited Product Details',
+      model,
+      brand: brand || 'No Brand',
+      before: beforeState,
+      after: item
+    });
+
+    closeEditPriceListModal();
+    populatePriceListBrandDropdowns();
+    renderPriceListView();
+    toast(`✓ Updated "${model}"`);
+  } catch(err) {
+    console.error('Error updating price list item:', err);
+    toast('Failed to update: ' + err.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function handleDeletePriceListItem(id) {
+  const item = allPriceListItems.find(x => x.id === id);
+  if (!item) return;
+
+  const brandStr = item.brand ? `[${item.brand}] ` : '';
+  const confirmed = await appConfirm({
+    title: 'Delete from Price List?',
+    message: `Are you sure you want to permanently delete "${brandStr}${item.model}" (${formatEmailMoney(item.price)}) from the Price List?`,
+    confirmText: 'Delete Item',
+    danger: true
+  });
+  if (!confirmed) return;
+
+  try {
+    if (firebaseReady && db) {
+      await db.collection('price_list').doc(id).delete();
+    }
+    allPriceListItems = allPriceListItems.filter(x => x.id !== id);
+    try {
+      localStorage.setItem('pmc_price_list', JSON.stringify(allPriceListItems));
+    } catch(e) {}
+
+    logAudit('price_list', 'delete', {
+      action: 'Deleted Product from Price List',
+      model: item.model,
+      brand: item.brand || 'No Brand',
+      price: item.price,
+      notes: item.notes || ''
+    });
+
+    populatePriceListBrandDropdowns();
+    renderPriceListView();
+    toast(`Item "${item.model}" deleted`);
+  } catch(err) {
+    console.error('Error deleting price list item:', err);
+    toast('Failed to delete: ' + err.message);
+  }
+}
+
+function renderPriceListView() {
+  const container = $('#priceListTableContainer');
+  if (!container) return;
+
+  const searchQ = ($('#plSearchInput')?.value || '').trim().toLowerCase();
+  const sortMode = $('#plSortOption')?.value || 'price_desc';
+  const brandFilter = activePriceListBrandFilter || 'all';
+
+  // 1. Filter
+  let filtered = allPriceListItems.filter(it => {
+    // Brand filter
+    if (brandFilter !== 'all') {
+      if (brandFilter === '__none__') {
+        if (it.brand && it.brand.trim()) return false;
+      } else {
+        if ((it.brand || '').toLowerCase() !== brandFilter.toLowerCase()) return false;
+      }
+    }
+
+    // Search query
+    if (searchQ) {
+      const matchModel = (it.model || '').toLowerCase().includes(searchQ);
+      const matchBrand = (it.brand || '').toLowerCase().includes(searchQ);
+      const matchNotes = (it.notes || '').toLowerCase().includes(searchQ);
+      const matchPrice = String(it.price || '').includes(searchQ);
+      if (!matchModel && !matchBrand && !matchNotes && !matchPrice) return false;
+    }
+    return true;
+  });
+
+  // 2. Sort
+  filtered.sort((a, b) => {
+    if (sortMode === 'price_desc') {
+      return (b.price || 0) - (a.price || 0) || a.model.localeCompare(b.model);
+    } else if (sortMode === 'price_asc') {
+      return (a.price || 0) - (b.price || 0) || a.model.localeCompare(b.model);
+    } else if (sortMode === 'brand_asc') {
+      const brandA = (a.brand || '').trim();
+      const brandB = (b.brand || '').trim();
+      if (!brandA && brandB) return 1;
+      if (brandA && !brandB) return -1;
+      return brandA.localeCompare(brandB) || a.model.localeCompare(b.model);
+    } else if (sortMode === 'model_asc') {
+      return a.model.localeCompare(b.model);
+    } else if (sortMode === 'updated_desc') {
+      return (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '') || (b.price || 0) - (a.price || 0);
+    } else if (sortMode === 'created_asc') {
+      return (a.createdAt || '').localeCompare(b.createdAt || '');
+    }
+    return (b.price || 0) - (a.price || 0);
+  });
+
+  // 3. Update Summary Cards
+  const totalCount = allPriceListItems.length;
+  const brandSet = new Set(allPriceListItems.map(x => (x.brand || '').trim()).filter(Boolean));
+  const prices = allPriceListItems.map(x => Number(x.price) || 0);
+  const avgPrice = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0;
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
+
+  if ($('#plTotalCount')) $('#plTotalCount').textContent = `${totalCount} item${totalCount === 1 ? '' : 's'}`;
+  if ($('#plTotalBrandsSub')) $('#plTotalBrandsSub').textContent = `Across ${brandSet.size} active brand${brandSet.size === 1 ? '' : 's'}`;
+  if ($('#plActiveBrandsCount')) $('#plActiveBrandsCount').textContent = String(allPriceListBrands.length);
+  if ($('#plAvgPrice')) $('#plAvgPrice').textContent = formatEmailMoney(avgPrice);
+  if ($('#plPriceRangeSub')) $('#plPriceRangeSub').textContent = totalCount ? `Range: ${formatEmailMoney(minPrice)} – ${formatEmailMoney(maxPrice)}` : 'No items listed';
+
+  // 4. Render Interactive Brand Filter Chips
+  const chipsContainer = $('#plBrandFilterChips');
+  if (chipsContainer) {
+    const brandCounts = {};
+    let noBrandCount = 0;
+    allPriceListItems.forEach(it => {
+      if (!it.brand || !it.brand.trim()) {
+        noBrandCount++;
+      } else {
+        const b = it.brand.trim();
+        brandCounts[b] = (brandCounts[b] || 0) + 1;
+      }
+    });
+
+    const activeBrandsInUse = Object.keys(brandCounts).sort((a, b) => a.localeCompare(b));
+    
+    let chipsHtml = `
+      <button type="button" class="pl-brand-chip ${brandFilter === 'all' ? 'active' : ''}" data-brand="all" style="background:${brandFilter === 'all' ? 'var(--accent)' : 'var(--panel)'}; color:${brandFilter === 'all' ? '#fff' : 'var(--text)'}; border:1.5px solid ${brandFilter === 'all' ? 'var(--accent)' : 'var(--border)'}; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s;">
+        <span>All Brands</span>
+        <span style="opacity:0.85; font-size:11px;">(${totalCount})</span>
+      </button>
+    `;
+
+    if (noBrandCount > 0) {
+      chipsHtml += `
+        <button type="button" class="pl-brand-chip ${brandFilter === '__none__' ? 'active' : ''}" data-brand="__none__" style="background:${brandFilter === '__none__' ? 'var(--accent)' : 'var(--panel)'}; color:${brandFilter === '__none__' ? '#fff' : 'var(--text)'}; border:1.5px solid ${brandFilter === '__none__' ? 'var(--accent)' : 'var(--border)'}; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s;">
+          <span>No Brand</span>
+          <span style="opacity:0.85; font-size:11px;">(${noBrandCount})</span>
+        </button>
+      `;
+    }
+
+    activeBrandsInUse.forEach(b => {
+      const isSelected = (brandFilter.toLowerCase() === b.toLowerCase());
+      chipsHtml += `
+        <button type="button" class="pl-brand-chip ${isSelected ? 'active' : ''}" data-brand="${escapeHtml(b)}" style="background:${isSelected ? 'var(--accent)' : 'var(--panel)'}; color:${isSelected ? '#fff' : 'var(--text)'}; border:1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s;">
+          <span>${escapeHtml(b)}</span>
+          <span style="opacity:0.85; font-size:11px;">(${brandCounts[b]})</span>
+        </button>
+      `;
+    });
+
+    chipsContainer.innerHTML = chipsHtml;
+    chipsContainer.querySelectorAll('.pl-brand-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activePriceListBrandFilter = btn.dataset.brand;
+        if ($('#plFilterBrandSelect')) $('#plFilterBrandSelect').value = activePriceListBrandFilter;
+        renderPriceListView();
+      });
+    });
+  }
+
+  // 5. Render Table / List
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:40px 20px; text-align:center; color:var(--text-faint);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px; height:40px; margin-bottom:10px; opacity:0.5;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <div style="font-weight:700; font-size:14.5px; color:var(--text-dim);">${searchQ || brandFilter !== 'all' ? 'No products match current filters' : 'No products listed in price catalog yet'}</div>
+        <div style="font-size:12px; margin-top:4px;">${searchQ || brandFilter !== 'all' ? 'Try adjusting your search query or brand filter' : 'Use the entry box above to add your first product and price.'}</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.03);">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-size:13px;">
+        <thead>
+          <tr style="background:var(--surface-sunken); border-bottom:1px solid var(--border); font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-dim);">
+            <th style="padding:12px 16px; text-align:left; width:130px;">Brand</th>
+            <th style="padding:12px 16px; text-align:left;">Model / Product Name</th>
+            <th style="padding:12px 16px; text-align:left;">Notes / Specs</th>
+            <th style="padding:12px 16px; text-align:right; width:150px;">Price (Tk)</th>
+            <th style="padding:12px 16px; text-align:center; width:140px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map((it, idx) => {
+            const hasBrand = Boolean(it.brand && it.brand.trim());
+            const brandLabel = hasBrand ? it.brand.trim() : 'Generic';
+            return `
+              <tr style="border-bottom:1px solid var(--border); transition:background 0.1s;" class="pl-table-row">
+                <td style="padding:12px 16px; vertical-align:middle;">
+                  <span style="display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:6px; background:${hasBrand ? 'rgba(14,140,129,0.12)' : 'var(--surface-sunken)'}; color:${hasBrand ? 'var(--teal)' : 'var(--text-dim)'}; border:1px solid ${hasBrand ? 'rgba(14,140,129,0.25)' : 'var(--border)'};">
+                    ${escapeHtml(brandLabel)}
+                  </span>
+                </td>
+                <td style="padding:12px 16px; vertical-align:middle;">
+                  <div style="font-weight:700; font-size:13.5px; color:var(--text);">${escapeHtml(it.model)}</div>
+                </td>
+                <td style="padding:12px 16px; vertical-align:middle; color:var(--text-dim); font-size:12px;">
+                  ${it.notes ? escapeHtml(it.notes) : '<span style="opacity:0.4;">—</span>'}
+                </td>
+                <td style="padding:12px 16px; text-align:right; vertical-align:middle;">
+                  <div class="pl-quick-price-trigger" data-id="${it.id}" style="cursor:pointer; display:inline-block; font-size:15px; font-weight:900; font-family:var(--font-numeric); font-variant-numeric:tabular-nums; color:var(--accent); background:rgba(24,90,149,0.08); padding:3px 9px; border-radius:6px; border:1px solid rgba(24,90,149,0.18);" title="Click to quick-edit price">
+                    ${formatEmailMoney(it.price || 0)}
+                  </div>
+                </td>
+                <td style="padding:12px 16px; text-align:center; vertical-align:middle;">
+                  <div style="display:inline-flex; gap:6px; align-items:center;">
+                    <button type="button" class="btn btn-ghost btn-xs pl-edit-price-btn" data-id="${it.id}" style="color:var(--accent); font-weight:700; padding:4px 8px;" title="Quick Edit Price">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px; height:13px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                      Price
+                    </button>
+                    <button type="button" class="btn btn-ghost btn-xs pl-edit-full-btn" data-id="${it.id}" style="color:var(--text-dim); padding:4px 6px;" title="Edit Full Details">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px; height:13px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </button>
+                    <button type="button" class="btn btn-ghost btn-xs pl-delete-btn" data-id="${it.id}" style="color:var(--danger); padding:4px 6px;" title="Delete Product">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px; height:13px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  // Attach event listeners on table rows
+  container.querySelectorAll('.pl-quick-price-trigger, .pl-edit-price-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      openQuickPriceModal(el.dataset.id);
+    });
+  });
+
+  container.querySelectorAll('.pl-edit-full-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openEditPriceListModal(btn.dataset.id);
+    });
+  });
+
+  container.querySelectorAll('.pl-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      handleDeletePriceListItem(btn.dataset.id);
+    });
+  });
+}
+
+function exportPriceListCsv() {
+  if (!allPriceListItems.length) {
+    toast('No price list items to export');
+    return;
+  }
+  const headers = ['Brand', 'Model Name', 'Price (Tk)', 'Notes', 'Created Date', 'Last Updated'];
+  const rows = allPriceListItems.map(it => [
+    csvEscape(it.brand || 'No Brand'),
+    csvEscape(it.model || ''),
+    it.price || 0,
+    csvEscape(it.notes || ''),
+    csvEscape(it.createdAt ? it.createdAt.slice(0, 10) : ''),
+    csvEscape(it.updatedAt ? it.updatedAt.slice(0, 10) : '')
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  downloadSingleCsv(csvContent, `PMC_Price_List_${todayISO}.csv`);
+  toast(`✓ Exported ${allPriceListItems.length} price list items to CSV`);
 }
 
 /* ============================================================
@@ -12225,6 +13264,8 @@ function generateCompleteSystemBackupPayload() {
       recordCounts: {
         sales: allSales.length,
         products: allProducts.length,
+        price_list: allPriceListItems.length,
+        price_list_brands: allPriceListBrands.length,
         pm_brings: allPmBrings.length,
         invoices: allInvoices.length,
         purchases: allPurchases.length,
@@ -12238,6 +13279,8 @@ function generateCompleteSystemBackupPayload() {
     data: {
       sales: allSales,
       products: allProducts,
+      price_list: allPriceListItems,
+      price_list_brands: allPriceListBrands,
       pm_brings: allPmBrings,
       invoices: allInvoices,
       purchases: allPurchases,
@@ -12306,6 +13349,13 @@ function downloadAllCsvBackup() {
         const expCsv = generateExpensesCsvContent(allExpenses);
         downloadSingleCsv(expCsv, `pmc_expenses_${todayISO}.csv`);
       }, 600);
+    }
+
+    // 5. Price List CSV
+    if (allPriceListItems.length) {
+      setTimeout(() => {
+        exportPriceListCsv();
+      }, 800);
     }
 
     toast('CSV archives downloaded');
@@ -12396,6 +13446,8 @@ function handleBackupFile(file) {
         data: {
           sales: Array.isArray(data.sales) ? data.sales : [],
           products: Array.isArray(data.products) ? data.products : [],
+          price_list: Array.isArray(data.price_list) ? data.price_list : (Array.isArray(data.priceList) ? data.priceList : []),
+          price_list_brands: Array.isArray(data.price_list_brands) ? data.price_list_brands : (Array.isArray(data.priceListBrands) ? data.priceListBrands : []),
           pm_brings: Array.isArray(data.pm_brings) ? data.pm_brings : (Array.isArray(data.pmBrings) ? data.pmBrings : []),
           invoices: Array.isArray(data.invoices) ? data.invoices : [],
           purchases: Array.isArray(data.purchases) ? data.purchases : [],
@@ -12415,6 +13467,7 @@ function handleBackupFile(file) {
         statsContainer.innerHTML = `
           <span class="backup-preview-badge"><b>${d.sales.length}</b> Sales</span>
           <span class="backup-preview-badge"><b>${d.products.length}</b> Products</span>
+          <span class="backup-preview-badge"><b>${d.price_list.length}</b> Price List</span>
           <span class="backup-preview-badge"><b>${d.pm_brings.length}</b> PM Brings</span>
           <span class="backup-preview-badge"><b>${d.invoices.length}</b> Invoices</span>
           <span class="backup-preview-badge"><b>${d.purchases.length}</b> Purchases</span>
@@ -12467,6 +13520,8 @@ async function executeDatabaseRestore() {
     if (mode === 'replace') {
       allSales = [...data.sales];
       allProducts = [...data.products];
+      allPriceListItems = [...data.price_list];
+      if (data.price_list_brands && data.price_list_brands.length) allPriceListBrands = [...data.price_list_brands];
       allPmBrings = [...data.pm_brings];
       allInvoices = [...data.invoices];
       allPurchases = [...data.purchases];
@@ -12491,6 +13546,10 @@ async function executeDatabaseRestore() {
 
       allSales = mergeByField(allSales, data.sales, 'date');
       allProducts = mergeByField(allProducts, data.products, 'id');
+      allPriceListItems = mergeByField(allPriceListItems, data.price_list, 'id');
+      if (data.price_list_brands && data.price_list_brands.length) {
+        allPriceListBrands = Array.from(new Set([...allPriceListBrands, ...data.price_list_brands]));
+      }
       allPmBrings = mergeByField(allPmBrings, data.pm_brings, 'id');
       allInvoices = mergeByField(allInvoices, data.invoices, 'id');
       allPurchases = mergeByField(allPurchases, data.purchases, 'id');
@@ -12512,6 +13571,8 @@ async function executeDatabaseRestore() {
     renderDashboard();
     renderHistory();
     renderProductList();
+    populatePriceListBrandDropdowns();
+    renderPriceListView();
     renderPmBringsList();
     renderInvoiceList();
     renderPurchasesTopStats();
@@ -12556,12 +13617,14 @@ async function syncAllCollectionsToFirestore() {
     await Promise.all([
       syncCollection('sales', allSales),
       syncCollection('products', allProducts),
+      syncCollection('price_list', allPriceListItems),
       syncCollection('pm_brings', allPmBrings),
       syncCollection('invoices', allInvoices),
       syncCollection('purchases', allPurchases),
       syncCollection('supplier_shops', allSupplierShops),
       syncCollection('purchase_payments', allPurchasePayments),
-      syncCollection('expenses', allExpenses)
+      syncCollection('expenses', allExpenses),
+      savePriceListBrands()
     ]);
   } catch (e) {
     console.warn('Firestore bulk sync notice:', e);
@@ -12578,6 +13641,7 @@ async function forceCloudSync() {
         loadSales(),
         loadShops(),
         loadProducts(),
+        loadPriceList(),
         loadPmBrings(),
         loadInvoices(),
         loadAuditLog(),
@@ -12592,6 +13656,8 @@ async function forceCloudSync() {
       renderDashboard();
       renderHistory();
       renderProductList();
+      populatePriceListBrandDropdowns();
+      renderPriceListView();
       renderPmBringsList();
       renderInvoiceList();
       renderPurchasesTopStats();
@@ -13589,6 +14655,69 @@ function setupEventListeners() {
     if ($('#expSearch')) $('#expSearch').value = '';
     renderExpensesView();
   });
+
+  // Price List Form & Toolbar Listeners
+  $('#priceListEntryForm')?.addEventListener('submit', handleSavePriceListEntry);
+  $('#plQuickAddBrandBtn')?.addEventListener('click', async () => {
+    const brandName = await appPrompt({
+      title: 'Add New Brand',
+      message: 'Enter brand name to add to catalog (e.g. Sony, Anker, Nothing, JBL):',
+      placeholder: 'Brand name...',
+      confirmText: 'Add Brand'
+    });
+    if (brandName) {
+      await handleAddCustomBrand(brandName, true);
+    }
+  });
+
+  $('#plManageBrandsBtn')?.addEventListener('click', openManageBrandsModal);
+  $('#closeManageBrandsModalBtn')?.addEventListener('click', closeManageBrandsModal);
+  $('#closeManageBrandsFooterBtn')?.addEventListener('click', closeManageBrandsModal);
+  $('#manageBrandsModalBackdrop')?.addEventListener('click', (e) => {
+    if (e.target.id === 'manageBrandsModalBackdrop') closeManageBrandsModal();
+  });
+  $('#addNewBrandForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = $('#newBrandInput');
+    const val = input ? input.value : '';
+    if (val) {
+      await handleAddCustomBrand(val, false);
+      renderManageBrandsList();
+      if (input) input.value = '';
+    }
+  });
+
+  $('#plExportCsvBtn')?.addEventListener('click', exportPriceListCsv);
+
+  $('#plFilterBrandSelect')?.addEventListener('change', (e) => {
+    activePriceListBrandFilter = e.target.value;
+    renderPriceListView();
+  });
+  $('#plSortOption')?.addEventListener('change', renderPriceListView);
+  $('#plSearchInput')?.addEventListener('input', renderPriceListView);
+  $('#plResetFiltersBtn')?.addEventListener('click', () => {
+    activePriceListBrandFilter = 'all';
+    if ($('#plFilterBrandSelect')) $('#plFilterBrandSelect').value = 'all';
+    if ($('#plSortOption')) $('#plSortOption').value = 'price_desc';
+    if ($('#plSearchInput')) $('#plSearchInput').value = '';
+    renderPriceListView();
+  });
+
+  // Quick Price Modal Listeners
+  $('#quickPriceForm')?.addEventListener('submit', handleSaveQuickPrice);
+  $('#closeQuickPriceModalBtn')?.addEventListener('click', closeQuickPriceModal);
+  $('#cancelQuickPriceBtn')?.addEventListener('click', closeQuickPriceModal);
+  $('#quickPriceModalBackdrop')?.addEventListener('click', (e) => {
+    if (e.target.id === 'quickPriceModalBackdrop') closeQuickPriceModal();
+  });
+
+  // Edit Product Modal Listeners
+  $('#editPriceListForm')?.addEventListener('submit', handleSaveEditPriceList);
+  $('#closeEditPriceListModalBtn')?.addEventListener('click', closeEditPriceListModal);
+  $('#cancelEditPriceListBtn')?.addEventListener('click', closeEditPriceListModal);
+  $('#editPriceListModalBackdrop')?.addEventListener('click', (e) => {
+    if (e.target.id === 'editPriceListModalBackdrop') closeEditPriceListModal();
+  });
 }
 
 /* ============================================================
@@ -13618,6 +14747,7 @@ async function init() {
   populateHistoryYearOptions();
   populateExportYearOptions();
   populateTrackerFilterOptions();
+  populatePriceListBrandDropdowns();
   populatePmBringsFilterOptions();
   populateInvoiceFilterOptions();
   populatePurchasesFilterOptions();
@@ -13630,6 +14760,7 @@ async function init() {
   renderTrendChart();
   renderHistory();
   renderProductList();
+  renderPriceListView();
   renderPmBringsList();
   renderInvoiceList();
   renderPurchasesTopStats();
@@ -13654,6 +14785,7 @@ async function init() {
         loadSales(),
         loadShops(),
         loadProducts(),
+        loadPriceList(),
         loadPmBrings(),
         loadInvoices(),
         loadAuditLog(),
@@ -13667,6 +14799,7 @@ async function init() {
       populateHistoryYearOptions();
       populateExportYearOptions();
       populateTrackerFilterOptions();
+      populatePriceListBrandDropdowns();
       populatePmBringsFilterOptions();
       populateInvoiceFilterOptions();
       populatePurchasesFilterOptions();
@@ -13679,6 +14812,7 @@ async function init() {
       renderDashboard();
       renderHistory();
       renderProductList();
+      renderPriceListView();
       renderPmBringsList();
       renderInvoiceList();
       renderPurchasesTopStats();
