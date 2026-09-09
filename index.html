@@ -1220,7 +1220,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   transition:border-color .15s, box-shadow .15s, background-color .15s;
 }
 .mini-select:focus{ border-color:var(--accent); box-shadow:var(--input-focus-shadow); background:var(--panel); }
-.toolbar-reset-btn, #trkResetBtn, #purResetFiltersBtn, #expResetBtn, #pmbResetBtn, #invResetBtn, #auditResetFilterBtn, #histResetBtn {
+.toolbar-reset-btn, #trkResetBtn, #purResetFiltersBtn, #expResetBtn, #pmbResetBtn, #invResetBtn, #auditResetFilterBtn, #histResetBtn, #plResetFiltersBtn {
   height: 36px !important;
   padding: 0 14px !important;
   font-size: 12.5px !important;
@@ -1239,7 +1239,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   text-decoration: none;
   transition: all 0.15s ease;
 }
-.toolbar-reset-btn:hover, #trkResetBtn:hover, #purResetFiltersBtn:hover, #expResetBtn:hover, #pmbResetBtn:hover, #invResetBtn:hover, #auditResetFilterBtn:hover, #histResetBtn:hover {
+.toolbar-reset-btn:hover, #trkResetBtn:hover, #purResetFiltersBtn:hover, #expResetBtn:hover, #pmbResetBtn:hover, #invResetBtn:hover, #auditResetFilterBtn:hover, #histResetBtn:hover, #plResetFiltersBtn:hover {
   background: var(--panel-2) !important;
   color: var(--text) !important;
   border-color: var(--accent) !important;
@@ -3549,24 +3549,51 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         </div>
       </div>
 
-      <!-- Toolbar: Sort & Search -->
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-faint); white-space:nowrap;">Sort</span>
-          <select class="pl-select" id="plSortOption" style="min-width:180px; width:auto; height:38px; font-size:13px;">
-            <option value="brand_asc" selected>Brand: A → Z</option>
-            <option value="type_asc">Product Type: A → Z</option>
-            <option value="model_asc">Model Name: A → Z</option>
-            <option value="price_asc">Price: Low → High</option>
-            <option value="price_desc">Price: High → Low</option>
-            <option value="updated_desc">Recently Updated</option>
-          </select>
-          <span id="plProductCountBadge" style="white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; font-size:12px; font-weight:600; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--border); padding:4px 10px; border-radius:8px; height:32px; line-height:1;">0 products</span>
+      <!-- Toolbar: Brand & Type Filters, Sort, Reset, & Search -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <!-- Brand Filter -->
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-faint); white-space:nowrap;">Brand</span>
+            <select class="pl-select" id="plFilterBrand" style="min-width:140px; width:auto; height:36px; font-size:12.5px;">
+              <option value="">All Brands</option>
+            </select>
+          </div>
+
+          <!-- Product Type Filter -->
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-faint); white-space:nowrap;">Type</span>
+            <select class="pl-select" id="plFilterType" style="min-width:140px; width:auto; height:36px; font-size:12.5px;">
+              <option value="">All Types</option>
+            </select>
+          </div>
+
+          <!-- Sort Order -->
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-faint); white-space:nowrap;">Sort</span>
+            <select class="pl-select" id="plSortOption" style="min-width:165px; width:auto; height:36px; font-size:12.5px;">
+              <option value="brand_first" selected>Brand → Type (A → Z)</option>
+              <option value="type_first">Type → Brand (A → Z)</option>
+              <option value="model_asc">Model Name: A → Z</option>
+              <option value="price_asc">Price: Low → High</option>
+              <option value="price_desc">Price: High → Low</option>
+              <option value="updated_desc">Recently Updated</option>
+            </select>
+          </div>
+
+          <!-- Reset Filters Button -->
+          <button type="button" class="btn btn-ghost toolbar-reset-btn" id="plResetFiltersBtn" title="Reset all brand, type, and search filters" style="height:36px; gap:5px; font-size:12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:13px; height:13px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+
+          <!-- Count Badge -->
+          <span id="plProductCountBadge" style="white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; font-size:12px; font-weight:600; color:var(--text-dim); background:var(--panel-2); border:1px solid var(--border); padding:2px 10px; border-radius:8px; height:34px; line-height:1;">0 products</span>
         </div>
 
-        <div class="search-wrap" style="max-width:320px; width:100%; margin:0;">
+        <div class="search-wrap" style="max-width:280px; width:100%; margin:0;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="plSearchInput" placeholder="Search products, brand, model..." style="height:38px; font-size:13px;">
+          <input type="text" id="plSearchInput" placeholder="Search products, brand, model..." style="height:36px; font-size:12.5px;">
         </div>
       </div>
 
@@ -8417,6 +8444,7 @@ async function loadPriceList() {
   await loadPriceListTypes();
   populatePriceListBrandDropdowns();
   populatePriceListTypeDropdowns();
+  populatePriceListFilterDropdowns();
   renderPriceListView();
 }
 
@@ -8600,6 +8628,115 @@ function populatePriceListTypeDropdowns() {
   }
 }
 
+let currentFilteredPriceListItems = [];
+
+function populatePriceListFilterDropdowns() {
+  const brandSel = $('#plFilterBrand');
+  const typeSel = $('#plFilterType');
+  if (!brandSel && !typeSel) return;
+
+  const curBrand = brandSel ? brandSel.value : '';
+  const curType = typeSel ? typeSel.value : '';
+
+  // 1. Calculate entry counts for every brand and type across allPriceListItems
+  const brandMap = new Map(); // lowerKey -> { name, count }
+  const typeMap = new Map();  // lowerKey -> { name, count }
+  let genericBrandCount = 0;
+  let uncategorizedTypeCount = 0;
+
+  allPriceListItems.forEach(it => {
+    const b = (it.brand || '').trim();
+    if (b) {
+      const lk = b.toLowerCase();
+      if (!brandMap.has(lk)) {
+        brandMap.set(lk, { name: b, count: 0 });
+      }
+      brandMap.get(lk).count++;
+    } else {
+      genericBrandCount++;
+    }
+
+    const t = (it.type || '').trim();
+    if (t) {
+      const lk = t.toLowerCase();
+      if (!typeMap.has(lk)) {
+        typeMap.set(lk, { name: t, count: 0 });
+      }
+      typeMap.get(lk).count++;
+    } else {
+      uncategorizedTypeCount++;
+    }
+  });
+
+  // 2. Sort brands by entry count descending, tie-break by name A-Z
+  const brandEntries = Array.from(brandMap.values()).sort((a, b) => {
+    return b.count - a.count || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+  });
+
+  if (genericBrandCount > 0) {
+    brandEntries.push({
+      name: '__generic__',
+      label: 'Generic / No Brand',
+      count: genericBrandCount
+    });
+  }
+
+  // 3. Sort types by entry count descending, tie-break by name A-Z
+  const typeEntries = Array.from(typeMap.values()).sort((a, b) => {
+    return b.count - a.count || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+  });
+
+  if (uncategorizedTypeCount > 0) {
+    typeEntries.push({
+      name: '__uncategorized__',
+      label: 'Uncategorized / No Type',
+      count: uncategorizedTypeCount
+    });
+  }
+
+  // 4. Populate Brand Filter Select
+  if (brandSel) {
+    const totalItems = allPriceListItems.length;
+    let brandHtml = `<option value="">All Brands (${totalItems})</option>`;
+    brandEntries.forEach(be => {
+      const val = be.name;
+      const label = be.label || be.name;
+      brandHtml += `<option value="${escapeHtml(val)}">${escapeHtml(label)} (${be.count})</option>`;
+    });
+    brandSel.innerHTML = brandHtml;
+    if (curBrand && (curBrand === '__generic__' ? genericBrandCount > 0 : brandMap.has(curBrand.toLowerCase()))) {
+      brandSel.value = curBrand;
+    } else {
+      brandSel.value = '';
+    }
+  }
+
+  // 5. Populate Type Filter Select
+  if (typeSel) {
+    const totalItems = allPriceListItems.length;
+    let typeHtml = `<option value="">All Types (${totalItems})</option>`;
+    typeEntries.forEach(te => {
+      const val = te.name;
+      const label = te.label || te.name;
+      typeHtml += `<option value="${escapeHtml(val)}">${escapeHtml(label)} (${te.count})</option>`;
+    });
+    typeSel.innerHTML = typeHtml;
+    if (curType && (curType === '__uncategorized__' ? uncategorizedTypeCount > 0 : typeMap.has(curType.toLowerCase()))) {
+      typeSel.value = curType;
+    } else {
+      typeSel.value = '';
+    }
+  }
+}
+
+function resetPriceListFilters() {
+  if ($('#plFilterBrand')) $('#plFilterBrand').value = '';
+  if ($('#plFilterType')) $('#plFilterType').value = '';
+  if ($('#plSortOption')) $('#plSortOption').value = 'brand_first';
+  if ($('#plSearchInput')) $('#plSearchInput').value = '';
+  renderPriceListView();
+}
+
 async function handleAddCustomBrand(brandName, autoSelectInEntry = true) {
   if (!brandName || !brandName.trim()) return false;
   const trimmed = brandName.trim();
@@ -8683,6 +8820,7 @@ async function handleEditCustomBrand(oldBrandName) {
   }
 
   populatePriceListBrandDropdowns();
+  populatePriceListFilterDropdowns();
   renderManageBrandsList();
   renderPriceListView();
 
@@ -8735,6 +8873,7 @@ async function handleDeleteCustomBrand(brandName) {
   }
 
   populatePriceListBrandDropdowns();
+  populatePriceListFilterDropdowns();
   renderManageBrandsList();
   renderPriceListView();
 
@@ -8830,6 +8969,7 @@ async function handleEditCustomType(oldTypeName) {
   }
 
   populatePriceListTypeDropdowns();
+  populatePriceListFilterDropdowns();
   renderManageTypesList();
   renderPriceListView();
 
@@ -8882,6 +9022,7 @@ async function handleDeleteCustomType(typeName) {
   }
 
   populatePriceListTypeDropdowns();
+  populatePriceListFilterDropdowns();
   renderManageTypesList();
   renderPriceListView();
 
@@ -9107,6 +9248,7 @@ async function handleSavePriceListEntry(e) {
 
     populatePriceListBrandDropdowns();
     populatePriceListTypeDropdowns();
+    populatePriceListFilterDropdowns();
     renderPriceListView();
   } catch(err) {
     console.error('Error saving price list item:', err);
@@ -9297,6 +9439,7 @@ async function handleSaveEditPriceList(e) {
     closeEditPriceListModal();
     populatePriceListBrandDropdowns();
     populatePriceListTypeDropdowns();
+    populatePriceListFilterDropdowns();
     renderPriceListView();
     toast(`✓ Updated "${model}"`);
   } catch(err) {
@@ -9338,6 +9481,8 @@ async function handleDeletePriceListItem(id) {
     });
 
     populatePriceListBrandDropdowns();
+    populatePriceListTypeDropdowns();
+    populatePriceListFilterDropdowns();
     renderPriceListView();
     toast(`Item "${item.model}" deleted`);
   } catch(err) {
@@ -9350,11 +9495,32 @@ function renderPriceListView() {
   const container = $('#priceListTableContainer');
   if (!container) return;
 
+  const selectedBrand = ($('#plFilterBrand')?.value || '').trim();
+  const selectedType = ($('#plFilterType')?.value || '').trim();
   const searchQ = ($('#plSearchInput')?.value || '').trim().toLowerCase();
-  const sortMode = $('#plSortOption')?.value || 'brand_asc';
+  const sortMode = $('#plSortOption')?.value || 'brand_first';
 
-  // 1. Filter by search query
+  // 1. Filter items by selected brand, type, and search query
   let filtered = allPriceListItems.filter(it => {
+    // Brand filter
+    if (selectedBrand) {
+      if (selectedBrand === '__generic__') {
+        if (it.brand && it.brand.trim()) return false;
+      } else {
+        if ((it.brand || '').trim().toLowerCase() !== selectedBrand.toLowerCase()) return false;
+      }
+    }
+
+    // Type filter
+    if (selectedType) {
+      if (selectedType === '__uncategorized__') {
+        if (it.type && it.type.trim()) return false;
+      } else {
+        if ((it.type || '').trim().toLowerCase() !== selectedType.toLowerCase()) return false;
+      }
+    }
+
+    // Search query filter
     if (searchQ) {
       const matchModel = (it.model || '').toLowerCase().includes(searchQ);
       const matchBrand = (it.brand || '').toLowerCase().includes(searchQ);
@@ -9366,53 +9532,114 @@ function renderPriceListView() {
     return true;
   });
 
-  // 2. Sort
+  // 2. Sort items
   filtered.sort((a, b) => {
-    if (sortMode === 'brand_asc') {
-      const brandA = (a.brand || '').trim();
-      const brandB = (b.brand || '').trim();
+    const brandA = (a.brand || '').trim();
+    const brandB = (b.brand || '').trim();
+    const typeA = (a.type || '').trim();
+    const typeB = (b.type || '').trim();
+    const modelA = (a.model || '').trim();
+    const modelB = (b.model || '').trim();
+
+    if (sortMode === 'brand_first' || sortMode === 'brand_asc') {
+      // 1. Brand A->Z (Generic at end)
       if (!brandA && brandB) return 1;
       if (brandA && !brandB) return -1;
-      return brandA.localeCompare(brandB) || (a.model || '').localeCompare(b.model || '');
-    } else if (sortMode === 'type_asc') {
-      const typeA = (a.type || '').trim();
-      const typeB = (b.type || '').trim();
+      const bComp = brandA.localeCompare(brandB, undefined, { sensitivity: 'base' });
+      if (bComp !== 0) return bComp;
+
+      // 2. Type A->Z (Uncategorized at end)
       if (!typeA && typeB) return 1;
       if (typeA && !typeB) return -1;
-      return typeA.localeCompare(typeB) || (a.model || '').localeCompare(b.model || '');
+      const tComp = typeA.localeCompare(typeB, undefined, { sensitivity: 'base' });
+      if (tComp !== 0) return tComp;
+
+      // 3. Model A->Z
+      return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
+
+    } else if (sortMode === 'type_first' || sortMode === 'type_asc') {
+      // 1. Type A->Z (Uncategorized at end)
+      if (!typeA && typeB) return 1;
+      if (typeA && !typeB) return -1;
+      const tComp = typeA.localeCompare(typeB, undefined, { sensitivity: 'base' });
+      if (tComp !== 0) return tComp;
+
+      // 2. Brand A->Z (Generic at end)
+      if (!brandA && brandB) return 1;
+      if (brandA && !brandB) return -1;
+      const bComp = brandA.localeCompare(brandB, undefined, { sensitivity: 'base' });
+      if (bComp !== 0) return bComp;
+
+      // 3. Model A->Z
+      return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
+
     } else if (sortMode === 'model_asc') {
-      return (a.model || '').localeCompare(b.model || '');
+      return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
     } else if (sortMode === 'price_asc') {
-      return (a.price || 0) - (b.price || 0) || (a.model || '').localeCompare(b.model || '');
+      return (a.price || 0) - (b.price || 0) || modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
     } else if (sortMode === 'price_desc') {
-      return (b.price || 0) - (a.price || 0) || (a.model || '').localeCompare(b.model || '');
+      return (b.price || 0) - (a.price || 0) || modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
     } else if (sortMode === 'updated_desc') {
       return (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '') || (b.price || 0) - (a.price || 0);
     }
     return 0;
   });
 
-  // 3. Update count badge
+  currentFilteredPriceListItems = filtered;
+
+  // 3. Update count badge & reset button styling
+  const hasActiveFilters = Boolean(selectedBrand || selectedType || searchQ);
   const countBadge = $('#plProductCountBadge');
   if (countBadge) {
-    countBadge.textContent = `${filtered.length} product${filtered.length === 1 ? '' : 's'}${searchQ ? ' found' : ''}`;
+    if (hasActiveFilters) {
+      countBadge.textContent = `${filtered.length} of ${allPriceListItems.length} products`;
+      countBadge.style.color = 'var(--accent)';
+      countBadge.style.borderColor = 'var(--accent-dim)';
+      countBadge.style.background = 'var(--accent-soft)';
+    } else {
+      countBadge.textContent = `${allPriceListItems.length} product${allPriceListItems.length === 1 ? '' : 's'}`;
+      countBadge.style.color = 'var(--text-dim)';
+      countBadge.style.borderColor = 'var(--border)';
+      countBadge.style.background = 'var(--panel-2)';
+    }
   }
 
-  // 4. Render Table / List
+  const resetBtn = $('#plResetFiltersBtn');
+  if (resetBtn) {
+    if (hasActiveFilters || (sortMode !== 'brand_first' && sortMode !== 'brand_asc')) {
+      resetBtn.style.color = 'var(--accent)';
+      resetBtn.style.borderColor = 'var(--accent)';
+      resetBtn.style.background = 'var(--accent-soft)';
+    } else {
+      resetBtn.style.color = '';
+      resetBtn.style.borderColor = '';
+      resetBtn.style.background = '';
+    }
+  }
+
+  // 4. Render Table / Empty state
   if (!filtered.length) {
     container.innerHTML = `
       <div style="background:var(--panel); border:1.5px solid var(--border); border-radius:14px; padding:48px 24px; text-align:center; color:var(--text-faint);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:42px; height:42px; margin-bottom:12px; opacity:0.5; color:var(--accent);"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        <div style="font-weight:700; font-size:15px; color:var(--text);">${searchQ ? 'No products match your search' : 'No products listed yet'}</div>
-        <div style="font-size:12.5px; color:var(--text-dim); margin-top:5px;">${searchQ ? 'Try searching for a different brand or model name' : 'Click "Add Product Price" above to add your first product and price.'}</div>
-        ${!searchQ ? `
-          <button type="button" class="btn btn-primary btn-sm" id="plEmptyAddBtn" style="margin-top:16px; display:inline-flex; align-items:center; gap:6px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path d="M12 5v14M5 12h14"/></svg>
-            Add Product Price
-          </button>
-        ` : ''}
+        <div style="font-weight:700; font-size:15px; color:var(--text);">${hasActiveFilters ? 'No products match your selected filters' : 'No products listed yet'}</div>
+        <div style="font-size:12.5px; color:var(--text-dim); margin-top:5px;">${hasActiveFilters ? 'Try adjusting or clearing your brand, product type, or search filters.' : 'Click "Add Product Price" above to add your first product and price.'}</div>
+        <div style="margin-top:16px; display:inline-flex; gap:8px;">
+          ${hasActiveFilters ? `
+            <button type="button" class="btn btn-primary btn-sm" id="plEmptyResetBtn" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              Reset Filters
+            </button>
+          ` : `
+            <button type="button" class="btn btn-primary btn-sm" id="plEmptyAddBtn" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:14px; height:14px;"><path d="M12 5v14M5 12h14"/></svg>
+              Add Product Price
+            </button>
+          `}
+        </div>
       </div>
     `;
+    $('#plEmptyResetBtn')?.addEventListener('click', resetPriceListFilters);
     $('#plEmptyAddBtn')?.addEventListener('click', openAddPriceModal);
     return;
   }
@@ -9506,8 +9733,12 @@ function exportPriceListCsv() {
     toast('No price list items to export');
     return;
   }
+  const itemsToExport = (Array.isArray(currentFilteredPriceListItems) && currentFilteredPriceListItems.length)
+    ? currentFilteredPriceListItems
+    : allPriceListItems;
+
   const headers = ['Brand', 'Product Type', 'Model Name', 'Price (Tk)', 'Notes', 'Created Date', 'Last Updated'];
-  const rows = allPriceListItems.map(it => [
+  const rows = itemsToExport.map(it => [
     csvEscape(it.brand || 'No Brand'),
     csvEscape(it.type || 'Uncategorized'),
     csvEscape(it.model || ''),
@@ -9519,7 +9750,7 @@ function exportPriceListCsv() {
 
   const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
   downloadSingleCsv(csvContent, `PMC_Price_List_${todayISO}.csv`);
-  toast(`✓ Exported ${allPriceListItems.length} price list items to CSV`);
+  toast(`✓ Exported ${itemsToExport.length} price list items to CSV`);
 }
 
 /* ============================================================
@@ -15597,8 +15828,11 @@ function setupEventListeners() {
 
   $('#plExportCsvBtn')?.addEventListener('click', exportPriceListCsv);
 
+  $('#plFilterBrand')?.addEventListener('change', renderPriceListView);
+  $('#plFilterType')?.addEventListener('change', renderPriceListView);
   $('#plSortOption')?.addEventListener('change', renderPriceListView);
   $('#plSearchInput')?.addEventListener('input', renderPriceListView);
+  $('#plResetFiltersBtn')?.addEventListener('click', resetPriceListFilters);
 
   // Add Product Price Modal Listeners
   $('#openAddPriceModalBtn')?.addEventListener('click', openAddPriceModal);
