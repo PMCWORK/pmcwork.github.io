@@ -4973,9 +4973,9 @@ tbody tr:hover{ background: var(--panel-2) !important; }
               <circle cx="12" cy="15" r="1.5" fill="currentColor"></circle>
             </svg>
           </div>
-          <div>
+          <div style="display: flex; align-items: center; gap: 9px; flex-wrap: wrap;">
             <h2 style="margin: 0; font-size: 16.5px; font-weight: 800; font-family: 'Space Grotesk', sans-serif;">Missing Sales Data</h2>
-            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Daily ledger check · Thursday off-days excluded</div>
+            <span id="missingSalesCountBadge" style="font-size: 11.5px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: #d97706; padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">1 day</span>
           </div>
         </div>
         <button type="button" class="modal-close-btn" id="closeMissingSalesModalBtn" title="Close">✕</button>
@@ -12450,14 +12450,14 @@ function checkMonthEndPrompt(dateStr) {
 let cachedMissingSalesDays = [];
 let hasMissingSalesPromptShownThisSession = false;
 
-function getMissingSalesDays(lookbackDays = 14) {
+function getMissingSalesDays(lookbackDays = 30) {
   if (!allSales || !Array.isArray(allSales)) return [];
   
   const now = dhakaNow();
   const missing = [];
   const salesDatesSet = new Set(allSales.map(s => s.date).filter(Boolean));
   
-  // Scan backwards starting from yesterday (1 day ago)
+  // Scan backwards starting from yesterday (1 day ago) up to lookbackDays
   for (let i = 1; i <= lookbackDays; i++) {
     const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i, 12, 0, 0);
     const dayOfWeek = dObj.getDay(); // 0: Sun, 1: Mon, 2: Tue, 3: Wed, 4: Thu, 5: Fri, 6: Sat
@@ -12488,7 +12488,7 @@ function getMissingSalesDays(lookbackDays = 14) {
 }
 
 function updateMissingSalesUI() {
-  cachedMissingSalesDays = getMissingSalesDays(14);
+  cachedMissingSalesDays = getMissingSalesDays(30);
   const banners = document.querySelectorAll('.missing-sales-banner');
   const bannerTexts = document.querySelectorAll('.missing-sales-banner-text');
   
@@ -12500,7 +12500,9 @@ function updateMissingSalesUI() {
         const item = cachedMissingSalesDays[0];
         bt.innerHTML = `Missing sales entry for <b>${item.dayNameEn} (${item.formattedLabel})</b>.`;
       } else {
-        bt.innerHTML = `<b>${cachedMissingSalesDays.length} missing sales days</b> found (excluding Thursdays).`;
+        const dayNames = cachedMissingSalesDays.slice(0, 3).map(d => d.dayNameEn).join(', ');
+        const extra = cachedMissingSalesDays.length > 3 ? ` +${cachedMissingSalesDays.length - 3} more` : '';
+        bt.innerHTML = `<b>${cachedMissingSalesDays.length} missing sales days</b> found: <b>${dayNames}${extra}</b>.`;
       }
     });
   } else {
@@ -12538,29 +12540,39 @@ function openMissingSalesModal() {
   hasMissingSalesPromptShownThisSession = true;
   const body = $('#missingSalesModalBody');
   const primaryBtn = $('#primaryEnterMissingSaleBtn');
+  const countBadge = $('#missingSalesCountBadge');
+
+  if (countBadge) {
+    const len = cachedMissingSalesDays.length;
+    countBadge.textContent = `${len} day${len === 1 ? '' : 's'} missing`;
+  }
   
   if (body) {
     let html = `
-      <div style="margin-bottom: 16px; font-size: 13.5px; color: var(--text-dim); line-height: 1.5;">
-        ${cachedMissingSalesDays.length === 1 
-          ? `Sales figures have not been recorded for <b>${cachedMissingSalesDays[0].dayNameEn}, ${cachedMissingSalesDays[0].formattedLabel}</b>. Thursday off-days are excluded.` 
-          : `The following <b>${cachedMissingSalesDays.length} days</b> are missing sales data in the ledger (Thursday off-days excluded):`}
-      </div>
-      
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; max-height: 280px; overflow-y: auto; padding-right: 2px;">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 2px;">
     `;
     
     cachedMissingSalesDays.forEach((item, idx) => {
       const isLatest = idx === 0;
+      let relativeBadge = '';
+      if (item.daysAgo === 1) {
+        relativeBadge = `<span style="font-size: 10.5px; font-weight: 700; color: var(--accent); background: rgba(47, 143, 224, 0.15); padding: 2px 7px; border-radius: 4px;">Yesterday</span>`;
+      } else if (item.daysAgo === 2) {
+        relativeBadge = `<span style="font-size: 10.5px; font-weight: 600; color: var(--text-dim); background: var(--panel); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border);">2 days ago</span>`;
+      } else {
+        relativeBadge = `<span style="font-size: 10.5px; font-weight: 600; color: var(--text-dim); background: var(--panel); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border);">${item.daysAgo} days ago</span>`;
+      }
+
       html += `
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; background: ${isLatest ? 'rgba(47, 143, 224, 0.08)' : 'var(--surface-sunken)'}; border: 1px solid ${isLatest ? 'rgba(47, 143, 224, 0.25)' : 'var(--border)'};">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-radius: 10px; background: ${isLatest ? 'rgba(47, 143, 224, 0.08)' : 'var(--surface-sunken)'}; border: 1px solid ${isLatest ? 'rgba(47, 143, 224, 0.25)' : 'var(--border)'};">
           <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span style="font-size: 13.5px; font-weight: 700; color: var(--text);">${item.dayNameEn}</span>
-            <span style="font-size: 12.5px; color: var(--text-dim); font-family: var(--font-numeric);">${item.formattedLabel}</span>
+            <span style="font-size: 14px; font-weight: 700; color: var(--text);">${item.dayNameEn}</span>
+            <span style="font-size: 12.5px; color: var(--text-dim); font-family: var(--font-numeric); font-weight: 600;">${item.formattedLabel}</span>
             ${item.dayNameBn ? `<span style="font-size: 11.5px; color: var(--text-dim); background: var(--panel); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);">${item.dayNameBn}</span>` : ''}
-            ${item.daysAgo === 1 ? `<span style="font-size: 10.5px; font-weight: 700; color: var(--accent); background: rgba(47, 143, 224, 0.15); padding: 2px 7px; border-radius: 4px;">Yesterday</span>` : ''}
+            ${relativeBadge}
           </div>
-          <button type="button" class="btn btn-sm btn-missing-sale-pick" data-iso="${item.iso}" style="padding: 5px 12px; font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; flex-shrink: 0;">
+          <button type="button" class="btn btn-sm btn-missing-sale-pick" data-iso="${item.iso}" style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px; height:12px;"><path d="M12 5v14M5 12h14"/></svg>
             Enter Sale
           </button>
         </div>
@@ -12583,7 +12595,7 @@ function openMissingSalesModal() {
     const targetItem = cachedMissingSalesDays[0];
     primaryBtn.innerHTML = `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:15px;height:15px;margin-right:4px;"><path d="M12 5v14M5 12h14"/></svg>
-      ${cachedMissingSalesDays.length === 1 ? `Enter Sale for ${targetItem.dayNameEn}` : `Enter Latest (${targetItem.formattedLabel})`}
+      ${cachedMissingSalesDays.length === 1 ? `Enter Sale for ${targetItem.dayNameEn}` : `Enter Sale for ${targetItem.dayNameEn} (${targetItem.formattedLabel})`}
     `;
   }
   
@@ -14112,7 +14124,6 @@ function setupEventListeners() {
       const data = { date: dateVal, sale, profit, cost, profitPct: pct, enteredBy: 'local-test' };
       const ref = await db.collection('sales').add({ ...data, createdAt: serverTs });
       await logAudit('sale', ref.id, 'create', null, data);
-      toast('Sale entry saved');
       $('#saleForm')?.reset();
       if ($('#fDate')) $('#fDate').value = todayISO;
       if ($('#topDateChip')) $('#topDateChip').innerHTML = buildDateChipHTML(todayISO);
@@ -14124,6 +14135,14 @@ function setupEventListeners() {
       renderStatsStrip();
       renderTrendChart();
       updateMissingSalesUI();
+      if (cachedMissingSalesDays.length > 0) {
+        toast(`✓ Sale saved! ${cachedMissingSalesDays.length} missing sales day${cachedMissingSalesDays.length > 1 ? 's' : ''} remaining.`);
+        setTimeout(() => {
+          openMissingSalesModal();
+        }, 600);
+      } else {
+        toast('✓ Sale entry saved. All sales records are up to date!');
+      }
       checkMonthEndPrompt(dateVal);
     } catch(err) {
       console.error(err);
