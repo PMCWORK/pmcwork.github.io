@@ -2134,8 +2134,8 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 }
 .pmc-inv-header{ text-align:center; margin-bottom:12px; }
 .pmc-inv-title{ font-size:26px; font-weight:bold; letter-spacing:0.5px; margin:0 0 4px; font-family:'Times New Roman', Times, serif; }
-.pmc-inv-addr{ font-size:13px; margin:2px 0; }
-.pmc-inv-contact{ font-size:12.5px; margin:2px 0; }
+.pmc-inv-addr{ font-size:15px; margin:2px 0; }
+.pmc-inv-contact{ font-size:14.5px; margin:2px 0; }
 .pmc-inv-banner{
   background:#e5e7eb !important;
   -webkit-print-color-adjust: exact !important;
@@ -2144,7 +2144,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   text-align:center; font-weight:bold; font-size:15px; padding:4px 0; margin:10px 0 12px;
 }
 .pmc-inv-meta-table{ width:100%; margin-bottom:10px; border-collapse:collapse; }
-.pmc-inv-meta-table td{ padding:3px 6px; vertical-align:top; font-size:13.5px; }
+.pmc-inv-meta-table td{ padding:3px 6px; vertical-align:top; font-size:15.5px; }
 .pmc-inv-meta-table td.label{ font-weight:bold; width:110px; white-space:nowrap; }
 
 /* 1:1 Bordered Product Table with thin crisp dividers */
@@ -2160,7 +2160,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   font-size:16.5px; font-weight:bold; line-height:1.25;
 }
 .pmc-inv-warranty-text{
-  font-size:11.5px; margin-top:2px; font-weight:normal;
+  font-size:13.5px; margin-top:3px; font-weight:normal;
 }
 .pmc-inv-items-table .row-blank td{ height:230px; }
 
@@ -2175,9 +2175,9 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 .pmc-inv-sig-line{ border-top:1px solid #000; padding-top:5px; font-weight:bold; font-size:13px; }
 
 .pmc-inv-terms{
-  margin-top:18px; font-size:11px; font-weight:bold; line-height:1.4;
+  margin-top:18px; font-size:13px; font-weight:bold; line-height:1.4;
 }
-.pmc-inv-footer-time{ display:flex; justify-content:space-between; margin-top:12px; font-size:11.5px; color:#000; }
+.pmc-inv-footer-time{ display:flex; justify-content:space-between; margin-top:12px; font-size:13.5px; color:#000; }
 
 /* Print rules */
 @media print{
@@ -2239,10 +2239,10 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     font-family: 'Times New Roman', Times, serif !important;
   }
   .pmc-inv-addr{
-    font-size: 13px !important;
+    font-size: 15px !important;
   }
   .pmc-inv-contact{
-    font-size: 12.5px !important;
+    font-size: 14.5px !important;
   }
   .pmc-inv-banner{
     font-size: 15px !important;
@@ -2251,7 +2251,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     print-color-adjust: exact !important;
   }
   .pmc-inv-meta-table td{
-    font-size: 13.5px !important;
+    font-size: 15.5px !important;
     padding: 3px 6px !important;
   }
   .pmc-inv-items-table{
@@ -2275,7 +2275,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     line-height: 1.25 !important;
   }
   .pmc-inv-warranty-text{
-    font-size: 11.5px !important;
+    font-size: 13.5px !important;
   }
   .pmc-inv-items-table .row-blank td{
     height: 230px !important;
@@ -2301,11 +2301,11 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     border-top: 1px solid #000000 !important;
   }
   .pmc-inv-terms{
-    font-size: 11px !important;
+    font-size: 13px !important;
     font-weight: bold !important;
   }
   .pmc-inv-footer-time{
-    font-size: 11.5px !important;
+    font-size: 13.5px !important;
   }
 }
 
@@ -10793,7 +10793,7 @@ function renderInvoicePaper(inv) {
         warrantyStr = `${warrantyStr} ${formattedNote}`;
       }
     }
-    const warrantyText = warrantyStr ? `<div class="pmc-inv-warranty-text" style="font-size:11.5px; margin-top:2px; font-weight:normal;">Warrenty : ${escapeHtml(warrantyStr)}</div>` : '';
+    const warrantyText = warrantyStr ? `<div class="pmc-inv-warranty-text" style="font-size:13.5px; margin-top:3px; font-weight:normal;">Warrenty : ${escapeHtml(warrantyStr)}</div>` : '';
     const qtyText = `${item.qty || 1} pc`;
     const priceText = Math.round(Number(item.price || 0)).toLocaleString('en-US');
     const totalText = Math.round(Number(item.total || (item.qty * item.price) || 0)).toLocaleString('en-US');
