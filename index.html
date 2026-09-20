@@ -2129,49 +2129,55 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 /* The 1:1 exact invoice paper layout matching original format with larger, proportioned text for crisp A4 print */
 .pmc-invoice-paper{
   background:#ffffff !important; color:#000000 !important;
-  font-family:'Times New Roman', Times, serif; font-size:15.5px; line-height:1.35;
+  font-family:'Times New Roman', Times, serif; font-size:13.5px; line-height:1.35;
   padding:32px 36px 28px; width:100%; box-sizing:border-box;
 }
 .pmc-inv-header{ text-align:center; margin-bottom:12px; }
-.pmc-inv-title{ font-size:32px; font-weight:bold; letter-spacing:0.5px; margin:0 0 4px; font-family:'Times New Roman', Times, serif; }
-.pmc-inv-addr{ font-size:15px; margin:2px 0; }
-.pmc-inv-contact{ font-size:14.5px; margin:2px 0; }
+.pmc-inv-title{ font-size:26px; font-weight:bold; letter-spacing:0.5px; margin:0 0 4px; font-family:'Times New Roman', Times, serif; }
+.pmc-inv-addr{ font-size:13px; margin:2px 0; }
+.pmc-inv-contact{ font-size:12.5px; margin:2px 0; }
 .pmc-inv-banner{
   background:#e5e7eb !important;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
   border-top:1px solid #000; border-bottom:1px solid #000;
-  text-align:center; font-weight:bold; font-size:18px; padding:4px 0; margin:10px 0 12px;
+  text-align:center; font-weight:bold; font-size:15px; padding:4px 0; margin:10px 0 12px;
 }
 .pmc-inv-meta-table{ width:100%; margin-bottom:10px; border-collapse:collapse; }
-.pmc-inv-meta-table td{ padding:3px 6px; vertical-align:top; font-size:15.5px; }
+.pmc-inv-meta-table td{ padding:3px 6px; vertical-align:top; font-size:13.5px; }
 .pmc-inv-meta-table td.label{ font-weight:bold; width:110px; white-space:nowrap; }
 
 /* 1:1 Bordered Product Table with thin crisp dividers */
-.pmc-inv-items-table{ width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:0; }
+.pmc-inv-items-table{ width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:0; table-layout:fixed; }
 .pmc-inv-items-table th{
-  border:1px solid #000; padding:6px 8px; font-size:15.5px; font-weight:bold; text-align:center; background:#fff;
+  border:1px solid #000; padding:6px 8px; font-size:13.5px; font-weight:bold; text-align:center; background:#fff;
 }
 .pmc-inv-items-table td{
   border-left:1px solid #000; border-right:1px solid #000;
-  padding:5px 8px; vertical-align:top; font-size:15.5px;
+  padding:5px 8px; vertical-align:top; font-size:13px;
+}
+.pmc-inv-prod-name{
+  font-size:16.5px; font-weight:bold; line-height:1.25;
+}
+.pmc-inv-warranty-text{
+  font-size:11.5px; margin-top:2px; font-weight:normal;
 }
 .pmc-inv-items-table .row-blank td{ height:230px; }
 
-.pmc-inv-calc-table{ width:100%; border-collapse:collapse; margin-top:2px; font-size:15.5px; }
+.pmc-inv-calc-table{ width:100%; border-collapse:collapse; margin-top:2px; font-size:13.5px; table-layout:fixed; }
 .pmc-inv-calc-table td{ padding:3px 8px; vertical-align:top; }
 .pmc-inv-calc-table .grand-row td{
-  font-weight:bold; font-size:17px; border-top:1px solid #000; border-bottom:1px solid #000; padding:5px 8px;
+  font-weight:bold; font-size:15px; border-top:1px solid #000; border-bottom:1px solid #000; padding:5px 8px;
 }
 
 .pmc-inv-signatures{ display:flex; justify-content:space-between; margin-top:48px; padding:0 10px; }
 .pmc-inv-sig-box{ text-align:center; width:210px; }
-.pmc-inv-sig-line{ border-top:1px solid #000; padding-top:5px; font-weight:bold; font-size:15px; }
+.pmc-inv-sig-line{ border-top:1px solid #000; padding-top:5px; font-weight:bold; font-size:13px; }
 
 .pmc-inv-terms{
-  margin-top:18px; font-size:12.5px; font-weight:bold; line-height:1.4;
+  margin-top:18px; font-size:11px; font-weight:bold; line-height:1.4;
 }
-.pmc-inv-footer-time{ display:flex; justify-content:space-between; margin-top:12px; font-size:13.5px; color:#000; }
+.pmc-inv-footer-time{ display:flex; justify-content:space-between; margin-top:12px; font-size:11.5px; color:#000; }
 
 /* Print rules */
 @media print{
@@ -2223,65 +2229,83 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     max-width: 100% !important;
     box-sizing: border-box !important;
     font-family: 'Times New Roman', Times, serif !important;
-    font-size: 15.5px !important;
+    font-size: 13.5px !important;
     line-height: 1.35 !important;
     color: #000000 !important;
   }
   .pmc-inv-title{
-    font-size: 32px !important;
+    font-size: 26px !important;
     font-weight: bold !important;
     font-family: 'Times New Roman', Times, serif !important;
   }
   .pmc-inv-addr{
-    font-size: 15px !important;
+    font-size: 13px !important;
   }
   .pmc-inv-contact{
-    font-size: 14.5px !important;
+    font-size: 12.5px !important;
   }
   .pmc-inv-banner{
-    font-size: 18px !important;
+    font-size: 15px !important;
     background: #e5e7eb !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
   .pmc-inv-meta-table td{
-    font-size: 15.5px !important;
+    font-size: 13.5px !important;
     padding: 3px 6px !important;
   }
+  .pmc-inv-items-table{
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
   .pmc-inv-items-table th{
-    font-size: 15.5px !important;
-    padding: 6px 8px !important;
+    font-size: 13.5px !important;
+    padding: 5px 8px !important;
     border: 1px solid #000000 !important;
   }
   .pmc-inv-items-table td{
-    font-size: 15.5px !important;
-    padding: 5px 8px !important;
+    font-size: 13px !important;
+    padding: 4px 8px !important;
     border-left: 1px solid #000000 !important;
     border-right: 1px solid #000000 !important;
+  }
+  .pmc-inv-prod-name{
+    font-size: 16.5px !important;
+    font-weight: bold !important;
+    line-height: 1.25 !important;
+  }
+  .pmc-inv-warranty-text{
+    font-size: 11.5px !important;
   }
   .pmc-inv-items-table .row-blank td{
     height: 230px !important;
   }
   .pmc-inv-calc-table{
-    font-size: 15.5px !important;
+    width: 100% !important;
+    font-size: 13.5px !important;
+    table-layout: fixed !important;
+  }
+  .pmc-inv-calc-table td{
+    padding: 3px 8px !important;
   }
   .pmc-inv-calc-table .grand-row td{
-    font-size: 17px !important;
+    font-size: 15px !important;
     font-weight: bold !important;
     border-top: 1px solid #000000 !important;
     border-bottom: 1px solid #000000 !important;
+    padding: 5px 8px !important;
   }
   .pmc-inv-sig-line{
-    font-size: 15px !important;
+    font-size: 13px !important;
     font-weight: bold !important;
     border-top: 1px solid #000000 !important;
   }
   .pmc-inv-terms{
-    font-size: 12.5px !important;
+    font-size: 11px !important;
     font-weight: bold !important;
   }
   .pmc-inv-footer-time{
-    font-size: 13.5px !important;
+    font-size: 11.5px !important;
   }
 }
 
@@ -4008,14 +4032,24 @@ tbody tr:hover{ background: var(--panel-2) !important; }
             </table>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; flex-wrap:wrap; gap:14px;">
             <button type="button" class="btn btn-ghost btn-sm" id="addInvItemRowBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M12 5v14M5 12h14"/></svg>
               Add line item
             </button>
-            <div style="display:flex; align-items:center; gap:16px;">
-              <span style="font-size:14px; color:var(--text-dim); font-weight:600;">Grand Total:</span>
-              <span class="inv-grand-total" id="invFormGrandTotal">৳ 0</span>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <span style="font-size:13.5px; color:var(--text-dim); font-weight:600;">Total Amount:</span>
+                <span id="invFormTotalAmount" style="font-family:var(--font-numeric); font-size:15px; font-weight:700; color:var(--text); min-width:80px; text-align:right;">৳ 0</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <label for="invDiscount" style="font-size:13.5px; color:var(--text-dim); font-weight:600; margin:0;">Discount (৳):</label>
+                <input type="number" id="invDiscount" min="0" step="any" placeholder="0" style="width:110px; height:32px; text-align:right; font-family:var(--font-numeric); font-weight:700; font-size:14px; padding:4px 8px; border:1px solid var(--border); border-radius:6px; background:var(--panel);">
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; border-top:1px solid var(--border-soft); padding-top:6px; margin-top:2px;">
+                <span style="font-size:14.5px; color:var(--text); font-weight:700;">Grand Total:</span>
+                <span class="inv-grand-total" id="invFormGrandTotal" style="min-width:80px; text-align:right;">৳ 0</span>
+              </div>
             </div>
           </div>
 
@@ -7483,6 +7517,7 @@ function renderAuditItemCard(entry) {
       badgeText = 'Invoice Updated';
       const diffs = [];
       if (b.grandTotal !== a.grandTotal) diffs.push(`Amount: <span class="audit-diff-pill">${formatMoney(b.grandTotal||0)} → ${formatMoney(a.grandTotal||0)}</span>`);
+      if (b.discount !== a.discount) diffs.push(`Discount: <span class="audit-diff-pill">${formatMoney(b.discount||0)} → ${formatMoney(a.discount||0)}</span>`);
       if (b.buyerName !== a.buyerName) diffs.push(`Buyer: <span class="audit-diff-pill">${escapeHtml(b.buyerName||'—')} → ${escapeHtml(a.buyerName||'—')}</span>`);
       if (b.soldBy !== a.soldBy) diffs.push(`Sold by: <span class="audit-diff-pill">${escapeHtml(b.soldBy||'—')} → ${escapeHtml(a.soldBy||'—')}</span>`);
       if (b.date !== a.date) diffs.push(`Date: <span class="audit-diff-pill">${formatDateLabel(b.date)} → ${formatDateLabel(a.date)}</span>`);
@@ -10241,8 +10276,9 @@ function burnInvoiceNumber(numStr) {
 function createInvoiceItemRow(item = {}) {
   const rowId = 'invRow_' + (++invItemCounter);
   const desc = item.desc || '';
-  const hasWarranty = !!item.warrantyDays;
+  const hasWarranty = !!(item.warrantyDays || item.warrantyNote);
   const warrantyDays = item.warrantyDays || '365 days';
+  const warrantyNote = item.warrantyNote || '';
   const qty = item.qty !== undefined ? item.qty : 1;
   const price = (item.price !== undefined && item.price !== null && item.price !== '') ? item.price : '';
   const total = (Number(qty || 0) * Number(price || 0)) || 0;
@@ -10266,7 +10302,8 @@ function createInvoiceItemRow(item = {}) {
             <option value="1825 days" ${warrantyDays === '1825 days' ? 'selected' : ''}>5 Years (1825 days)</option>
             <option value="custom" ${!['365 days','730 days','1095 days','1825 days'].includes(warrantyDays) ? 'selected' : ''}>Custom</option>
           </select>
-          <input type="text" class="warranty-custom-input" value="${!['365 days','730 days','1095 days','1825 days'].includes(warrantyDays) ? escapeHtml(warrantyDays) : ''}" style="width:100px; display:${!['365 days','730 days','1095 days','1825 days'].includes(warrantyDays) ? 'inline-block' : 'none'}; padding:4px 8px; font-size:11.5px;">
+          <input type="text" class="warranty-custom-input" value="${!['365 days','730 days','1095 days','1825 days'].includes(warrantyDays) ? escapeHtml(warrantyDays) : ''}" placeholder="e.g. 180 days" style="width:90px; display:${!['365 days','730 days','1095 days','1825 days'].includes(warrantyDays) ? 'inline-block' : 'none'}; padding:4px 8px; font-size:11.5px;">
+          <input type="text" class="warranty-note-input" value="${escapeHtml(warrantyNote)}" placeholder="Custom note (e.g. MyText)" title="Custom text shown as Warrenty : 365 days (MyText)" style="width:140px; padding:4px 8px; font-size:11.5px;">
         </div>
       </div>
     </td>
@@ -10284,6 +10321,7 @@ function createInvoiceItemRow(item = {}) {
   const wBox = tr.querySelector('.warranty-box');
   const wPreset = tr.querySelector('.warranty-preset-select');
   const wCustom = tr.querySelector('.warranty-custom-input');
+  const wNote = tr.querySelector('.warranty-note-input');
 
   btnNo.addEventListener('click', () => {
     btnNo.classList.add('active');
@@ -10295,6 +10333,7 @@ function createInvoiceItemRow(item = {}) {
     btnYes.classList.add('active');
     btnNo.classList.remove('active');
     wBox.style.display = 'inline-flex';
+    if (wNote && !wNote.value) wNote.focus();
   });
 
   wPreset.addEventListener('change', () => {
@@ -10340,14 +10379,19 @@ function updateInvoiceRowNumbers() {
 }
 
 function recalcInvoiceTotals() {
-  let grand = 0;
+  let totalAmount = 0;
   const rows = $$('#invItemsBody .inv-item-row');
   rows.forEach(row => {
     const q = Number(row.querySelector('.item-qty')?.value) || 0;
     const p = Number(row.querySelector('.item-price')?.value) || 0;
-    grand += (q * p);
+    totalAmount += (q * p);
   });
-  if ($('#invFormGrandTotal')) $('#invFormGrandTotal').textContent = formatMoney(grand);
+  const discountVal = $('#invDiscount')?.value;
+  const discount = Number(discountVal) || 0;
+  const grandTotal = Math.max(0, totalAmount - discount);
+
+  if ($('#invFormTotalAmount')) $('#invFormTotalAmount').textContent = formatMoney(totalAmount);
+  if ($('#invFormGrandTotal')) $('#invFormGrandTotal').textContent = formatMoney(grandTotal);
 }
 
 function openInvoiceForm(inv = null, isTemplate = false) {
@@ -10372,6 +10416,7 @@ function openInvoiceForm(inv = null, isTemplate = false) {
     if ($('#invBuyerName')) $('#invBuyerName').value = inv.buyerName || '';
     if ($('#invBuyerPhone')) $('#invBuyerPhone').value = inv.buyerPhone || '';
     if ($('#invBuyerAddress')) $('#invBuyerAddress').value = inv.buyerAddress || '';
+    if ($('#invDiscount')) $('#invDiscount').value = (inv.discount !== undefined && inv.discount !== null && inv.discount !== '') ? inv.discount : '';
   } else if (inv) {
     const d = inv.date || todayISO;
     if ($('#invDate')) $('#invDate').value = d;
@@ -10380,6 +10425,7 @@ function openInvoiceForm(inv = null, isTemplate = false) {
     if ($('#invBuyerName')) $('#invBuyerName').value = inv.buyerName || '';
     if ($('#invBuyerPhone')) $('#invBuyerPhone').value = inv.buyerPhone || '';
     if ($('#invBuyerAddress')) $('#invBuyerAddress').value = inv.buyerAddress || '';
+    if ($('#invDiscount')) $('#invDiscount').value = (inv.discount !== undefined && inv.discount !== null && inv.discount !== '') ? inv.discount : '';
   } else {
     const d = todayISO;
     if ($('#invDate')) $('#invDate').value = d;
@@ -10388,6 +10434,7 @@ function openInvoiceForm(inv = null, isTemplate = false) {
     if ($('#invBuyerName')) $('#invBuyerName').value = '';
     if ($('#invBuyerPhone')) $('#invBuyerPhone').value = '';
     if ($('#invBuyerAddress')) $('#invBuyerAddress').value = '';
+    if ($('#invDiscount')) $('#invDiscount').value = '';
   }
 
   // Populate line items
@@ -10420,13 +10467,14 @@ function getInvoiceFormData() {
   const buyerAddress = $('#invBuyerAddress')?.value.trim() || '';
 
   const items = [];
-  let grandTotal = 0;
+  let totalAmount = 0;
 
   const rows = $$('#invItemsBody .inv-item-row');
   rows.forEach(row => {
     const desc = row.querySelector('.item-desc')?.value.trim() || '';
     const isYes = row.querySelector('.warranty-toggle-btn[data-wval="yes"]')?.classList.contains('active');
     let warrantyDays = '';
+    let warrantyNote = '';
     if (isYes) {
       const preset = row.querySelector('.warranty-preset-select')?.value;
       if (preset === 'custom') {
@@ -10434,14 +10482,18 @@ function getInvoiceFormData() {
       } else {
         warrantyDays = preset || '365 days';
       }
+      warrantyNote = row.querySelector('.warranty-note-input')?.value.trim() || '';
     }
     const qty = Number(row.querySelector('.item-qty')?.value) || 1;
     const price = Number(row.querySelector('.item-price')?.value) || 0;
     const total = qty * price;
-    grandTotal += total;
+    totalAmount += total;
 
-    items.push({ desc, warrantyDays, qty, price, total });
+    items.push({ desc, warrantyDays, warrantyNote, qty, price, total });
   });
+
+  const discount = Number($('#invDiscount')?.value) || 0;
+  const grandTotal = Math.max(0, totalAmount - discount);
 
   return {
     number,
@@ -10451,8 +10503,9 @@ function getInvoiceFormData() {
     buyerPhone,
     buyerAddress,
     items,
-    totalAmount: grandTotal,
-    grandTotal: grandTotal
+    totalAmount,
+    discount,
+    grandTotal
   };
 }
 
@@ -10732,7 +10785,15 @@ function renderInvoicePaper(inv) {
   const items = inv.items || [];
   const itemsRowsHTML = items.map((item, idx) => {
     const desc = (item.desc || '').toUpperCase();
-    const warrantyText = item.warrantyDays ? `<div style="font-size:13.5px; margin-top:3px; font-weight:normal;">Warrenty : ${escapeHtml(item.warrantyDays)}</div>` : '';
+    let warrantyStr = item.warrantyDays || '';
+    if (warrantyStr) {
+      const rawNote = (item.warrantyNote || '').trim();
+      if (rawNote) {
+        const formattedNote = (rawNote.startsWith('(') && rawNote.endsWith(')')) ? rawNote : `(${rawNote})`;
+        warrantyStr = `${warrantyStr} ${formattedNote}`;
+      }
+    }
+    const warrantyText = warrantyStr ? `<div class="pmc-inv-warranty-text" style="font-size:11.5px; margin-top:2px; font-weight:normal;">Warrenty : ${escapeHtml(warrantyStr)}</div>` : '';
     const qtyText = `${item.qty || 1} pc`;
     const priceText = Math.round(Number(item.price || 0)).toLocaleString('en-US');
     const totalText = Math.round(Number(item.total || (item.qty * item.price) || 0)).toLocaleString('en-US');
@@ -10740,8 +10801,8 @@ function renderInvoicePaper(inv) {
     return `
       <tr>
         <td style="text-align:center; width:45px;">${idx + 1}</td>
-        <td style="text-align:left; font-weight:bold;">
-          ${escapeHtml(desc)}
+        <td style="text-align:left;">
+          <div class="pmc-inv-prod-name">${escapeHtml(desc)}</div>
           ${warrantyText}
         </td>
         <td style="text-align:center; width:90px; white-space:nowrap;">${qtyText}</td>
@@ -10750,7 +10811,23 @@ function renderInvoicePaper(inv) {
       </tr>`;
   }).join('');
 
-  const grandNum = Math.round(Number(inv.grandTotal || inv.totalAmount || 0)).toLocaleString('en-US');
+  let calculatedTotal = 0;
+  items.forEach(it => {
+    calculatedTotal += (Number(it.total) || (Number(it.qty || 1) * Number(it.price || 0)));
+  });
+  const totalAmount = (inv.totalAmount !== undefined && inv.totalAmount !== null && inv.totalAmount !== '') ? Number(inv.totalAmount) : calculatedTotal;
+  const discount = Number(inv.discount || 0);
+  const grandTotal = (inv.grandTotal !== undefined && inv.grandTotal !== null && inv.grandTotal !== '') ? Number(inv.grandTotal) : Math.max(0, totalAmount - discount);
+
+  const totalAmountNum = Math.round(totalAmount).toLocaleString('en-US');
+  const discountNum = Math.round(discount).toLocaleString('en-US');
+  const grandTotalNum = Math.round(grandTotal).toLocaleString('en-US');
+
+  const discountRowHTML = discount > 0 ? `
+    <tr>
+      <td colspan="4" style="text-align:right; font-weight:bold; padding:3px 8px;">Discount</td>
+      <td style="text-align:center; width:120px; font-weight:bold; white-space:nowrap; padding:3px 8px;">${discountNum}</td>
+    </tr>` : '';
 
   paper.innerHTML = `
     <!-- HEADER -->
@@ -10785,6 +10862,13 @@ function renderInvoicePaper(inv) {
 
     <!-- 1:1 PRODUCT TABLE -->
     <table class="pmc-inv-items-table">
+      <colgroup>
+        <col style="width:45px;">
+        <col>
+        <col style="width:90px;">
+        <col style="width:120px;">
+        <col style="width:120px;">
+      </colgroup>
       <thead>
         <tr>
           <th style="width:45px; text-align:center;">Sl. No.</th>
@@ -10805,14 +10889,24 @@ function renderInvoicePaper(inv) {
 
     <!-- CALCULATION ROWS -->
     <table class="pmc-inv-calc-table">
-      <tr>
-        <td style="text-align:right; width:75%; font-weight:bold;">Total Amount</td>
-        <td style="text-align:center; width:25%; font-weight:bold;">${grandNum}</td>
-      </tr>
-      <tr class="grand-row">
-        <td style="text-align:right; font-weight:bold;">Grand Total</td>
-        <td style="text-align:center; font-weight:bold;">${grandNum}</td>
-      </tr>
+      <colgroup>
+        <col style="width:45px;">
+        <col>
+        <col style="width:90px;">
+        <col style="width:120px;">
+        <col style="width:120px;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <td colspan="4" style="text-align:right; font-weight:bold; padding:3px 8px;">Total Amount</td>
+          <td style="text-align:center; width:120px; font-weight:bold; white-space:nowrap; padding:3px 8px;">${totalAmountNum}</td>
+        </tr>
+        ${discountRowHTML}
+        <tr class="grand-row">
+          <td colspan="4" style="text-align:right; font-weight:bold; padding:5px 8px;">Grand Total</td>
+          <td style="text-align:center; width:120px; font-weight:bold; white-space:nowrap; padding:5px 8px;">${grandTotalNum}</td>
+        </tr>
+      </tbody>
     </table>
 
     <!-- SIGNATURES -->
@@ -15380,6 +15474,8 @@ function setupEventListeners() {
       recalcInvoiceTotals();
     }
   });
+
+  $('#invDiscount')?.addEventListener('input', recalcInvoiceTotals);
 
   $('#invDate')?.addEventListener('change', (e) => {
     if (!$('#invDocId')?.value) {
