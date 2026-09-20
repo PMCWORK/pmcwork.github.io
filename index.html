@@ -2132,6 +2132,12 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   font-family:'Times New Roman', Times, serif; font-size:13.5px; line-height:1.35;
   padding:32px 36px 28px; width:100%; box-sizing:border-box;
 }
+.pmc-inv-paper-top{
+  display:flex; flex-direction:column;
+}
+.pmc-inv-paper-bottom{
+  display:flex; flex-direction:column;
+}
 .pmc-inv-header{ text-align:center; margin-bottom:12px; }
 .pmc-inv-title{ font-size:26px; font-weight:bold; letter-spacing:0.5px; margin:0 0 4px; font-family:'Times New Roman', Times, serif; }
 .pmc-inv-addr{ font-size:15px; margin:2px 0; }
@@ -2150,18 +2156,20 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 /* 1:1 Bordered Product Table with thin crisp dividers */
 .pmc-inv-items-table{ width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:0; table-layout:fixed; }
 .pmc-inv-items-table th{
-  border:1px solid #000; padding:6px 8px; font-size:13.5px; font-weight:bold; text-align:center; background:#fff;
+  border:1px solid #000; padding:6px 8px; font-size:13.5px; font-weight:bold; text-align:center; background:#fff; white-space:nowrap;
 }
 .pmc-inv-items-table td{
   border-left:1px solid #000; border-right:1px solid #000;
   padding:5px 8px; vertical-align:top; font-size:13px;
+  white-space:normal;
 }
 .pmc-inv-prod-name{
   font-size:16.5px; font-weight:bold; line-height:1.25;
-  word-break:normal; overflow-wrap:break-word;
+  white-space:normal !important; word-break:normal !important; overflow-wrap:break-word !important;
 }
 .pmc-inv-warranty-text{
   font-size:13.5px; margin-top:3px; font-weight:normal;
+  white-space:normal !important;
 }
 .pmc-inv-items-table .row-blank td{ height:230px; }
 
@@ -2184,33 +2192,35 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 @media print{
   @page {
     size: A4 portrait;
-    margin: 6mm 8mm;
+    margin: 8mm 10mm;
   }
   html, body {
     background: #ffffff !important;
     color: #000000 !important;
     width: 100% !important;
-    height: auto !important;
+    height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  body * {
-    visibility: hidden !important;
-  }
-  #invoiceModalBackdrop, #invoiceModalBackdrop * {
-    visibility: visible !important;
+  body > *:not(#invoiceModalBackdrop) {
+    display: none !important;
   }
   #invoiceModalBackdrop{
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     width: 100% !important;
+    height: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     background: #ffffff !important;
     display: block !important;
+    visibility: visible !important;
+  }
+  #invoiceModalBackdrop * {
+    visibility: visible !important;
   }
   .invoice-modal-bar, #customPrintDateBar{
     display: none !important;
@@ -2219,74 +2229,130 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     box-shadow: none !important;
     width: 100% !important;
     max-width: 100% !important;
+    height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 0 !important;
     background: #ffffff !important;
   }
   .pmc-invoice-paper{
-    padding: 4px 8px !important;
     width: 100% !important;
-    max-width: 100% !important;
+    height: 100% !important;
+    min-height: 275mm !important;
+    max-height: 275mm !important;
+    padding: 0 !important;
     box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
     font-family: 'Times New Roman', Times, serif !important;
     font-size: 13.5px !important;
     line-height: 1.35 !important;
     color: #000000 !important;
+    page-break-inside: avoid !important;
+  }
+  .pmc-inv-paper-top{
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+  .pmc-inv-header{
+    text-align: center !important;
+    margin-bottom: 8px !important;
+    flex-shrink: 0 !important;
   }
   .pmc-inv-title{
     font-size: 26px !important;
     font-weight: bold !important;
+    letter-spacing: 0.5px !important;
+    margin: 0 0 3px !important;
     font-family: 'Times New Roman', Times, serif !important;
   }
   .pmc-inv-addr{
     font-size: 15px !important;
+    margin: 2px 0 !important;
   }
   .pmc-inv-contact{
     font-size: 14.5px !important;
+    margin: 2px 0 !important;
   }
   .pmc-inv-banner{
     font-size: 15px !important;
+    font-weight: bold !important;
     background: #e5e7eb !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    border-top: 1px solid #000000 !important;
+    border-bottom: 1px solid #000000 !important;
+    padding: 3px 0 !important;
+    margin: 8px 0 10px !important;
+    text-align: center !important;
+  }
+  .pmc-inv-meta-table{
+    width: 100% !important;
+    margin-bottom: 10px !important;
+    border-collapse: collapse !important;
+    flex-shrink: 0 !important;
   }
   .pmc-inv-meta-table td{
     font-size: 15.5px !important;
     padding: 3px 6px !important;
   }
+  .pmc-inv-meta-table td.label{
+    font-weight: bold !important;
+    width: 110px !important;
+    white-space: nowrap !important;
+  }
   .pmc-inv-items-table{
     width: 100% !important;
+    border-collapse: collapse !important;
+    border: 1px solid #000000 !important;
     table-layout: fixed !important;
+    flex: 1 1 auto !important;
   }
   .pmc-inv-items-table th{
     font-size: 13.5px !important;
     padding: 5px 8px !important;
     border: 1px solid #000000 !important;
+    background: #ffffff !important;
+    white-space: nowrap !important;
   }
   .pmc-inv-items-table td{
     font-size: 13px !important;
-    padding: 4px 8px !important;
+    padding: 5px 8px !important;
     border-left: 1px solid #000000 !important;
     border-right: 1px solid #000000 !important;
+    white-space: normal !important;
   }
   .pmc-inv-prod-name{
     font-size: 16.5px !important;
     font-weight: bold !important;
     line-height: 1.25 !important;
+    white-space: normal !important;
     word-break: normal !important;
     overflow-wrap: break-word !important;
   }
   .pmc-inv-warranty-text{
     font-size: 13.5px !important;
+    margin-top: 3px !important;
+    font-weight: normal !important;
+    white-space: normal !important;
+  }
+  .pmc-inv-items-table .row-blank{
+    height: 100% !important;
   }
   .pmc-inv-items-table .row-blank td{
-    height: 230px !important;
+    height: 100% !important;
+    border-bottom: 1px solid #000000 !important;
   }
   .pmc-inv-calc-table{
     width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 2px !important;
     font-size: 13.5px !important;
     table-layout: fixed !important;
+    flex-shrink: 0 !important;
   }
   .pmc-inv-calc-table td{
     padding: 3px 8px !important;
@@ -2298,16 +2364,36 @@ tbody tr:hover{ background: var(--panel-2) !important; }
     border-bottom: 1px solid #000000 !important;
     padding: 5px 8px !important;
   }
+  .pmc-inv-paper-bottom{
+    flex-shrink: 0 !important;
+    margin-top: 12px !important;
+  }
+  .pmc-inv-signatures{
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: 16px !important;
+    margin-bottom: 14px !important;
+    padding: 0 15px !important;
+  }
+  .pmc-inv-sig-box{
+    text-align: center !important;
+    width: 220px !important;
+  }
   .pmc-inv-sig-line{
     font-size: 13px !important;
     font-weight: bold !important;
     border-top: 1px solid #000000 !important;
+    padding-top: 5px !important;
   }
   .pmc-inv-terms{
     font-size: 13px !important;
     font-weight: bold !important;
+    line-height: 1.4 !important;
+    margin-bottom: 10px !important;
   }
   .pmc-inv-footer-time{
+    display: flex !important;
+    justify-content: space-between !important;
     font-size: 13.5px !important;
   }
 }
@@ -10833,104 +10919,110 @@ function renderInvoicePaper(inv) {
     </tr>` : '';
 
   paper.innerHTML = `
-    <!-- HEADER -->
-    <div class="pmc-inv-header">
-      <div class="pmc-inv-title">PM COMPUTERS</div>
-      <div class="pmc-inv-addr">Address : Shop 19, Level 4, Capital Tower, Mirpur-1, Dhaka-1216</div>
-      <div class="pmc-inv-contact">Phone : 01683880269, 01799700299 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E-mail : pmcomputers.bd@gmail.com</div>
-      <div class="pmc-inv-banner">Invoice/ Bill</div>
-    </div>
-
-    <!-- META GRID -->
-    <table class="pmc-inv-meta-table">
-      <tr>
-        <td class="label">Invoice No.</td>
-        <td style="width:40%;"><b>${escapeHtml(inv.number || '')}</b></td>
-        <td class="label">Date</td>
-        <td>${invDateFormatted}</td>
-      </tr>
-      <tr>
-        <td class="label">Buyer Name</td>
-        <td><b>${escapeHtml(inv.buyerName || '')}</b></td>
-        <td class="label">Sold By</td>
-        <td><b>${escapeHtml(inv.soldBy || 'FOYEZ')}</b></td>
-      </tr>
-      <tr>
-        <td class="label">Address</td>
-        <td>${escapeHtml(inv.buyerAddress || '')}</td>
-        <td class="label">Phone No.</td>
-        <td>${escapeHtml(inv.buyerPhone || '')}</td>
-      </tr>
-    </table>
-
-    <!-- 1:1 PRODUCT TABLE -->
-    <table class="pmc-inv-items-table">
-      <colgroup>
-        <col style="width:7%;">
-        <col style="width:56%;">
-        <col style="width:11%;">
-        <col style="width:13%;">
-        <col style="width:13%;">
-      </colgroup>
-      <thead>
-        <tr>
-          <th style="text-align:center;">SL. NO.</th>
-          <th style="text-align:center;">PRODUCT DESCRIPTION</th>
-          <th style="text-align:center;">QUANTITY</th>
-          <th style="text-align:center;">UNIT PRICE</th>
-          <th style="text-align:center;">TOTAL</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${itemsRowsHTML}
-        <!-- Tall blank spacer to match original receipt layout -->
-        <tr class="row-blank">
-          <td></td><td></td><td></td><td></td><td></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- CALCULATION ROWS -->
-    <table class="pmc-inv-calc-table">
-      <colgroup>
-        <col style="width:7%;">
-        <col style="width:56%;">
-        <col style="width:11%;">
-        <col style="width:13%;">
-        <col style="width:13%;">
-      </colgroup>
-      <tbody>
-        <tr>
-          <td colspan="4" style="text-align:right; font-weight:bold; padding:3px 8px;">Total Amount</td>
-          <td style="text-align:center; font-weight:bold; white-space:nowrap; padding:3px 8px;">${totalAmountNum}</td>
-        </tr>
-        ${discountRowHTML}
-        <tr class="grand-row">
-          <td colspan="4" style="text-align:right; font-weight:bold; padding:5px 8px;">Grand Total</td>
-          <td style="text-align:center; font-weight:bold; white-space:nowrap; padding:5px 8px;">${grandTotalNum}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- SIGNATURES -->
-    <div class="pmc-inv-signatures">
-      <div class="pmc-inv-sig-box">
-        <div class="pmc-inv-sig-line">Receiver's Signature</div>
+    <!-- TOP WRAPPER (HEADER, META, TABLE, TOTALS) -->
+    <div class="pmc-inv-paper-top">
+      <!-- HEADER -->
+      <div class="pmc-inv-header">
+        <div class="pmc-inv-title">PM COMPUTERS</div>
+        <div class="pmc-inv-addr">Address : Shop 19, Level 4, Capital Tower, Mirpur-1, Dhaka-1216</div>
+        <div class="pmc-inv-contact">Phone : 01683880269, 01799700299 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E-mail : pmcomputers.bd@gmail.com</div>
+        <div class="pmc-inv-banner">Invoice/ Bill</div>
       </div>
-      <div class="pmc-inv-sig-box">
-        <div class="pmc-inv-sig-line">Manager Signature</div>
+
+      <!-- META GRID -->
+      <table class="pmc-inv-meta-table">
+        <tr>
+          <td class="label">Invoice No.</td>
+          <td style="width:40%;"><b>${escapeHtml(inv.number || '')}</b></td>
+          <td class="label">Date</td>
+          <td>${invDateFormatted}</td>
+        </tr>
+        <tr>
+          <td class="label">Buyer Name</td>
+          <td><b>${escapeHtml(inv.buyerName || '')}</b></td>
+          <td class="label">Sold By</td>
+          <td><b>${escapeHtml(inv.soldBy || 'FOYEZ')}</b></td>
+        </tr>
+        <tr>
+          <td class="label">Address</td>
+          <td>${escapeHtml(inv.buyerAddress || '')}</td>
+          <td class="label">Phone No.</td>
+          <td>${escapeHtml(inv.buyerPhone || '')}</td>
+        </tr>
+      </table>
+
+      <!-- 1:1 PRODUCT TABLE -->
+      <table class="pmc-inv-items-table">
+        <colgroup>
+          <col style="width:8%;">
+          <col style="width:50%;">
+          <col style="width:13.5%;">
+          <col style="width:14%;">
+          <col style="width:14.5%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="text-align:center;">SL. NO.</th>
+            <th style="text-align:center;">PRODUCT DESCRIPTION</th>
+            <th style="text-align:center;">QUANTITY</th>
+            <th style="text-align:center;">UNIT PRICE</th>
+            <th style="text-align:center;">TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsRowsHTML}
+          <!-- Blank spacer absorbing remaining table height -->
+          <tr class="row-blank">
+            <td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- CALCULATION ROWS -->
+      <table class="pmc-inv-calc-table">
+        <colgroup>
+          <col style="width:8%;">
+          <col style="width:50%;">
+          <col style="width:13.5%;">
+          <col style="width:14%;">
+          <col style="width:14.5%;">
+        </colgroup>
+        <tbody>
+          <tr>
+            <td colspan="4" style="text-align:right; font-weight:bold; padding:3px 8px;">Total Amount</td>
+            <td style="text-align:center; font-weight:bold; white-space:nowrap; padding:3px 8px;">${totalAmountNum}</td>
+          </tr>
+          ${discountRowHTML}
+          <tr class="grand-row">
+            <td colspan="4" style="text-align:right; font-weight:bold; padding:5px 8px;">Grand Total</td>
+            <td style="text-align:center; font-weight:bold; white-space:nowrap; padding:5px 8px;">${grandTotalNum}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BOTTOM WRAPPER (SIGNATURES, TERMS, FOOTER) -->
+    <div class="pmc-inv-paper-bottom">
+      <!-- SIGNATURES -->
+      <div class="pmc-inv-signatures">
+        <div class="pmc-inv-sig-box">
+          <div class="pmc-inv-sig-line">Receiver's Signature</div>
+        </div>
+        <div class="pmc-inv-sig-box">
+          <div class="pmc-inv-sig-line">Manager Signature</div>
+        </div>
       </div>
-    </div>
 
-    <!-- TERMS & CONDITIONS -->
-    <div class="pmc-inv-terms">
-      The warranty is not applicable to keyboard, mouse, speaker, power Supply, Sticker-removed items, Burned &amp; physically damage items.
-    </div>
+      <!-- TERMS & CONDITIONS -->
+      <div class="pmc-inv-terms">
+        The warranty is not applicable to keyboard, mouse, speaker, power Supply, Sticker-removed items, Burned &amp; physically damage items.
+      </div>
 
-    <!-- PRINT TIMESTAMP FOOTER -->
-    <div class="pmc-inv-footer-time">
-      <div>Printing Date : ${printDateFormatted}</div>
-      <div>Print Time : ${printTimeFormatted}</div>
+      <!-- PRINT TIMESTAMP FOOTER -->
+      <div class="pmc-inv-footer-time">
+        <div>Printing Date : ${printDateFormatted}</div>
+        <div>Print Time : ${printTimeFormatted}</div>
+      </div>
     </div>
   `;
 }
