@@ -8968,36 +8968,48 @@ let activePriceListTypeFilter = '';
 let currentFilteredPriceListItems = [];
 
 function closeAllPriceListTreeDropdowns() {
-  const brandWrap = $('#plBrandTreeDropdownWrap');
-  const typeWrap = $('#plTypeTreeDropdownWrap');
-  brandWrap?.classList.remove('open');
-  brandWrap?.classList.add('is-closed');
-  brandWrap?.querySelector('#plBrandTreeBtn')?.setAttribute('aria-expanded', 'false');
-  typeWrap?.classList.remove('open');
-  typeWrap?.classList.add('is-closed');
-  typeWrap?.querySelector('#plTypeTreeBtn')?.setAttribute('aria-expanded', 'false');
+  collapsePriceListDropdown('brand');
+  collapsePriceListDropdown('type');
+}
+
+function collapsePriceListDropdown(which) {
+  if (which === 'brand') {
+    const brandWrap = $('#plBrandTreeDropdownWrap');
+    brandWrap?.classList.remove('open');
+    brandWrap?.classList.add('is-closed');
+    brandWrap?.querySelector('#plBrandTreeBtn')?.setAttribute('aria-expanded', 'false');
+  } else if (which === 'type') {
+    const typeWrap = $('#plTypeTreeDropdownWrap');
+    typeWrap?.classList.remove('open');
+    typeWrap?.classList.add('is-closed');
+    typeWrap?.querySelector('#plTypeTreeBtn')?.setAttribute('aria-expanded', 'false');
+  }
 }
 
 function togglePriceListTreeDropdown(which) {
   const brandWrap = $('#plBrandTreeDropdownWrap');
   const typeWrap = $('#plTypeTreeDropdownWrap');
   if (which === 'brand') {
+    collapsePriceListDropdown('type');
     const isClosed = brandWrap?.classList.contains('is-closed');
     const isOpen = brandWrap?.classList.contains('open');
-    closeAllPriceListTreeDropdowns();
     if (isClosed || !isOpen) {
       brandWrap?.classList.remove('is-closed');
       brandWrap?.classList.add('open');
       brandWrap?.querySelector('#plBrandTreeBtn')?.setAttribute('aria-expanded', 'true');
+    } else {
+      collapsePriceListDropdown('brand');
     }
   } else if (which === 'type') {
+    collapsePriceListDropdown('brand');
     const isClosed = typeWrap?.classList.contains('is-closed');
     const isOpen = typeWrap?.classList.contains('open');
-    closeAllPriceListTreeDropdowns();
     if (isClosed || !isOpen) {
       typeWrap?.classList.remove('is-closed');
       typeWrap?.classList.add('open');
       typeWrap?.querySelector('#plTypeTreeBtn')?.setAttribute('aria-expanded', 'true');
+    } else {
+      collapsePriceListDropdown('type');
     }
   }
 }
@@ -9158,15 +9170,6 @@ function populatePriceListFilterDropdowns() {
           </div>
           ${hasChildren ? `
             <div class="pl-tree-submenu">
-              <div class="pl-tree-item ${isBrandActive && !activePriceListTypeFilter ? 'is-selected' : ''}"
-                   data-tree-target="brand"
-                   data-brand="${escapeHtml(b.name)}"
-                   data-type=""
-                   title="All ${escapeHtml(b.label)}">
-                <span class="pl-tree-item-label">All ${escapeHtml(b.label)}</span>
-                <span class="pl-tree-item-count">${b.count}</span>
-              </div>
-              <div class="pl-tree-divider"></div>
               ${childTypes.map(ct => {
                 const isChildActive = isBrandActive && activePriceListTypeFilter.toLowerCase() === ct.name.toLowerCase();
                 return `
@@ -9224,15 +9227,6 @@ function populatePriceListFilterDropdowns() {
           </div>
           ${hasChildren ? `
             <div class="pl-tree-submenu">
-              <div class="pl-tree-item ${isTypeActive && !activePriceListBrandFilter ? 'is-selected' : ''}"
-                   data-tree-target="type"
-                   data-type="${escapeHtml(t.name)}"
-                   data-brand=""
-                   title="All ${escapeHtml(t.label)}">
-                <span class="pl-tree-item-label">All ${escapeHtml(t.label)}</span>
-                <span class="pl-tree-item-count">${t.count}</span>
-              </div>
-              <div class="pl-tree-divider"></div>
               ${childBrands.map(cb => {
                 const isChildActive = isTypeActive && activePriceListBrandFilter.toLowerCase() === cb.name.toLowerCase();
                 return `
@@ -16417,16 +16411,24 @@ function setupEventListeners() {
 
   brandWrap?.addEventListener('mouseenter', () => {
     brandWrap.classList.remove('is-closed');
+    collapsePriceListDropdown('type');
   });
   brandWrap?.addEventListener('mouseleave', () => {
     brandWrap.classList.remove('is-closed');
   });
+  brandWrap?.addEventListener('click', () => {
+    collapsePriceListDropdown('type');
+  });
 
   typeWrap?.addEventListener('mouseenter', () => {
     typeWrap.classList.remove('is-closed');
+    collapsePriceListDropdown('brand');
   });
   typeWrap?.addEventListener('mouseleave', () => {
     typeWrap.classList.remove('is-closed');
+  });
+  typeWrap?.addEventListener('click', () => {
+    collapsePriceListDropdown('brand');
   });
 
   $('#plBrandTreeBtn')?.addEventListener('click', (e) => {
