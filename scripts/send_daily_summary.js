@@ -286,6 +286,18 @@ async function main() {
   console.log(`   - PM Brings:  ${todayBrings.length} handled`);
   console.log(`   - Purchases:  ${todayPurchases.length} bill(s) (${formatMoney(todayPurchasesTotal)})`);
 
+  // Thursday Store Off-Day Rule:
+  // Store is typically closed on Thursdays; only send daily email if sales data was recorded
+  const isThursday = closingDate.getDay() === 4;
+  const hasSalesData = todaySale && Number(todaySale.sale || 0) > 0;
+  if (isThursday && !hasSalesData) {
+    console.log('ℹ️ Thursday detected with NO sales data. Skipping daily email summary as shop is closed on Thursdays.');
+    return;
+  }
+  if (isThursday && hasSalesData) {
+    console.log(`✓ Thursday detected WITH sales data (${formatMoney(todaySale.sale)}). Proceeding with email dispatch.`);
+  }
+
   const dateBadge = `${formatDateEmail(closingDate)} · Daily Closing`;
 
   // 3. Dispatch to each configured recipient respecting their individual preferences

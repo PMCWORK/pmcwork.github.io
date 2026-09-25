@@ -4948,22 +4948,23 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         <!-- STEP 1: Non-Operating Days & Calendar Audit -->
         <div style="background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-            <div id="monthEndDaysEquation" style="font-size: 12px; font-weight: 600; color: var(--text-dim);">
-              Closed (<span id="mEndNonOperatingCount" style="color:var(--danger); font-family:var(--font-numeric); font-weight:700;">0</span>) + 
-              Open (<span id="mEndOperatingCount" style="color:var(--teal); font-family:var(--font-numeric); font-weight:700;">0</span>) = 
-              Total (<span id="mEndTotalCount" style="color:var(--text); font-family:var(--font-numeric); font-weight:700;">0</span>)
+            <div id="monthEndDaysEquation" style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--text-dim); flex-wrap: wrap;">
+              <span>Closed (<span id="mEndNonOperatingCount" style="color:var(--text); font-family:var(--font-numeric); font-weight:700;">0</span>) + </span>
+              <span>Open (<span id="mEndOperatingCount" style="color:var(--teal); font-family:var(--font-numeric); font-weight:700;">0</span>) = </span>
+              <span>Total (<span id="mEndTotalCount" style="color:var(--text); font-family:var(--font-numeric); font-weight:700;">0</span>)</span>
+              <span id="mEndMissingWarning" style="display:none; margin-left:6px; color:var(--danger); font-size:11px; font-weight:700; background:rgba(239,68,68,0.1); padding:1px 7px; border-radius:4px; border:1px solid rgba(239,68,68,0.25);"></span>
             </div>
             <div id="verifiedOperatingDaysBadge" style="background: var(--teal-soft); color: var(--teal); border: 1px solid var(--teal); padding: 3px 10px; border-radius: 16px; font-weight: 700; font-size: 11.5px;">
               0 Open Days
             </div>
           </div>
           
-          <div style="max-height: 125px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel);">
+          <div style="max-height: 140px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--panel);">
             <table style="width: 100%; border-collapse: collapse; font-size: 12px;" id="monthEndCalendarTable">
               <thead>
                 <tr style="background: var(--panel-2); border-bottom: 1px solid var(--border); color: var(--text-dim); text-align: left;">
-                  <th style="padding: 5px 12px;">Non-Operating Date &amp; Bangla Day</th>
-                  <th style="padding: 5px 12px; text-align: right; width: 110px;">Action</th>
+                  <th style="padding: 5px 12px;">Non-Operating Date &amp; Status</th>
+                  <th style="padding: 5px 12px; text-align: right; width: 175px;">Action</th>
                 </tr>
               </thead>
               <tbody id="monthEndCalendarBody"></tbody>
@@ -5401,7 +5402,10 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 
       <!-- Footer -->
       <div style="padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--panel);" id="missingSalesModalFooter">
-        <button type="button" class="btn btn-ghost btn-sm" id="dismissMissingSalesModalBtn">Remind me later</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" class="btn btn-ghost btn-sm" id="dismissMissingSalesModalBtn">Remind me later</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="markAllMissingOffDaysBtn" style="display: none; color: var(--text-dim); font-size: 11.5px; border: 1px solid var(--border);">Mark all as Off-Days</button>
+        </div>
         <button type="button" class="btn btn-primary btn-sm" id="primaryEnterMissingSaleBtn" style="font-weight: 700;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width: 15px; height: 15px; margin-right: 4px;"><path d="M12 5v14M5 12h14"/></svg>
           Enter Missing Sale
@@ -13230,6 +13234,7 @@ function renderMonthEndCalendarAudit(targetMonth) {
   let totalRev = 0;
   let totalGrossProfit = 0;
   let totalDailyCost = 0;
+  let missingDaysCount = 0;
 
   const nonOperatingRows = [];
   for (let d = 1; d <= totalDays; d++) {
@@ -13246,24 +13251,47 @@ function renderMonthEndCalendarAudit(targetMonth) {
       totalGrossProfit += (Number(sale.profit) || 0);
       totalDailyCost += (Number(sale.cost) || 0);
     } else {
-      // Non-operating day (Thursday or missing entry)
+      const isMarkedOffDay = isDateOffDay(dateISO);
       if (isThursday) {
         nonOperatingRows.push(`
           <tr style="border-bottom:1px solid var(--border-soft); background:rgba(0,0,0,0.01);">
             <td style="padding:6px 12px; color:var(--text);">
               <span style="font-family:var(--font-numeric); font-weight:700;">${pad(d)}</span> ${mName} (<b style="color:var(--accent);">${bnDayName}</b>)
+              <span style="font-size:10.5px; margin-left:6px; color:var(--text-dim); background:var(--panel-2); padding:1px 6px; border-radius:4px; border:1px solid var(--border);">Weekly Off-Day</span>
             </td>
-            <td style="padding:6px 12px; text-align:right;"></td>
+            <td style="padding:6px 12px; text-align:right;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent); cursor:pointer;">+ Add Sale</button>
+            </td>
+          </tr>
+        `);
+      } else if (isMarkedOffDay) {
+        nonOperatingRows.push(`
+          <tr style="border-bottom:1px solid var(--border-soft); background:rgba(14,165,233,0.04);">
+            <td style="padding:6px 12px; color:var(--text);">
+              <span style="font-family:var(--font-numeric); font-weight:700;">${pad(d)}</span> ${mName} (${bnDayName})
+              <span style="font-size:10.5px; margin-left:6px; color:#0284c7; background:rgba(14,165,233,0.1); padding:1px 6px; border-radius:4px; border:1px solid rgba(14,165,233,0.25); font-weight:600;">Marked Off-Day</span>
+            </td>
+            <td style="padding:6px 12px; text-align:right;">
+              <div style="display:inline-flex; gap:6px; align-items:center; justify-content:flex-end;">
+                <button type="button" class="btn btn-ghost btn-sm btn-unmark-settlement-offday" data-iso="${dateISO}" title="Unmark this day as off-day" style="padding:2px 8px; font-size:11px; color:var(--text-dim); border:1px solid var(--border); cursor:pointer;">Unmark</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent); cursor:pointer;">+ Add Sale</button>
+              </div>
+            </td>
           </tr>
         `);
       } else {
+        missingDaysCount++;
         nonOperatingRows.push(`
           <tr style="border-bottom:1px solid var(--border-soft); background:rgba(239,68,68,0.03);">
             <td style="padding:6px 12px; font-weight:700; color:var(--danger);">
               <span style="font-family:var(--font-numeric);">${pad(d)}</span> ${mName} (${bnDayName})
+              <span style="font-size:10.5px; margin-left:6px; color:var(--danger); background:rgba(239,68,68,0.1); padding:1px 6px; border-radius:4px; font-weight:600;">Missing Entry</span>
             </td>
             <td style="padding:6px 12px; text-align:right;">
-              <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent);">+ Add Sale</button>
+              <div style="display:inline-flex; gap:6px; align-items:center; justify-content:flex-end;">
+                <button type="button" class="btn btn-ghost btn-sm btn-mark-settlement-offday" data-iso="${dateISO}" title="Mark this day as Store Off-Day" style="padding:2px 8px; font-size:11px; color:var(--text); border:1px solid var(--border); font-weight:600; cursor:pointer;">Mark Off-Day</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="switchView('addsale'); if($('#fDate')) $('#fDate').value='${dateISO}'; closeMonthEndWizard();" style="padding:2px 8px; font-size:11px; color:var(--accent); cursor:pointer;">+ Add Sale</button>
+              </div>
             </td>
           </tr>
         `);
@@ -13279,6 +13307,16 @@ function renderMonthEndCalendarAudit(targetMonth) {
   if ($('#mEndTotalCount')) $('#mEndTotalCount').textContent = totalDays;
   if ($('#verifiedOperatingDaysBadge')) $('#verifiedOperatingDaysBadge').textContent = `${operatingDaysCount} Open Days`;
 
+  const missingWarn = $('#mEndMissingWarning');
+  if (missingWarn) {
+    if (missingDaysCount > 0) {
+      missingWarn.style.display = 'inline-block';
+      missingWarn.textContent = `⚠️ ${missingDaysCount} Unmarked Missing`;
+    } else {
+      missingWarn.style.display = 'none';
+    }
+  }
+
   // Render ONLY non-operating days in calendar table
   const tbody = $('#monthEndCalendarBody');
   if (tbody) {
@@ -13286,6 +13324,23 @@ function renderMonthEndCalendarAudit(targetMonth) {
       tbody.innerHTML = nonOperatingRows.join('');
     } else {
       tbody.innerHTML = `<tr><td colspan="2" style="padding:12px; text-align:center; color:var(--text-dim);">No off-days or missing days found. The shop operated all ${totalDays} days this month!</td></tr>`;
+    }
+    if (!tbody._delegationAttached) {
+      tbody._delegationAttached = true;
+      tbody.addEventListener('click', async (e) => {
+        const markBtn = e.target.closest('.btn-mark-settlement-offday');
+        if (markBtn) {
+          const iso = markBtn.dataset.iso;
+          if (iso) await markDateAsOffDay(iso);
+          return;
+        }
+        const unmarkBtn = e.target.closest('.btn-unmark-settlement-offday');
+        if (unmarkBtn) {
+          const iso = unmarkBtn.dataset.iso;
+          if (iso) await unmarkDateAsOffDay(iso);
+          return;
+        }
+      });
     }
   }
 
@@ -13820,7 +13875,110 @@ function checkMonthEndPrompt(dateStr) {
 }
 
 /* ============================================================
-   MISSING SALES DATA REMINDER ENGINE (EXCLUDING THURSDAYS)
+   STORE OFF-DAYS REGISTRY & PERSISTENCE
+   ============================================================ */
+let allOffDays = []; // Array of { date: 'YYYY-MM-DD', reason: string, markedAt: string }
+
+async function loadOffDays() {
+  try {
+    const cached = localStorage.getItem('pmc_off_days');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed)) allOffDays = parsed;
+    }
+  } catch(e) {}
+
+  if (firebaseReady && db) {
+    try {
+      const doc = await db.collection('settings').doc('store_off_days').get();
+      if (doc.exists) {
+        const data = doc.data() || {};
+        if (Array.isArray(data.offDays)) {
+          allOffDays = data.offDays;
+          try {
+            localStorage.setItem('pmc_off_days', JSON.stringify(allOffDays));
+          } catch(e) {}
+        }
+      }
+    } catch(err) {
+      console.warn('loadOffDays notice:', err);
+    }
+  }
+}
+
+async function saveOffDays() {
+  try {
+    localStorage.setItem('pmc_off_days', JSON.stringify(allOffDays));
+  } catch(e) {}
+
+  if (firebaseReady && db) {
+    try {
+      await db.collection('settings').doc('store_off_days').set({
+        offDays: allOffDays,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+    } catch(err) {
+      console.error('saveOffDays error:', err);
+    }
+  }
+}
+
+function isDateOffDay(isoDate) {
+  if (!isoDate || !allOffDays || !allOffDays.length) return false;
+  return allOffDays.some(o => (typeof o === 'string' ? o : o.date) === isoDate);
+}
+
+async function markDateAsOffDay(isoDate, reason = 'Shop Off-Day') {
+  if (!isoDate) return;
+  const existing = allOffDays.find(o => (typeof o === 'string' ? o : o.date) === isoDate);
+  if (!existing) {
+    allOffDays.push({
+      date: isoDate,
+      reason: reason || 'Shop Off-Day',
+      markedAt: new Date().toISOString()
+    });
+    await saveOffDays();
+    logAudit('store', isoDate, 'Marked as Off-Day', null, { date: isoDate, reason });
+  }
+
+  // Update missing sales UI & prompt
+  updateMissingSalesUI();
+
+  // If missing sales modal is open, re-render it or close if empty
+  if ($('#missingSalesModalBackdrop')?.classList.contains('show')) {
+    if (cachedMissingSalesDays.length === 0) {
+      closeMissingSalesModal(false);
+    } else {
+      openMissingSalesModal();
+    }
+  }
+
+  // If Month-End wizard is open, re-render calendar audit
+  if ($('#monthEndModalBackdrop')?.classList.contains('show') && currentMonthEndTarget) {
+    renderMonthEndCalendarAudit(currentMonthEndTarget);
+  }
+
+  toast(`✓ ${formatDateLabel(isoDate)} marked as Off-Day`);
+}
+
+async function unmarkDateAsOffDay(isoDate) {
+  if (!isoDate) return;
+  allOffDays = allOffDays.filter(o => (typeof o === 'string' ? o : o.date) !== isoDate);
+  await saveOffDays();
+  logAudit('store', isoDate, 'Unmarked Off-Day');
+
+  updateMissingSalesUI();
+
+  // If Month-End wizard is open, re-render calendar audit
+  if ($('#monthEndModalBackdrop')?.classList.contains('show') && currentMonthEndTarget) {
+    renderMonthEndCalendarAudit(currentMonthEndTarget);
+  }
+
+  toast(`✓ ${formatDateLabel(isoDate)} unmarked as Off-Day`);
+}
+
+/* ============================================================
+   MISSING SALES DATA REMINDER ENGINE (EXCLUDING THURSDAYS & OFF-DAYS)
    ============================================================ */
 let cachedMissingSalesDays = [];
 let hasMissingSalesPromptShownThisSession = false;
@@ -13831,6 +13989,7 @@ function getMissingSalesDays(lookbackDays = 30) {
   const now = dhakaNow();
   const missing = [];
   const salesDatesSet = new Set(allSales.map(s => s.date).filter(Boolean));
+  const offDaysSet = new Set(allOffDays.map(o => (typeof o === 'string' ? o : o.date)).filter(Boolean));
   
   // Scan backwards starting from yesterday (1 day ago) up to lookbackDays
   for (let i = 1; i <= lookbackDays; i++) {
@@ -13842,6 +14001,9 @@ function getMissingSalesDays(lookbackDays = 30) {
     
     const iso = toISODate(dObj);
     
+    // Skip explicitly marked off-days
+    if (offDaysSet.has(iso)) continue;
+
     if (!salesDatesSet.has(iso)) {
       const dayNameEn = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dayOfWeek];
       const dayNameBn = BN_DAYS[dayOfWeek] || '';
@@ -13946,10 +14108,15 @@ function openMissingSalesModal() {
             ${item.dayNameBn ? `<span style="font-size: 11.5px; color: var(--text-dim); background: var(--panel); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);">${item.dayNameBn}</span>` : ''}
             ${relativeBadge}
           </div>
-          <button type="button" class="btn btn-sm btn-missing-sale-pick" data-iso="${item.iso}" style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px; height:12px;"><path d="M12 5v14M5 12h14"/></svg>
-            Enter Sale
-          </button>
+          <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+            <button type="button" class="btn btn-ghost btn-sm btn-missing-sale-offday" data-iso="${item.iso}" title="Mark this day as Store Off-Day" style="padding: 6px 12px; font-size: 11.5px; font-weight: 600; color: var(--text-dim); border: 1px solid var(--border); border-radius: 6px; cursor: pointer;">
+              Mark as Off Day
+            </button>
+            <button type="button" class="btn btn-sm btn-missing-sale-pick" data-iso="${item.iso}" style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px; height:12px;"><path d="M12 5v14M5 12h14"/></svg>
+              Enter Sale
+            </button>
+          </div>
         </div>
       `;
     });
@@ -13957,6 +14124,14 @@ function openMissingSalesModal() {
     html += `</div>`;
     body.innerHTML = html;
     
+    // Attach listener to each individual "Mark as Off Day" button
+    body.querySelectorAll('.btn-missing-sale-offday').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const iso = btn.dataset.iso;
+        if (iso) await markDateAsOffDay(iso);
+      });
+    });
+
     // Attach listener to each individual "Enter Sale" button
     body.querySelectorAll('.btn-missing-sale-pick').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -13972,6 +14147,37 @@ function openMissingSalesModal() {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:15px;height:15px;margin-right:4px;"><path d="M12 5v14M5 12h14"/></svg>
       ${cachedMissingSalesDays.length === 1 ? `Enter Sale for ${targetItem.dayNameEn}` : `Enter Sale for ${targetItem.dayNameEn} (${targetItem.formattedLabel})`}
     `;
+  }
+
+  const markAllBtn = $('#markAllMissingOffDaysBtn');
+  if (markAllBtn) {
+    markAllBtn.style.display = cachedMissingSalesDays.length > 1 ? 'inline-block' : 'none';
+    if (!markAllBtn._listenerAttached) {
+      markAllBtn._listenerAttached = true;
+      markAllBtn.addEventListener('click', async () => {
+        if (!cachedMissingSalesDays.length) return;
+        const count = cachedMissingSalesDays.length;
+        for (const item of [...cachedMissingSalesDays]) {
+          const existing = allOffDays.find(o => (typeof o === 'string' ? o : o.date) === item.iso);
+          if (!existing) {
+            allOffDays.push({
+              date: item.iso,
+              reason: 'Shop Off-Day',
+              markedAt: new Date().toISOString()
+            });
+          }
+        }
+        await saveOffDays();
+        logAudit('store', 'bulk', 'Marked multiple dates as Off-Days', null, { count });
+        updateMissingSalesUI();
+        closeMissingSalesModal(false);
+        if ($('#monthEndModalBackdrop')?.classList.contains('show')) {
+          const target = currentMonthEndTarget || ($('#monthEndPicker')?.value) || todayISO.slice(0, 7);
+          renderMonthEndCalendarAudit(target);
+        }
+        toast(`✓ Marked ${count} missing days as Off-Days`);
+      });
+    }
   }
   
   $('#missingSalesModalBackdrop')?.classList.add('show');
@@ -14840,6 +15046,15 @@ async function checkAndSendScheduledEmails() {
   const currentTime = `${currentHH}:${currentMM}`;
   const currentDate = todayISO;
 
+  // Thursday Store Off-Day Rule:
+  // Store is typically closed on Thursdays; only send daily email if sales data was recorded
+  const isThursday = now.getDay() === 4;
+  const todayEntry = allSales.find(s => s.date === todayISO);
+  const hasSalesData = todayEntry && Number(todayEntry.sale || 0) > 0;
+  if (isThursday && !hasSalesData) {
+    return;
+  }
+
   for (const r of notificationRecipients) {
     if (!r.email || r.alertDaily === false) continue;
     const targetTiming = r.dailyTiming || '23:00';
@@ -14938,6 +15153,7 @@ function generateCompleteSystemBackupPayload() {
         purchase_payments: allPurchasePayments.length,
         expenses: allExpenses.length,
         audit_log: allAuditLog.length,
+        off_days: allOffDays.length,
         recipients: notificationRecipients.length
       }
     },
@@ -14954,6 +15170,7 @@ function generateCompleteSystemBackupPayload() {
       purchase_payments: allPurchasePayments,
       expenses: allExpenses,
       audit_log: allAuditLog,
+      off_days: allOffDays,
       settings: notificationRecipients
     }
   };
@@ -15200,6 +15417,10 @@ async function executeDatabaseRestore() {
       allExpenses = [...data.expenses];
       if (data.audit_log && data.audit_log.length) allAuditLog = [...data.audit_log];
       if (data.settings && data.settings.length) notificationRecipients = [...data.settings];
+      if (data.off_days && Array.isArray(data.off_days)) {
+        allOffDays = [...data.off_days];
+        await saveOffDays();
+      }
     } else {
       const mergeByField = (existing, incoming, key = 'id') => {
         const map = new Map();
@@ -15232,6 +15453,10 @@ async function executeDatabaseRestore() {
       if (data.audit_log && data.audit_log.length) {
         allAuditLog = mergeByField(allAuditLog, data.audit_log, 'id');
       }
+      if (data.off_days && Array.isArray(data.off_days)) {
+        allOffDays = mergeByField(allOffDays, data.off_days, 'date');
+        await saveOffDays();
+      }
     }
 
     if (firebaseReady && db) {
@@ -15254,6 +15479,7 @@ async function executeDatabaseRestore() {
     renderSupplierShopsList();
     renderExpensesView();
     renderAuditLog();
+    updateMissingSalesUI();
     renderBackupHealthStats();
     saveDailyLocalSnapshot();
 
@@ -15324,7 +15550,8 @@ async function forceCloudSync() {
         loadSupplierShops(),
         loadPurchases(),
         loadPurchasePayments(),
-        loadExpenses()
+        loadExpenses(),
+        loadOffDays()
       ]);
       renderStatsStrip();
       renderTrendChart();
@@ -15341,6 +15568,7 @@ async function forceCloudSync() {
       renderSupplierShopsList();
       renderExpensesView();
       renderAuditLog();
+      updateMissingSalesUI();
       renderBackupHealthStats();
       saveDailyLocalSnapshot();
       toast('Cloud database synchronized successfully!');
@@ -15517,6 +15745,10 @@ function setupEventListeners() {
       updateMarginPreview();
       allSales.push({ id: ref.id, ...data });
       allSales.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      if (isDateOffDay(dateVal)) {
+        allOffDays = allOffDays.filter(o => (typeof o === 'string' ? o : o.date) !== dateVal);
+        await saveOffDays();
+      }
       populateHistoryYearOptions();
       populateExportYearOptions();
       renderStatsStrip();
@@ -16565,6 +16797,7 @@ async function init() {
   try { savedTheme = localStorage.getItem('pmc-theme') || 'light'; } catch(e) {}
   setTheme(savedTheme, false);
   loadFixedRates();
+  loadOffDays();
 
   // 2. Set default dates
   const dateChipHTML = buildDateChipHTML(todayISO);
@@ -16632,7 +16865,8 @@ async function init() {
         loadPurchases(),
         loadPurchasePayments(),
         loadExpenses(),
-        loadFixedRates()
+        loadFixedRates(),
+        loadOffDays()
       ]);
       populateHistoryYearOptions();
       populateExportYearOptions();
