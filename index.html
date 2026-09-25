@@ -1383,6 +1383,210 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   padding: 8px 12px;
 }
 
+/* ---------- Price List Cascading Tree Dropdown Navigation ---------- */
+.pl-tree-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pl-tree-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, box-shadow .15s, background-color .15s, color .15s;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.pl-tree-trigger-btn:hover {
+  background: var(--panel-2);
+  border-color: var(--accent);
+}
+
+.pl-tree-trigger-btn.active-filter {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.pl-tree-trigger-chevron {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.pl-tree-dropdown-wrap.open .pl-tree-trigger-chevron {
+  transform: rotate(180deg);
+}
+
+/* Tree Main Flyout Menu */
+.pl-tree-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  min-width: 220px;
+  max-width: 290px;
+  max-height: 420px;
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+  z-index: 1050;
+  padding: 6px 0;
+  overflow-y: auto;
+  overflow-x: visible;
+}
+
+.pl-tree-dropdown-wrap.open .pl-tree-menu {
+  display: block;
+}
+
+/* Tree Menu Items */
+.pl-tree-item-wrap {
+  position: relative;
+}
+
+.pl-tree-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+  text-decoration: none;
+  user-select: none;
+  border-left: 3px solid transparent;
+  box-sizing: border-box;
+}
+
+.pl-tree-item:hover,
+.pl-tree-item-wrap:hover > .pl-tree-item,
+.pl-tree-item.is-selected {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+.pl-tree-item-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.pl-tree-item-count {
+  font-size: 11px;
+  color: var(--text-faint);
+  background: var(--panel-2);
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+  line-height: 1;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.pl-tree-item:hover .pl-tree-item-count,
+.pl-tree-item-wrap:hover > .pl-tree-item .pl-tree-item-count,
+.pl-tree-item.is-selected .pl-tree-item-count {
+  border-color: var(--accent-dim);
+  color: var(--accent);
+}
+
+.pl-tree-item-arrow {
+  width: 13px;
+  height: 13px;
+  stroke: var(--text-faint);
+  margin-left: 4px;
+  flex-shrink: 0;
+  transition: stroke 0.12s ease, transform 0.12s ease;
+}
+
+.pl-tree-item:hover .pl-tree-item-arrow,
+.pl-tree-item-wrap:hover > .pl-tree-item .pl-tree-item-arrow {
+  stroke: var(--accent);
+  transform: translateX(2px);
+}
+
+/* Submenu Flyout (Child Tree) */
+.pl-tree-submenu {
+  display: none;
+  position: absolute;
+  top: -6px;
+  left: 100%;
+  min-width: 200px;
+  max-width: 280px;
+  max-height: 380px;
+  background: var(--panel);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+  z-index: 1060;
+  padding: 6px 0;
+  overflow-y: auto;
+}
+
+/* Invisible bridge to prevent hover loss when moving mouse diagonally to submenu */
+.pl-tree-submenu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  width: 12px;
+}
+
+.pl-tree-item-wrap:hover > .pl-tree-submenu,
+.pl-tree-item-wrap:focus-within > .pl-tree-submenu {
+  display: block;
+}
+
+.pl-tree-submenu.flip-left {
+  left: auto;
+  right: 100%;
+}
+.pl-tree-submenu.flip-left::before {
+  left: auto;
+  right: -12px;
+}
+
+.pl-tree-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 5px 0;
+}
+
+.pl-tree-menu::-webkit-scrollbar,
+.pl-tree-submenu::-webkit-scrollbar {
+  width: 5px;
+}
+.pl-tree-menu::-webkit-scrollbar-thumb,
+.pl-tree-submenu::-webkit-scrollbar-thumb {
+  background: var(--border-strong, rgba(120, 120, 120, 0.4));
+  border-radius: 3px;
+}
+
 .add-form-card.compact{ padding:18px 20px; margin-bottom:18px; }
 .pf-head{ margin-bottom:12px; }
 .pf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
@@ -3668,33 +3872,28 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <!-- Toolbar: Brand & Type Filters, Sort, Reset, & Search -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-          <!-- Brand Filter -->
+          <!-- Brand Tree Dropdown -->
           <div style="display:flex; align-items:center; gap:6px;">
             <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-faint); white-space:nowrap;">Brand</span>
-            <select class="pl-select" id="plFilterBrand" style="min-width:140px; width:auto; height:36px; font-size:12.5px;">
-              <option value="">All Brands</option>
-            </select>
+            <div class="pl-tree-dropdown-wrap" id="plBrandTreeDropdownWrap">
+              <button type="button" class="pl-tree-trigger-btn" id="plBrandTreeBtn" aria-expanded="false" aria-haspopup="true">
+                <span class="pl-tree-trigger-label" id="plBrandTreeBtnLabel">All Brands</span>
+                <svg class="pl-tree-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="pl-tree-menu" id="plBrandTreeMenu" role="menu"></div>
+            </div>
           </div>
 
-          <!-- Product Type Filter -->
+          <!-- Product Type Tree Dropdown -->
           <div style="display:flex; align-items:center; gap:6px;">
             <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-faint); white-space:nowrap;">Type</span>
-            <select class="pl-select" id="plFilterType" style="min-width:140px; width:auto; height:36px; font-size:12.5px;">
-              <option value="">All Types</option>
-            </select>
-          </div>
-
-          <!-- Sort Order -->
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:var(--text-faint); white-space:nowrap;">Sort</span>
-            <select class="pl-select" id="plSortOption" style="min-width:165px; width:auto; height:36px; font-size:12.5px;">
-              <option value="brand_first" selected>Brand → Type (A → Z)</option>
-              <option value="type_first">Type → Brand (A → Z)</option>
-              <option value="model_asc">Model Name: A → Z</option>
-              <option value="price_asc">Price: Low → High</option>
-              <option value="price_desc">Price: High → Low</option>
-              <option value="updated_desc">Recently Updated</option>
-            </select>
+            <div class="pl-tree-dropdown-wrap" id="plTypeTreeDropdownWrap">
+              <button type="button" class="pl-tree-trigger-btn" id="plTypeTreeBtn" aria-expanded="false" aria-haspopup="true">
+                <span class="pl-tree-trigger-label" id="plTypeTreeBtnLabel">All Types</span>
+                <svg class="pl-tree-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="pl-tree-menu" id="plTypeTreeMenu" role="menu"></div>
+            </div>
           </div>
 
           <!-- Reset Filters Button -->
@@ -8755,112 +8954,299 @@ function populatePriceListTypeDropdowns() {
   }
 }
 
+let activePriceListBrandFilter = '';
+let activePriceListTypeFilter = '';
 let currentFilteredPriceListItems = [];
 
-function populatePriceListFilterDropdowns() {
-  const brandSel = $('#plFilterBrand');
-  const typeSel = $('#plFilterType');
-  if (!brandSel && !typeSel) return;
+function closeAllPriceListTreeDropdowns() {
+  $('#plBrandTreeDropdownWrap')?.classList.remove('open');
+  $('#plBrandTreeBtn')?.setAttribute('aria-expanded', 'false');
+  $('#plTypeTreeDropdownWrap')?.classList.remove('open');
+  $('#plTypeTreeBtn')?.setAttribute('aria-expanded', 'false');
+}
 
-  const curBrand = brandSel ? brandSel.value : '';
-  const curType = typeSel ? typeSel.value : '';
-
-  // 1. Calculate entry counts for every brand and type across allPriceListItems
-  const brandMap = new Map(); // lowerKey -> { name, count }
-  const typeMap = new Map();  // lowerKey -> { name, count }
-  let genericBrandCount = 0;
-  let uncategorizedTypeCount = 0;
-
-  allPriceListItems.forEach(it => {
-    const b = (it.brand || '').trim();
-    if (b) {
-      const lk = b.toLowerCase();
-      if (!brandMap.has(lk)) {
-        brandMap.set(lk, { name: b, count: 0 });
-      }
-      brandMap.get(lk).count++;
-    } else {
-      genericBrandCount++;
+function togglePriceListTreeDropdown(which) {
+  const brandWrap = $('#plBrandTreeDropdownWrap');
+  const typeWrap = $('#plTypeTreeDropdownWrap');
+  if (which === 'brand') {
+    const isOpen = brandWrap?.classList.contains('open');
+    closeAllPriceListTreeDropdowns();
+    if (!isOpen) {
+      brandWrap?.classList.add('open');
+      brandWrap?.querySelector('#plBrandTreeBtn')?.setAttribute('aria-expanded', 'true');
     }
-
-    const t = (it.type || '').trim();
-    if (t) {
-      const lk = t.toLowerCase();
-      if (!typeMap.has(lk)) {
-        typeMap.set(lk, { name: t, count: 0 });
-      }
-      typeMap.get(lk).count++;
-    } else {
-      uncategorizedTypeCount++;
-    }
-  });
-
-  // 2. Sort brands by entry count descending, tie-break by name A-Z
-  const brandEntries = Array.from(brandMap.values()).sort((a, b) => {
-    return b.count - a.count || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
-
-  if (genericBrandCount > 0) {
-    brandEntries.push({
-      name: '__generic__',
-      label: 'Generic / No Brand',
-      count: genericBrandCount
-    });
-  }
-
-  // 3. Sort types by entry count descending, tie-break by name A-Z
-  const typeEntries = Array.from(typeMap.values()).sort((a, b) => {
-    return b.count - a.count || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
-
-  if (uncategorizedTypeCount > 0) {
-    typeEntries.push({
-      name: '__uncategorized__',
-      label: 'Uncategorized / No Type',
-      count: uncategorizedTypeCount
-    });
-  }
-
-  // 4. Populate Brand Filter Select
-  if (brandSel) {
-    const totalItems = allPriceListItems.length;
-    let brandHtml = `<option value="">All Brands (${totalItems})</option>`;
-    brandEntries.forEach(be => {
-      const val = be.name;
-      const label = be.label || be.name;
-      brandHtml += `<option value="${escapeHtml(val)}">${escapeHtml(label)} (${be.count})</option>`;
-    });
-    brandSel.innerHTML = brandHtml;
-    if (curBrand && (curBrand === '__generic__' ? genericBrandCount > 0 : brandMap.has(curBrand.toLowerCase()))) {
-      brandSel.value = curBrand;
-    } else {
-      brandSel.value = '';
-    }
-  }
-
-  // 5. Populate Type Filter Select
-  if (typeSel) {
-    const totalItems = allPriceListItems.length;
-    let typeHtml = `<option value="">All Types (${totalItems})</option>`;
-    typeEntries.forEach(te => {
-      const val = te.name;
-      const label = te.label || te.name;
-      typeHtml += `<option value="${escapeHtml(val)}">${escapeHtml(label)} (${te.count})</option>`;
-    });
-    typeSel.innerHTML = typeHtml;
-    if (curType && (curType === '__uncategorized__' ? uncategorizedTypeCount > 0 : typeMap.has(curType.toLowerCase()))) {
-      typeSel.value = curType;
-    } else {
-      typeSel.value = '';
+  } else if (which === 'type') {
+    const isOpen = typeWrap?.classList.contains('open');
+    closeAllPriceListTreeDropdowns();
+    if (!isOpen) {
+      typeWrap?.classList.add('open');
+      typeWrap?.querySelector('#plTypeTreeBtn')?.setAttribute('aria-expanded', 'true');
     }
   }
 }
 
+function updatePriceListTreeTriggerLabels() {
+  const brandBtn = $('#plBrandTreeBtn');
+  const brandLabel = $('#plBrandTreeBtnLabel');
+  const typeBtn = $('#plTypeTreeBtn');
+  const typeLabel = $('#plTypeTreeBtnLabel');
+
+  if (brandLabel) {
+    if (activePriceListBrandFilter) {
+      const bDisplay = activePriceListBrandFilter === '__generic__' ? 'Generic / No Brand' : activePriceListBrandFilter;
+      if (activePriceListTypeFilter) {
+        const tDisplay = activePriceListTypeFilter === '__uncategorized__' ? 'Uncategorized' : activePriceListTypeFilter;
+        brandLabel.textContent = `${bDisplay} › ${tDisplay}`;
+        brandBtn?.setAttribute('title', `Filter: ${bDisplay} › ${tDisplay}`);
+      } else {
+        brandLabel.textContent = `Brand: ${bDisplay}`;
+        brandBtn?.setAttribute('title', `Filter: ${bDisplay} (All Types)`);
+      }
+      brandBtn?.classList.add('active-filter');
+    } else {
+      brandLabel.textContent = 'All Brands';
+      brandBtn?.removeAttribute('title');
+      brandBtn?.classList.remove('active-filter');
+    }
+  }
+
+  if (typeLabel) {
+    if (activePriceListTypeFilter) {
+      const tDisplay = activePriceListTypeFilter === '__uncategorized__' ? 'Uncategorized' : activePriceListTypeFilter;
+      if (activePriceListBrandFilter) {
+        const bDisplay = activePriceListBrandFilter === '__generic__' ? 'Generic / No Brand' : activePriceListBrandFilter;
+        typeLabel.textContent = `${tDisplay} › ${bDisplay}`;
+        typeBtn?.setAttribute('title', `Filter: ${tDisplay} › ${bDisplay}`);
+      } else {
+        typeLabel.textContent = `Type: ${tDisplay}`;
+        typeBtn?.setAttribute('title', `Filter: ${tDisplay} (All Brands)`);
+      }
+      typeBtn?.classList.add('active-filter');
+    } else {
+      typeLabel.textContent = 'All Types';
+      typeBtn?.removeAttribute('title');
+      typeBtn?.classList.remove('active-filter');
+    }
+  }
+}
+
+function populatePriceListFilterDropdowns() {
+  const brandMenu = $('#plBrandTreeMenu');
+  const typeMenu = $('#plTypeTreeMenu');
+  if (!brandMenu && !typeMenu) return;
+
+  // 1. Group items: brand -> types and type -> brands
+  const brandMap = new Map();
+  const typeMap = new Map();
+
+  allPriceListItems.forEach(it => {
+    const rawBrand = (it.brand || '').trim();
+    const rawType = (it.type || '').trim();
+
+    const brandKey = rawBrand ? rawBrand.toLowerCase() : '__generic__';
+    const brandName = rawBrand || '__generic__';
+    const brandLabel = rawBrand || 'Generic / No Brand';
+
+    const typeKey = rawType ? rawType.toLowerCase() : '__uncategorized__';
+    const typeName = rawType || '__uncategorized__';
+    const typeLabel = rawType || 'Uncategorized';
+
+    // Populate Brand hierarchy
+    if (!brandMap.has(brandKey)) {
+      brandMap.set(brandKey, {
+        name: brandName,
+        label: brandLabel,
+        count: 0,
+        types: new Map()
+      });
+    }
+    const bEntry = brandMap.get(brandKey);
+    bEntry.count++;
+    if (!bEntry.types.has(typeKey)) {
+      bEntry.types.set(typeKey, {
+        name: typeName,
+        label: typeLabel,
+        count: 0
+      });
+    }
+    bEntry.types.get(typeKey).count++;
+
+    // Populate Type hierarchy
+    if (!typeMap.has(typeKey)) {
+      typeMap.set(typeKey, {
+        name: typeName,
+        label: typeLabel,
+        count: 0,
+        brands: new Map()
+      });
+    }
+    const tEntry = typeMap.get(typeKey);
+    tEntry.count++;
+    if (!tEntry.brands.has(brandKey)) {
+      tEntry.brands.set(brandKey, {
+        name: brandName,
+        label: brandLabel,
+        count: 0
+      });
+    }
+    tEntry.brands.get(brandKey).count++;
+  });
+
+  // Sort brands: generic at the bottom, others sorted by count desc then A-Z
+  const sortedBrands = Array.from(brandMap.values()).sort((a, b) => {
+    if (a.name === '__generic__' && b.name !== '__generic__') return 1;
+    if (b.name === '__generic__' && a.name !== '__generic__') return -1;
+    return b.count - a.count || a.label.localeCompare(b.label, undefined, { sensitivity: 'base' });
+  });
+
+  // Sort types: uncategorized at the bottom, others sorted by count desc then A-Z
+  const sortedTypes = Array.from(typeMap.values()).sort((a, b) => {
+    if (a.name === '__uncategorized__' && b.name !== '__uncategorized__') return 1;
+    if (b.name === '__uncategorized__' && a.name !== '__uncategorized__') return -1;
+    return b.count - a.count || a.label.localeCompare(b.label, undefined, { sensitivity: 'base' });
+  });
+
+  // Render Brand Menu
+  if (brandMenu) {
+    const isAllSelected = !activePriceListBrandFilter;
+    let bHtml = `
+      <div class="pl-tree-item ${isAllSelected ? 'is-selected' : ''}" data-tree-target="brand" data-brand="" data-type="">
+        <span class="pl-tree-item-label">All Brands</span>
+        <span class="pl-tree-item-count">${allPriceListItems.length}</span>
+      </div>
+      <div class="pl-tree-divider"></div>
+    `;
+
+    sortedBrands.forEach(b => {
+      const isBrandActive = activePriceListBrandFilter.toLowerCase() === b.name.toLowerCase();
+      const childTypes = Array.from(b.types.values()).sort((x, y) => {
+        if (x.name === '__uncategorized__' && y.name !== '__uncategorized__') return 1;
+        if (y.name === '__uncategorized__' && x.name !== '__uncategorized__') return -1;
+        return y.count - x.count || x.label.localeCompare(y.label, undefined, { sensitivity: 'base' });
+      });
+
+      const hasChildren = childTypes.length > 0;
+      bHtml += `
+        <div class="pl-tree-item-wrap">
+          <div class="pl-tree-item ${isBrandActive && !activePriceListTypeFilter ? 'is-selected' : ''}"
+               data-tree-target="brand"
+               data-brand="${escapeHtml(b.name)}"
+               data-type=""
+               title="Filter by ${escapeHtml(b.label)}">
+            <span class="pl-tree-item-label">${escapeHtml(b.label)}</span>
+            <span class="pl-tree-item-count">${b.count}</span>
+            ${hasChildren ? `
+              <svg class="pl-tree-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            ` : ''}
+          </div>
+          ${hasChildren ? `
+            <div class="pl-tree-submenu">
+              <div class="pl-tree-item ${isBrandActive && !activePriceListTypeFilter ? 'is-selected' : ''}"
+                   data-tree-target="brand"
+                   data-brand="${escapeHtml(b.name)}"
+                   data-type=""
+                   title="All ${escapeHtml(b.label)}">
+                <span class="pl-tree-item-label">All ${escapeHtml(b.label)}</span>
+                <span class="pl-tree-item-count">${b.count}</span>
+              </div>
+              <div class="pl-tree-divider"></div>
+              ${childTypes.map(ct => {
+                const isChildActive = isBrandActive && activePriceListTypeFilter.toLowerCase() === ct.name.toLowerCase();
+                return `
+                  <div class="pl-tree-item ${isChildActive ? 'is-selected' : ''}"
+                       data-tree-target="brand-sub"
+                       data-brand="${escapeHtml(b.name)}"
+                       data-type="${escapeHtml(ct.name)}"
+                       title="${escapeHtml(b.label)} › ${escapeHtml(ct.label)}">
+                    <span class="pl-tree-item-label">${escapeHtml(ct.label)}</span>
+                    <span class="pl-tree-item-count">${ct.count}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+
+    brandMenu.innerHTML = bHtml;
+  }
+
+  // Render Type Menu
+  if (typeMenu) {
+    const isAllSelected = !activePriceListTypeFilter;
+    let tHtml = `
+      <div class="pl-tree-item ${isAllSelected ? 'is-selected' : ''}" data-tree-target="type" data-type="" data-brand="">
+        <span class="pl-tree-item-label">All Types</span>
+        <span class="pl-tree-item-count">${allPriceListItems.length}</span>
+      </div>
+      <div class="pl-tree-divider"></div>
+    `;
+
+    sortedTypes.forEach(t => {
+      const isTypeActive = activePriceListTypeFilter.toLowerCase() === t.name.toLowerCase();
+      const childBrands = Array.from(t.brands.values()).sort((x, y) => {
+        if (x.name === '__generic__' && y.name !== '__generic__') return 1;
+        if (y.name === '__generic__' && x.name !== '__generic__') return -1;
+        return y.count - x.count || x.label.localeCompare(y.label, undefined, { sensitivity: 'base' });
+      });
+
+      const hasChildren = childBrands.length > 0;
+      tHtml += `
+        <div class="pl-tree-item-wrap">
+          <div class="pl-tree-item ${isTypeActive && !activePriceListBrandFilter ? 'is-selected' : ''}"
+               data-tree-target="type"
+               data-type="${escapeHtml(t.name)}"
+               data-brand=""
+               title="Filter by ${escapeHtml(t.label)}">
+            <span class="pl-tree-item-label">${escapeHtml(t.label)}</span>
+            <span class="pl-tree-item-count">${t.count}</span>
+            ${hasChildren ? `
+              <svg class="pl-tree-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            ` : ''}
+          </div>
+          ${hasChildren ? `
+            <div class="pl-tree-submenu">
+              <div class="pl-tree-item ${isTypeActive && !activePriceListBrandFilter ? 'is-selected' : ''}"
+                   data-tree-target="type"
+                   data-type="${escapeHtml(t.name)}"
+                   data-brand=""
+                   title="All ${escapeHtml(t.label)}">
+                <span class="pl-tree-item-label">All ${escapeHtml(t.label)}</span>
+                <span class="pl-tree-item-count">${t.count}</span>
+              </div>
+              <div class="pl-tree-divider"></div>
+              ${childBrands.map(cb => {
+                const isChildActive = isTypeActive && activePriceListBrandFilter.toLowerCase() === cb.name.toLowerCase();
+                return `
+                  <div class="pl-tree-item ${isChildActive ? 'is-selected' : ''}"
+                       data-tree-target="type-sub"
+                       data-type="${escapeHtml(t.name)}"
+                       data-brand="${escapeHtml(cb.name)}"
+                       title="${escapeHtml(t.label)} › ${escapeHtml(cb.label)}">
+                    <span class="pl-tree-item-label">${escapeHtml(cb.label)}</span>
+                    <span class="pl-tree-item-count">${cb.count}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+
+    typeMenu.innerHTML = tHtml;
+  }
+
+  updatePriceListTreeTriggerLabels();
+}
+
 function resetPriceListFilters() {
-  if ($('#plFilterBrand')) $('#plFilterBrand').value = '';
-  if ($('#plFilterType')) $('#plFilterType').value = '';
-  if ($('#plSortOption')) $('#plSortOption').value = 'brand_first';
+  activePriceListBrandFilter = '';
+  activePriceListTypeFilter = '';
   if ($('#plSearchInput')) $('#plSearchInput').value = '';
+  closeAllPriceListTreeDropdowns();
+  populatePriceListFilterDropdowns();
   renderPriceListView();
 }
 
@@ -9622,10 +10008,9 @@ function renderPriceListView() {
   const container = $('#priceListTableContainer');
   if (!container) return;
 
-  const selectedBrand = ($('#plFilterBrand')?.value || '').trim();
-  const selectedType = ($('#plFilterType')?.value || '').trim();
+  const selectedBrand = (activePriceListBrandFilter || '').trim();
+  const selectedType = (activePriceListTypeFilter || '').trim();
   const searchQ = ($('#plSearchInput')?.value || '').trim().toLowerCase();
-  const sortMode = $('#plSortOption')?.value || 'brand_first';
 
   // 1. Filter items by selected brand, type, and search query
   let filtered = allPriceListItems.filter(it => {
@@ -9659,7 +10044,7 @@ function renderPriceListView() {
     return true;
   });
 
-  // 2. Sort items
+  // 2. Sort items: Brand (A->Z) -> Type (A->Z) -> Model (A->Z)
   filtered.sort((a, b) => {
     const brandA = (a.brand || '').trim();
     const brandB = (b.brand || '').trim();
@@ -9668,48 +10053,33 @@ function renderPriceListView() {
     const modelA = (a.model || '').trim();
     const modelB = (b.model || '').trim();
 
-    if (sortMode === 'brand_first' || sortMode === 'brand_asc') {
-      // 1. Brand A->Z (Generic at end)
-      if (!brandA && brandB) return 1;
-      if (brandA && !brandB) return -1;
-      const bComp = brandA.localeCompare(brandB, undefined, { sensitivity: 'base' });
-      if (bComp !== 0) return bComp;
-
-      // 2. Type A->Z (Uncategorized at end)
+    // If Type is specifically selected and Brand is not, sort by Type first then Brand
+    if (selectedType && !selectedBrand) {
       if (!typeA && typeB) return 1;
       if (typeA && !typeB) return -1;
       const tComp = typeA.localeCompare(typeB, undefined, { sensitivity: 'base' });
       if (tComp !== 0) return tComp;
 
-      // 3. Model A->Z
-      return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
-
-    } else if (sortMode === 'type_first' || sortMode === 'type_asc') {
-      // 1. Type A->Z (Uncategorized at end)
-      if (!typeA && typeB) return 1;
-      if (typeA && !typeB) return -1;
-      const tComp = typeA.localeCompare(typeB, undefined, { sensitivity: 'base' });
-      if (tComp !== 0) return tComp;
-
-      // 2. Brand A->Z (Generic at end)
       if (!brandA && brandB) return 1;
       if (brandA && !brandB) return -1;
       const bComp = brandA.localeCompare(brandB, undefined, { sensitivity: 'base' });
       if (bComp !== 0) return bComp;
 
-      // 3. Model A->Z
       return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
-
-    } else if (sortMode === 'model_asc') {
-      return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
-    } else if (sortMode === 'price_asc') {
-      return (a.price || 0) - (b.price || 0) || modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
-    } else if (sortMode === 'price_desc') {
-      return (b.price || 0) - (a.price || 0) || modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
-    } else if (sortMode === 'updated_desc') {
-      return (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '') || (b.price || 0) - (a.price || 0);
     }
-    return 0;
+
+    // Default Brand -> Type -> Model
+    if (!brandA && brandB) return 1;
+    if (brandA && !brandB) return -1;
+    const bComp = brandA.localeCompare(brandB, undefined, { sensitivity: 'base' });
+    if (bComp !== 0) return bComp;
+
+    if (!typeA && typeB) return 1;
+    if (typeA && !typeB) return -1;
+    const tComp = typeA.localeCompare(typeB, undefined, { sensitivity: 'base' });
+    if (tComp !== 0) return tComp;
+
+    return modelA.localeCompare(modelB, undefined, { sensitivity: 'base' });
   });
 
   currentFilteredPriceListItems = filtered;
@@ -9733,7 +10103,7 @@ function renderPriceListView() {
 
   const resetBtn = $('#plResetFiltersBtn');
   if (resetBtn) {
-    if (hasActiveFilters || (sortMode !== 'brand_first' && sortMode !== 'brand_asc')) {
+    if (hasActiveFilters) {
       resetBtn.style.color = 'var(--accent)';
       resetBtn.style.borderColor = 'var(--accent)';
       resetBtn.style.background = 'var(--accent-soft)';
@@ -9743,6 +10113,8 @@ function renderPriceListView() {
       resetBtn.style.background = '';
     }
   }
+
+  updatePriceListTreeTriggerLabels();
 
   // 4. Render Table / Empty state
   if (!filtered.length) {
@@ -16022,9 +16394,83 @@ function setupEventListeners() {
 
   $('#plExportCsvBtn')?.addEventListener('click', exportPriceListCsv);
 
-  $('#plFilterBrand')?.addEventListener('change', renderPriceListView);
-  $('#plFilterType')?.addEventListener('change', renderPriceListView);
-  $('#plSortOption')?.addEventListener('change', renderPriceListView);
+  // Brand Tree Dropdown interactions
+  $('#plBrandTreeBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePriceListTreeDropdown('brand');
+  });
+
+  $('#plBrandTreeMenu')?.addEventListener('click', (e) => {
+    const item = e.target.closest('.pl-tree-item');
+    if (!item) return;
+    const target = item.dataset.treeTarget;
+    if (target === 'brand') {
+      activePriceListBrandFilter = item.dataset.brand || '';
+      activePriceListTypeFilter = '';
+      closeAllPriceListTreeDropdowns();
+      populatePriceListFilterDropdowns();
+      renderPriceListView();
+    } else if (target === 'brand-sub') {
+      activePriceListBrandFilter = item.dataset.brand || '';
+      activePriceListTypeFilter = item.dataset.type || '';
+      closeAllPriceListTreeDropdowns();
+      populatePriceListFilterDropdowns();
+      renderPriceListView();
+    }
+  });
+
+  // Type Tree Dropdown interactions
+  $('#plTypeTreeBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePriceListTreeDropdown('type');
+  });
+
+  $('#plTypeTreeMenu')?.addEventListener('click', (e) => {
+    const item = e.target.closest('.pl-tree-item');
+    if (!item) return;
+    const target = item.dataset.treeTarget;
+    if (target === 'type') {
+      activePriceListTypeFilter = item.dataset.type || '';
+      activePriceListBrandFilter = '';
+      closeAllPriceListTreeDropdowns();
+      populatePriceListFilterDropdowns();
+      renderPriceListView();
+    } else if (target === 'type-sub') {
+      activePriceListTypeFilter = item.dataset.type || '';
+      activePriceListBrandFilter = item.dataset.brand || '';
+      closeAllPriceListTreeDropdowns();
+      populatePriceListFilterDropdowns();
+      renderPriceListView();
+    }
+  });
+
+  // Submenu flyout boundary adjustment: flip left if overflowing viewport
+  document.addEventListener('mouseover', (e) => {
+    const itemWrap = e.target.closest('.pl-tree-item-wrap');
+    if (!itemWrap) return;
+    const submenu = itemWrap.querySelector('.pl-tree-submenu');
+    if (!submenu) return;
+    const rect = submenu.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 12) {
+      submenu.classList.add('flip-left');
+    } else {
+      submenu.classList.remove('flip-left');
+    }
+  });
+
+  // Global dismiss for tree dropdowns on click outside and escape
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#plBrandTreeDropdownWrap') && !e.target.closest('#plTypeTreeDropdownWrap')) {
+      closeAllPriceListTreeDropdowns();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAllPriceListTreeDropdowns();
+    }
+  });
+
   $('#plSearchInput')?.addEventListener('input', renderPriceListView);
   $('#plResetFiltersBtn')?.addEventListener('click', resetPriceListFilters);
 
