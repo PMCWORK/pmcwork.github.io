@@ -1611,16 +1611,110 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   margin: 5px 0;
 }
 
-.add-form-card.compact{ padding:18px 20px; margin-bottom:18px; }
-.pf-head{ margin-bottom:12px; }
-.pf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
-.pf-grid .field{ margin-bottom:0; }
-.pf-grid textarea{ min-height:46px; }
-.pf-full{ grid-column:1 / -1; }
-.pf-actions{ display:flex; justify-content:flex-end; align-items:center; gap:10px; margin-top:4px; }
-.pf-actions .btn{ flex:0 0 auto; padding:9px 20px; }
-.add-form-card{ display:none; margin-bottom:20px; }
+/* ---------- Streamlined Product Tracker Add/Edit Box ---------- */
+.add-form-card{ display:none; margin-bottom:14px; }
 .add-form-card.open{ display:block; }
+.add-form-card.compact{
+  padding: 10px 14px 12px;
+  margin-bottom: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+.pf-head{
+  margin-bottom: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.pf-grid{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px 10px;
+  align-items: end;
+}
+.pf-grid .field{
+  margin-bottom: 0;
+}
+.pf-grid .field label{
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  margin-bottom: 3px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.1px;
+}
+.pf-grid .field input,
+.pf-grid .field select{
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  height: 33px;
+  border-radius: 6px;
+  border: 1.5px solid var(--input-border) !important;
+  background: var(--input-bg) !important;
+  box-shadow: var(--input-shadow);
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+.pf-grid .field input:focus,
+.pf-grid .field select:focus{
+  border-style: solid !important;
+  border-color: var(--accent) !important;
+  background: var(--panel) !important;
+  box-shadow: var(--input-focus-shadow) !important;
+}
+.pf-col-shop{ grid-column: span 3; }
+.pf-col-datetime{ grid-column: span 3; }
+.pf-col-desc{ grid-column: span 6; }
+.pf-col-sn{ grid-column: span 3; }
+.pf-col-note{ grid-column: span 6; }
+.pf-actions.pf-col-actions{
+  grid-column: span 3;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  height: 33px;
+  margin-top: 0;
+}
+.pf-col-actions .btn{
+  height: 33px;
+  padding: 0 14px;
+  font-size: 12px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.pf-col-actions #saveProductBtn{
+  font-weight: 700;
+  padding: 0 18px;
+}
+
+@media (max-width: 960px){
+  .pf-col-shop{ grid-column: span 6; }
+  .pf-col-datetime{ grid-column: span 6; }
+  .pf-col-desc{ grid-column: span 12; }
+  .pf-col-sn{ grid-column: span 6; }
+  .pf-col-note{ grid-column: span 6; }
+  .pf-actions.pf-col-actions{ grid-column: span 12; margin-top: 4px; }
+}
+
+@media (max-width: 580px){
+  .pf-col-shop,
+  .pf-col-datetime,
+  .pf-col-desc,
+  .pf-col-sn,
+  .pf-col-note,
+  .pf-actions.pf-col-actions{
+    grid-column: span 12;
+  }
+}
 
 /* ---------- Redesigned Product Tracker Cards ---------- */
 .product-card{
@@ -3815,12 +3909,12 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <div class="card add-form-card compact" id="productFormCard">
         <div class="pf-head eyebrow" id="pfMode">New entry</div>
         <form id="productForm" class="pf-grid">
-          <div class="field"><label>Shop</label><select id="pShop" required></select></div>
-          <div class="field"><label>Date &amp; time</label><input type="datetime-local" id="pDateTime" required></div>
-          <div class="field"><label>Description</label><input type="text" id="pDesc" required></div>
-          <div class="field"><label>Serial number</label><input type="text" id="pSn"></div>
-          <div class="field pf-full"><label>Note</label><textarea id="pNote" rows="2"></textarea></div>
-          <div class="pf-actions pf-full">
+          <div class="field pf-col-shop"><label>Shop</label><select id="pShop" required></select></div>
+          <div class="field pf-col-datetime"><label>Date &amp; time</label><input type="datetime-local" id="pDateTime" required></div>
+          <div class="field pf-col-desc"><label>Description</label><input type="text" id="pDesc" required placeholder="Product name & model..."></div>
+          <div class="field pf-col-sn"><label>Serial number</label><input type="text" id="pSn" placeholder="Serial No."></div>
+          <div class="field pf-col-note"><label>Note</label><input type="text" id="pNote" placeholder="Notes (optional)..."></div>
+          <div class="pf-actions pf-col-actions">
             <button type="button" class="btn btn-ghost btn-sm" id="cancelProductBtn">Cancel</button>
             <button type="submit" class="btn btn-primary btn-sm" id="saveProductBtn">Save entry</button>
           </div>
