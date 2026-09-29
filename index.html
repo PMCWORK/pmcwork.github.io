@@ -1611,20 +1611,20 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   margin: 5px 0;
 }
 
-/* ---------- Streamlined Product Tracker Add/Edit Box ---------- */
-.add-form-card{ display:none; margin-bottom:14px; }
+/* ---------- Streamlined Product Tracker Add/Edit Box (Slim Vertical Profile) ---------- */
+.add-form-card{ display:none; margin-bottom:12px; }
 .add-form-card.open{ display:block; }
 .add-form-card.compact{
-  padding: 10px 14px 12px;
-  margin-bottom: 14px;
+  padding: 8px 16px 10px;
+  margin-bottom: 12px;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 .pf-head{
-  margin-bottom: 6px;
-  font-size: 10.5px;
+  margin-bottom: 4px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: var(--accent);
@@ -1632,9 +1632,9 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 }
 .pf-grid{
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 8px 10px;
-  align-items: end;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 5px;
+  column-gap: 14px;
 }
 .pf-grid .field{
   margin-bottom: 0;
@@ -1643,7 +1643,7 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   display: flex;
   align-items: center;
   font-size: 11px;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   font-weight: 600;
   color: var(--text-dim);
   letter-spacing: 0.1px;
@@ -1651,11 +1651,12 @@ tbody tr:hover{ background: var(--panel-2) !important; }
 .pf-grid .field input,
 .pf-grid .field select{
   width: 100%;
-  padding: 6px 10px;
-  font-size: 12.5px;
-  height: 33px;
+  padding: 4px 10px;
+  font-size: 13px;
+  height: 31px;
   border-radius: 6px;
   border: 1.5px solid var(--input-border) !important;
+  border-style: solid !important;
   background: var(--input-bg) !important;
   box-shadow: var(--input-shadow);
   transition: border-color .15s, box-shadow .15s, background-color .15s;
@@ -1667,23 +1668,19 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   background: var(--panel) !important;
   box-shadow: var(--input-focus-shadow) !important;
 }
-.pf-col-shop{ grid-column: span 3; }
-.pf-col-datetime{ grid-column: span 3; }
-.pf-col-desc{ grid-column: span 6; }
-.pf-col-sn{ grid-column: span 3; }
-.pf-col-note{ grid-column: span 6; }
-.pf-actions.pf-col-actions{
-  grid-column: span 3;
+.pf-full{
+  grid-column: 1 / -1;
+}
+.pf-actions{
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
-  height: 33px;
-  margin-top: 0;
+  margin-top: 3px;
 }
-.pf-col-actions .btn{
-  height: 33px;
-  padding: 0 14px;
+.pf-actions .btn{
+  height: 30px;
+  padding: 0 16px;
   font-size: 12px;
   border-radius: 6px;
   display: inline-flex;
@@ -1691,28 +1688,14 @@ tbody tr:hover{ background: var(--panel-2) !important; }
   justify-content: center;
   white-space: nowrap;
 }
-.pf-col-actions #saveProductBtn{
+.pf-actions #saveProductBtn{
   font-weight: 700;
   padding: 0 18px;
 }
 
-@media (max-width: 960px){
-  .pf-col-shop{ grid-column: span 6; }
-  .pf-col-datetime{ grid-column: span 6; }
-  .pf-col-desc{ grid-column: span 12; }
-  .pf-col-sn{ grid-column: span 6; }
-  .pf-col-note{ grid-column: span 6; }
-  .pf-actions.pf-col-actions{ grid-column: span 12; margin-top: 4px; }
-}
-
-@media (max-width: 580px){
-  .pf-col-shop,
-  .pf-col-datetime,
-  .pf-col-desc,
-  .pf-col-sn,
-  .pf-col-note,
-  .pf-actions.pf-col-actions{
-    grid-column: span 12;
+@media (max-width: 640px){
+  .pf-grid{
+    grid-template-columns: 1fr;
   }
 }
 
@@ -3909,12 +3892,12 @@ tbody tr:hover{ background: var(--panel-2) !important; }
       <div class="card add-form-card compact" id="productFormCard">
         <div class="pf-head eyebrow" id="pfMode">New entry</div>
         <form id="productForm" class="pf-grid">
-          <div class="field pf-col-shop"><label>Shop</label><select id="pShop" required></select></div>
-          <div class="field pf-col-datetime"><label>Date &amp; time</label><input type="datetime-local" id="pDateTime" required></div>
-          <div class="field pf-col-desc"><label>Description</label><input type="text" id="pDesc" required placeholder="Product name & model..."></div>
-          <div class="field pf-col-sn"><label>Serial number</label><input type="text" id="pSn" placeholder="Serial No."></div>
-          <div class="field pf-col-note"><label>Note</label><input type="text" id="pNote" placeholder="Notes (optional)..."></div>
-          <div class="pf-actions pf-col-actions">
+          <div class="field"><label>Shop</label><select id="pShop" required></select></div>
+          <div class="field"><label>Date &amp; time</label><input type="datetime-local" id="pDateTime" required></div>
+          <div class="field"><label>Description</label><input type="text" id="pDesc" required placeholder="Product name & model..."></div>
+          <div class="field"><label>Serial number</label><input type="text" id="pSn" placeholder="Serial No."></div>
+          <div class="field pf-full"><label>Note</label><input type="text" id="pNote" placeholder="Notes (optional)..."></div>
+          <div class="pf-actions pf-full">
             <button type="button" class="btn btn-ghost btn-sm" id="cancelProductBtn">Cancel</button>
             <button type="submit" class="btn btn-primary btn-sm" id="saveProductBtn">Save entry</button>
           </div>
