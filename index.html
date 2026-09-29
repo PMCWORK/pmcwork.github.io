@@ -1093,6 +1093,21 @@ button{ font-family: inherit; }
   box-shadow: var(--input-focus-shadow);
 }
 
+/* Remove optional tags, dashed borders, and fluff from sales history edit modal */
+#saleEditBackdrop .field > label::after {
+  content: none !important;
+  display: none !important;
+}
+#saleEditBackdrop .field input {
+  border: 1.5px solid var(--input-border) !important;
+  background: var(--input-bg) !important;
+}
+#saleEditBackdrop .field input:focus {
+  border-color: var(--accent) !important;
+  background: var(--panel) !important;
+  box-shadow: var(--input-focus-shadow) !important;
+}
+
 /* Obvious border & tactile inner shading for data entry inputs */
 .field input, .field select, .field textarea{
   width:100%; background:var(--input-bg); border:1.5px solid var(--input-border); border-radius:9px;
@@ -3774,10 +3789,10 @@ tbody tr:hover{ background: var(--panel-2) !important; }
         <h2>Edit sale entry</h2>
         <div class="field"><label>Date</label><input type="date" id="eDate"></div>
         <div class="field-row">
-          <div class="field"><label>Sale amount <span class="unit">(৳)</span></label><input type="number" step="0.01" id="eSale"></div>
-          <div class="field"><label>Profit <span class="unit">(৳)</span></label><input type="number" step="0.01" id="eProfit"></div>
+          <div class="field"><label>Sale amount</label><input type="number" step="0.01" id="eSale"></div>
+          <div class="field"><label>Profit</label><input type="number" step="0.01" id="eProfit"></div>
         </div>
-        <div class="field"><label>Cost / expense <span class="unit">(৳)</span></label><input type="number" step="0.01" id="eCost"></div>
+        <div class="field"><label>Cost / expense</label><input type="number" step="0.01" id="eCost"></div>
         <div style="display:flex; gap:10px; margin-top:6px;">
           <button class="btn btn-primary" id="eSaveBtn" style="flex:1">Save changes</button>
           <button class="btn btn-ghost" id="eCancelBtn">Cancel</button>
