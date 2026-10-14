@@ -1,5 +1,6 @@
-# Dependencies
+# Dependencies & Build Outputs
 node_modules/
+dist/
 scripts/node_modules/
 functions/node_modules/
 
@@ -7,6 +8,8 @@ functions/node_modules/
 junk/
 *.xlsx
 *.csv
+index.legacy.html
+entry-designs.html
 
 # Local documentation
 README.md

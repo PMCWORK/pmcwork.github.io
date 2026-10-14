@@ -1,0 +1,286 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-numeric: 'Plus Jakarta Sans', 'Outfit', 'Inter', sans-serif;
+}
+
+.font-numeric {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.font-bengali {
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Universal Input & Select Trigger Styling */
+[data-slot="base"][data-has-label-outside="true"],
+[data-has-label-outside="true"],
+[data-slot="base"]:has(> [data-slot="label"]) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  position: relative !important;
+}
+
+[data-slot="base"][data-has-label-outside="true"] > [data-slot="label"],
+[data-has-label-outside="true"] [data-slot="label"],
+[data-slot="base"] > [data-slot="label"]:first-child {
+  position: static !important;
+  transform: none !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  inset: auto !important;
+  display: block !important;
+  width: auto !important;
+  margin-bottom: 0.35rem !important;
+  padding: 0 !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  line-height: 1rem !important;
+  color: #475569 !important;
+  pointer-events: auto !important;
+  z-index: 1 !important;
+}
+
+.dark [data-slot="base"][data-has-label-outside="true"] > [data-slot="label"],
+.dark [data-has-label-outside="true"] [data-slot="label"],
+.dark [data-slot="base"] > [data-slot="label"]:first-child {
+  color: #94a3b8 !important;
+}
+
+[data-slot="input-wrapper"],
+[data-slot="trigger"] {
+  position: relative !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: rgba(203, 213, 225, 0.85) !important;
+  background-color: #ffffff !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-slot="trigger"] {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+[data-slot="innerWrapper"] {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+[data-slot="selectorIcon"] {
+  position: absolute !important;
+  right: 0.75rem !important;
+  inset-inline-end: 0.75rem !important;
+  top: 50% !important;
+  margin-top: -0.5rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  pointer-events: none !important;
+}
+
+[data-slot="value"] {
+  padding-right: 1.5rem !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+[data-slot="clear-button"] {
+  position: absolute !important;
+  right: 0.5rem !important;
+  inset-inline-end: 0.5rem !important;
+  top: 50% !important;
+  margin-top: -0.75rem !important;
+}
+
+.dark [data-slot="input-wrapper"],
+.dark [data-slot="trigger"],
+[data-theme="dark"] [data-slot="input-wrapper"],
+[data-theme="dark"] [data-slot="trigger"] {
+  border-color: rgba(71, 85, 105, 0.6) !important;
+  background-color: #1a1e27 !important;
+}
+
+[data-slot="input-wrapper"]:hover,
+[data-slot="trigger"]:hover {
+  border-color: #2f8fe0 !important;
+}
+
+[data-slot="input-wrapper"][data-focus="true"],
+[data-slot="input-wrapper"]:focus-within,
+[data-slot="trigger"][data-focus="true"],
+[data-slot="trigger"]:focus-within {
+  border-color: #2f8fe0 !important;
+  box-shadow: 0 0 0 2px rgba(47, 143, 224, 0.25) !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Print Media Styles for Official A4 Invoices */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 10mm;
+  }
+
+  /* Reset document and viewport - force light theme in print regardless of dark mode */
+  html,
+  html.dark,
+  body,
+  body.dark {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    color-scheme: light !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide interactive elements, background app, backdrops, and tooltips */
+  .no-print,
+  #root,
+  button,
+  [data-slot="backdrop"],
+  [data-slot="popover"],
+  [role="tooltip"],
+  div[class*="backdrop"],
+  div[class*="bg-overlay"],
+  .backdrop-blur-xs,
+  .backdrop-blur-md,
+  [data-overlay-container="true"] > div > div:first-child:not([data-slot="wrapper"]) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+
+  /* Flatten HeroUI Modal wrappers & React Aria overlay containers so invoice sits cleanly at top */
+  [data-overlay-container="true"],
+  [data-overlay-container="true"] > div,
+  [data-slot="portal"],
+  [data-slot="wrapper"],
+  [data-slot="base"],
+  [data-slot="body"],
+  section[role="dialog"] {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    overflow: visible !important;
+    transform: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Printable invoice area - sits cleanly at top of page */
+  #printableInvoiceArea {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  #printableInvoiceArea * {
+    visibility: visible !important;
+    color-scheme: light !important;
+  }
+
+  .pmc-invoice-paper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Prevent blank spacer row from overflowing A4 sheet */
+  .pmc-invoice-paper .row-blank td {
+    height: 35px !important;
+  }
+
+  /* Prevent awkward page breaks inside invoice elements */
+  .pmc-inv-header,
+  .pmc-inv-meta-table,
+  .pmc-inv-items-table,
+  .pmc-inv-calc-table,
+  .pmc-inv-signatures,
+  .pmc-inv-terms,
+  .pmc-inv-footer-time {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .pmc-inv-signatures {
+    margin-top: 24px !important;
+  }
+}
+
+

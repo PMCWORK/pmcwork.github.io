@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMC Data Management System</title>
+    <link rel="icon" type="image/svg+xml" href="/v2/assets/pmc_favicon-obEueOTa.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/v2/assets/favicon-32-CU0Ssohp.png" />
+    <link rel="shortcut icon" href="/v2/assets/favicon-DbbYJGAR.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('pmc-theme');
+          var isDark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch(e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="/v2/assets/v2-DdkDyZ9-.js"></script>
+    <link rel="stylesheet" crossorigin href="/v2/assets/v2-CB1FtH0t.css">
+  </head>
+  <body class="bg-background text-foreground antialiased min-h-screen">
+    <div id="root"></div>
+  </body>
+</html>

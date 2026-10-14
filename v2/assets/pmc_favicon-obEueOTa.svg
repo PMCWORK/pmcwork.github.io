@@ -1,0 +1,45 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6DD5FA"/>
+      <stop offset="100%" stop-color="#2E9EE0"/>
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0B2540"/>
+      <stop offset="100%" stop-color="#0F3A5F"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#9FE7FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background: rounded square -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <!-- subtle circuit lines in corners for "computer" feel -->
+  <g stroke="#BDEBFF" stroke-width="8" stroke-linecap="round" opacity="0.45" fill="none">
+    <path d="M60 130 L60 90 L100 90"/>
+    <circle cx="100" cy="90" r="8" fill="#BDEBFF" stroke="none"/>
+    <path d="M452 382 L452 422 L412 422"/>
+    <circle cx="412" cy="422" r="8" fill="#BDEBFF" stroke="none"/>
+  </g>
+
+  <!-- Monitor body -->
+  <rect x="76" y="120" width="360" height="240" rx="24" fill="url(#screenGrad)" stroke="#BDEBFF" stroke-width="10"/>
+
+  <!-- Screen top bar (like a browser/terminal header) -->
+  <rect x="76" y="120" width="360" height="42" rx="24" fill="#0B2540"/>
+  <rect x="76" y="140" width="360" height="22" fill="#0B2540"/>
+  <circle cx="106" cy="141" r="7" fill="#FF6B6B"/>
+  <circle cx="130" cy="141" r="7" fill="#FFD166"/>
+  <circle cx="154" cy="141" r="7" fill="#6DFAA3"/>
+
+  <!-- Monitor stand -->
+  <rect x="236" y="360" width="40" height="44" rx="8" fill="#0F3A5F" stroke="#BDEBFF" stroke-width="8"/>
+  <rect x="180" y="398" width="152" height="26" rx="13" fill="#0F3A5F" stroke="#BDEBFF" stroke-width="8"/>
+
+  <!-- PMC text on screen -->
+  <text x="256" y="282" font-family="Poppins, Arial, Helvetica, sans-serif" font-weight="800"
+        font-size="132" fill="#FFFFFF" text-anchor="middle" letter-spacing="-2">PMC</text>
+</svg>
