@@ -361,10 +361,10 @@ export default function PriceListView({ showToast }) {
               }}
             >
               <TableHeader>
-                <TableColumn key="brand">BRAND</TableColumn>
-                <TableColumn key="type">TYPE</TableColumn>
+                <TableColumn key="brand" align="center">BRAND</TableColumn>
+                <TableColumn key="type" align="center">TYPE</TableColumn>
                 <TableColumn key="model">MODEL / PRODUCT NAME</TableColumn>
-                <TableColumn key="price" align="end">PRICE (TK)</TableColumn>
+                <TableColumn key="price" align="center">PRICE (TK)</TableColumn>
                 <TableColumn key="actions" align="center">ACTIONS</TableColumn>
               </TableHeader>
 
@@ -373,35 +373,35 @@ export default function PriceListView({ showToast }) {
                   <TableRow key={it.id}>
                     {/* Brand */}
                     <TableCell>
-                      {it.brand ? (
+                      <div className="flex justify-center">
                         <Chip
                           size="sm"
                           variant="flat"
-                          color="primary"
+                          color={it.brand ? "primary" : "default"}
                           className="text-xs font-semibold w-28 min-w-[112px] max-w-[112px] justify-center"
                           classNames={{ content: "truncate text-center block" }}
                         >
-                          {it.brand}
+                          {it.brand || "Generic"}
                         </Chip>
-                      ) : (
-                        <span className="text-xs text-default-400">Generic</span>
-                      )}
+                      </div>
                     </TableCell>
 
                     {/* Type */}
                     <TableCell>
-                      {it.type ? (
+                      <div className="flex justify-center">
                         <Chip
                           size="sm"
                           variant="flat"
-                          className="text-xs font-semibold bg-default-100 text-default-700 w-28 min-w-[112px] max-w-[112px] justify-center"
+                          className={`text-xs font-semibold w-28 min-w-[112px] max-w-[112px] justify-center ${
+                            it.type
+                              ? "bg-default-100 text-default-700"
+                              : "bg-default-100/60 text-default-400"
+                          }`}
                           classNames={{ content: "truncate text-center block" }}
                         >
-                          {it.type}
+                          {it.type || "—"}
                         </Chip>
-                      ) : (
-                        <span className="text-xs text-default-400">—</span>
-                      )}
+                      </div>
                     </TableCell>
 
                     {/* Model & Notes */}
@@ -420,7 +420,7 @@ export default function PriceListView({ showToast }) {
                     </TableCell>
 
                     {/* Price with Quick Edit trigger */}
-                    <TableCell className="text-right">
+                    <TableCell className="text-center">
                       <Tooltip content="Click to quick-update price">
                         <button
                           type="button"
