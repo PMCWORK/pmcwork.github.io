@@ -12,6 +12,12 @@
  */
 
 let isInitialized = false;
+/** Tracks the actual items-array index of the last typeahead-highlighted item.
+ *  -1 means "no typeahead highlight active". Used instead of DOM attributes
+ *  so cycling is always reliable regardless of HeroUI's own aria-selected / data-focused state. */
+let _lastHighlightedIndex = -1;
+/** The last char pressed for typeahead — used to reset position when the char changes */
+let _lastSearchChar = '';
 
 /**
  * Detect if a HeroUI / ARIA dropdown or select is currently OPEN.
@@ -132,30 +138,26 @@ function findNextMatchingIndex(items, searchChar) {
 
   if (matchingIndices.length === 0) return -1;
 
-  // Identify currently active item index in the list
-  const currentActiveIdx = items.findIndex((item) =>
-    item.getAttribute('data-typeahead-active') === 'true' ||
-    item.getAttribute('data-hover') === 'true' ||
-    item.getAttribute('data-focus') === 'true' ||
-    item.getAttribute('data-focused') === 'true' ||
-    item.getAttribute('data-selected') === 'true' ||
-    item.getAttribute('aria-selected') === 'true'
-  );
+  // If the key changed, reset to start of new char's matches
+  if (searchChar !== _lastSearchChar) {
+    _lastSearchChar = searchChar;
+    _lastHighlightedIndex = -1;
+  }
 
-  // If currently on one of the matches, advance to next match in sequence
-  const posInMatches = matchingIndices.indexOf(currentActiveIdx);
+  // If we currently have a typeahead-highlighted item in the matches list, advance to next
+  const posInMatches = matchingIndices.indexOf(_lastHighlightedIndex);
   if (posInMatches !== -1) {
     const nextPos = (posInMatches + 1) % matchingIndices.length;
     return matchingIndices[nextPos];
   }
 
-  // If current item is between matches, pick first match that comes after it
-  if (currentActiveIdx !== -1) {
-    const after = matchingIndices.find((idx) => idx > currentActiveIdx);
+  // Otherwise, pick the first match that comes after the current highlight position
+  if (_lastHighlightedIndex !== -1) {
+    const after = matchingIndices.find((idx) => idx > _lastHighlightedIndex);
     if (after !== undefined) return after;
   }
 
-  // Default to the first match
+  // Default: start at the first match
   return matchingIndices[0];
 }
 
@@ -197,6 +199,9 @@ function applyItemHighlight(targetItem, items, activeTrigger) {
     'font-semibold'
   );
 
+  // Track the index so cycling works reliably
+  _lastHighlightedIndex = items.indexOf(targetItem);
+
   // Focus target item natively
   try {
     targetItem.focus({ preventScroll: true });
@@ -222,7 +227,7 @@ export function initDropdownTypeahead() {
   if (isInitialized || typeof window === 'undefined') return;
   isInitialized = true;
 
-  // Clear typeahead highlights when moving mouse
+  // Clear typeahead highlights and reset cycling state when moving mouse
   window.addEventListener(
     'mousemove',
     () => {
@@ -236,6 +241,9 @@ export function initDropdownTypeahead() {
           'dark:bg-primary-900/30'
         );
       });
+      // Reset tracking so next keypress starts fresh
+      _lastHighlightedIndex = -1;
+      _lastSearchChar = '';
     },
     { passive: true }
   );

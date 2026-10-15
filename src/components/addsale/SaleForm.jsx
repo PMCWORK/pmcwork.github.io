@@ -208,13 +208,8 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
             </div>
           </div>
 
-          {/* Hint */}
-          <div className="text-[11.5px] text-default-400 leading-relaxed pt-1">
-            <b>Profit %</b> is calculated automatically as profit ÷ sale amount.
-          </div>
-
           {/* Submit Button */}
-          <div className="mt-auto pt-4">
+          <div className="mt-auto pt-8">
             <Button
               type="submit"
               color="primary"

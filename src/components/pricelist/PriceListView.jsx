@@ -361,9 +361,9 @@ export default function PriceListView({ showToast }) {
               }}
             >
               <TableHeader>
-                <TableColumn key="model">MODEL / PRODUCT NAME</TableColumn>
                 <TableColumn key="brand">BRAND</TableColumn>
                 <TableColumn key="type">TYPE</TableColumn>
+                <TableColumn key="model">MODEL / PRODUCT NAME</TableColumn>
                 <TableColumn key="price" align="end">PRICE (TK)</TableColumn>
                 <TableColumn key="actions" align="center">ACTIONS</TableColumn>
               </TableHeader>
@@ -371,6 +371,39 @@ export default function PriceListView({ showToast }) {
               <TableBody emptyContent="No products found in catalog matching your filter.">
                 {paginatedItems.map((it) => (
                   <TableRow key={it.id}>
+                    {/* Brand */}
+                    <TableCell>
+                      {it.brand ? (
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          color="primary"
+                          className="text-xs font-semibold w-28 min-w-[112px] max-w-[112px] justify-center"
+                          classNames={{ content: "truncate text-center block" }}
+                        >
+                          {it.brand}
+                        </Chip>
+                      ) : (
+                        <span className="text-xs text-default-400">Generic</span>
+                      )}
+                    </TableCell>
+
+                    {/* Type */}
+                    <TableCell>
+                      {it.type ? (
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          className="text-xs font-semibold bg-default-100 text-default-700 w-28 min-w-[112px] max-w-[112px] justify-center"
+                          classNames={{ content: "truncate text-center block" }}
+                        >
+                          {it.type}
+                        </Chip>
+                      ) : (
+                        <span className="text-xs text-default-400">—</span>
+                      )}
+                    </TableCell>
+
                     {/* Model & Notes */}
                     <TableCell>
                       <div>
@@ -384,28 +417,6 @@ export default function PriceListView({ showToast }) {
                           </div>
                         )}
                       </div>
-                    </TableCell>
-
-                    {/* Brand */}
-                    <TableCell>
-                      {it.brand ? (
-                        <Chip size="sm" variant="flat" color="primary" className="text-xs font-semibold">
-                          {it.brand}
-                        </Chip>
-                      ) : (
-                        <span className="text-xs text-default-400">Generic</span>
-                      )}
-                    </TableCell>
-
-                    {/* Type */}
-                    <TableCell>
-                      {it.type ? (
-                        <Chip size="sm" variant="flat" className="text-xs font-semibold bg-default-100 text-default-700">
-                          {it.type}
-                        </Chip>
-                      ) : (
-                        <span className="text-xs text-default-400">—</span>
-                      )}
                     </TableCell>
 
                     {/* Price with Quick Edit trigger */}

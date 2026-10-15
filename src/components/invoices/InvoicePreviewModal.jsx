@@ -56,6 +56,12 @@ export default function InvoicePreviewModal({
   const grandTotal = Number(invoice.grandTotal || (totalAmount - discount));
 
   const handlePrint = () => {
+    const origTitle = document.title;
+    document.title = invoice.number || 'PMC-Invoice';
+    window.onafterprint = () => {
+      document.title = origTitle;
+      window.onafterprint = null;
+    };
     window.print();
   };
 

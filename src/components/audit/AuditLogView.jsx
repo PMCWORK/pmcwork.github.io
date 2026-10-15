@@ -206,7 +206,7 @@ export default function AuditLogView({ showToast }) {
           </div>
 
           {/* Audit List Stream */}
-          <div className="space-y-2.5 min-h-[320px]">
+          <div className="space-y-2 min-h-[320px]">
             {filteredEntries.length === 0 ? (
               <div className="py-16 text-center border border-dashed border-default-200 rounded-xl bg-default-50/50">
                 <ShieldCheck className="w-10 h-10 text-default-400 mx-auto mb-2 opacity-50" />
@@ -218,72 +218,99 @@ export default function AuditLogView({ showToast }) {
             ) : (
               paginatedEntries.map((rawEntry) => {
                 const parsed = parseAuditItem(rawEntry);
+
+                // Pick icon per entity type
+                const entityIcon = {
+                  auth: <ShieldCheck className="w-4 h-4" />,
+                  invoice: <Tag className="w-4 h-4" />,
+                  sale: <Activity className="w-4 h-4" />,
+                  product: <Tag className="w-4 h-4" />,
+                  expense: <AlertCircle className="w-4 h-4" />,
+                  settlement: <Calendar className="w-4 h-4" />,
+                  purchase: <Tag className="w-4 h-4" />,
+                  price_list: <Tag className="w-4 h-4" />,
+                }[parsed.type] || <Activity className="w-4 h-4" />;
+
+                // Icon background per badge color
+                const iconBg = {
+                  success: 'bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-400',
+                  primary: 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400',
+                  danger:  'bg-danger-100  dark:bg-danger-900/30  text-danger-600  dark:text-danger-400',
+                  warning: 'bg-warning-100 dark:bg-warning-900/30 text-warning-600 dark:text-warning-400',
+                  default: 'bg-default-100 text-default-500',
+                }[parsed.badgeColor] || 'bg-default-100 text-default-500';
+
                 return (
                   <div
                     key={parsed.id || `${parsed.type}_${rawEntry.timestampMillis}`}
-                    className="p-3.5 rounded-xl border border-default-200 bg-content2/30 hover:bg-content2/60 transition-colors flex items-start gap-3.5 shadow-2xs"
+                    className="p-3.5 rounded-xl border border-default-200 bg-content2/30 hover:bg-content2/60 transition-colors flex items-start gap-3 shadow-2xs"
                   >
-                    {/* Category Icon */}
-                    <div className="w-8 h-8 rounded-lg bg-default-100 flex items-center justify-center shrink-0 mt-0.5 text-primary">
-                      <Activity className="w-4 h-4" />
+                    {/* Entity Icon */}
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${iconBg}`}>
+                      {entityIcon}
                     </div>
 
-                    {/* Content Box */}
-                    <div className="flex-1 min-w-0 space-y-1">
-                      {/* Title & Badge */}
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs sm:text-sm font-bold text-foreground">
+                    {/* Content */}
+                    <div className="flex-1 min-w-0 space-y-1.5">
+
+                      {/* Row 1: Title + Badge + Timestamp */}
+                      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-xs sm:text-sm font-bold text-foreground leading-tight truncate">
                             {parsed.titleText}
                           </span>
                           <Chip
                             size="sm"
                             variant="flat"
                             color={parsed.badgeColor}
-                            className="h-5 text-[10px] font-bold"
+                            className="h-5 text-[10px] font-bold shrink-0"
                           >
                             {parsed.badgeText}
                           </Chip>
                         </div>
 
-                        {/* Timestamp */}
-                        <div className="text-[11px] text-default-400 flex items-center gap-1 font-mono">
-                          <Clock className="w-3 h-3 text-default-400" />
+                        <div className="text-[11px] text-default-400 flex items-center gap-1 font-mono shrink-0">
+                          <Clock className="w-3 h-3" />
                           <span>{parsed.time.dateStr} · {parsed.time.timeStr}</span>
                           {parsed.time.relText && (
-                            <span className="text-default-400 font-normal">
-                              ({parsed.time.relText})
-                            </span>
+                            <span className="text-default-400">({parsed.time.relText})</span>
                           )}
                         </div>
                       </div>
 
-                      {/* Details / Diff Pills */}
-                      <div className="text-xs text-default-600 space-y-1">
-                        {parsed.details.length > 0 && (
-                          <div className="flex flex-wrap items-center gap-2">
-                            {parsed.details.map((d, idx) => (
-                              <span key={idx}>
-                                {d}
-                                {idx < parsed.details.length - 1 && ' · '}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {parsed.diffs.length > 0 && (
-                          <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                            {parsed.diffs.map((diffStr, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2 py-0.5 rounded bg-default-200/60 dark:bg-default-100 text-[11px] font-semibold text-foreground"
-                              >
-                                {diffStr}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                      {/* Row 2: Author + Category */}
+                      <div className="flex items-center gap-2 text-[11px] text-default-400">
+                        <User className="w-3 h-3 shrink-0" />
+                        <span className="font-medium text-default-500">{parsed.author}</span>
+                        <span className="text-default-300">·</span>
+                        <span className="capitalize">{parsed.type.replace('_', ' ')}</span>
                       </div>
+
+                      {/* Row 3: Details (create/delete info) */}
+                      {parsed.details.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-default-600">
+                          {parsed.details.map((d, idx) => (
+                            <span key={idx} className="flex items-center gap-1">
+                              {idx > 0 && <span className="text-default-300">·</span>}
+                              {d}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Row 4: Diffs (update pills) */}
+                      {parsed.diffs.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                          {parsed.diffs.map((diffStr, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-default-100 dark:bg-default-100/80 border border-default-200 text-[11px] font-semibold text-foreground"
+                            >
+                              {diffStr}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
