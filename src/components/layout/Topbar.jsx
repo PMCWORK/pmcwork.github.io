@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Badge, Tooltip } from '@heroui/react';
+import { Button, Tooltip } from '@heroui/react';
 import { Calendar, Bell, Sun, Moon } from 'lucide-react';
 import { getDateChipData } from '../../utils/calculations';
 
@@ -66,18 +66,16 @@ export default function Topbar({
         </Tooltip>
 
         {/* Notifications Icon Button */}
-        <Badge content="3" color="danger" shape="circle" size="sm">
-          <Button
-            isIconOnly
-            variant="light"
-            size="sm"
-            aria-label="Notifications"
-            onPress={onOpenNotifications}
-            className="h-8 w-8 min-w-8 text-default-500 hover:text-foreground rounded-lg"
-          >
-            <Bell className="w-4 h-4" />
-          </Button>
-        </Badge>
+        <Button
+          isIconOnly
+          variant="light"
+          size="sm"
+          aria-label="Notifications"
+          onPress={onOpenNotifications}
+          className="h-8 w-8 min-w-8 text-default-500 hover:text-foreground rounded-lg"
+        >
+          <Bell className="w-4 h-4" />
+        </Button>
       </div>
     </header>
   );

@@ -579,7 +579,7 @@ export default function HistoryView({ showToast }) {
                     </TableCell>
 
                     <TableCell className="text-center">
-                      <span className="text-sm font-normal text-default-700 dark:text-default-300">
+                      <span className="text-sm font-normal text-default-700 dark:text-white">
                         {bnDay(s.date) || '—'}
                       </span>
                     </TableCell>
