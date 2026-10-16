@@ -48,12 +48,12 @@ export default function AddSaleView({ isDark, initialDate, onDateChange, showToa
       {/* Main 2-Column Ledger & Analytics Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
         {/* Left Column: Monthly Cumulative Trend Chart */}
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 flex flex-col">
           <MonthlyTrendChart sales={sales} isDark={isDark} />
         </div>
 
         {/* Right Column: Sale Details Entry Form */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 flex flex-col">
           <SaleForm
             initialDate={selectedFillDate}
             onDateChange={onDateChange}

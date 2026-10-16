@@ -98,118 +98,120 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
         </h2>
       </CardHeader>
 
-      <CardBody className="px-6 pb-6 pt-2 flex-1 flex flex-col justify-between">
-        <form onSubmit={handleSubmit} className="space-y-4 flex flex-col flex-1">
-          {/* Row 1: Date & Profit % */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-default-600 mb-1.5">
-                Date
-              </label>
-              <Input
-                type="date"
-                variant="bordered"
-                size="sm"
-                value={date}
-                onChange={(e) => {
-                  setDate(e.target.value);
-                  onDateChange?.(e.target.value);
-                }}
-                classNames={{
-                  inputWrapper: "border-default-300 focus-within:border-primary h-10"
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-default-600 mb-1.5">
-                Profit %
-              </label>
-              <div className="relative">
+      <CardBody className="px-6 pb-6 pt-2 flex-1 flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 justify-between">
+          <div className="space-y-4 sm:space-y-5">
+            {/* Row 1: Date & Profit % */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-default-600 mb-1.5">
+                  Date
+                </label>
                 <Input
-                  isReadOnly
+                  type="date"
                   variant="bordered"
                   size="sm"
-                  value={marginDisplay}
-                  classNames={{
-                    input: "font-mono font-semibold text-default-500",
-                    inputWrapper: "border-default-200 bg-default-50/70 h-10 cursor-not-allowed"
+                  value={date}
+                  onChange={(e) => {
+                    setDate(e.target.value);
+                    onDateChange?.(e.target.value);
                   }}
-                  endContent={
-                    <Chip size="sm" variant="flat" color="success" className="text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
-                      Auto
-                    </Chip>
-                  }
+                  classNames={{
+                    inputWrapper: "border-default-300 focus-within:border-primary h-10"
+                  }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-default-600 mb-1.5">
+                  Profit %
+                </label>
+                <div className="relative">
+                  <Input
+                    isReadOnly
+                    variant="bordered"
+                    size="sm"
+                    value={marginDisplay}
+                    classNames={{
+                      input: "font-mono font-semibold text-default-500",
+                      inputWrapper: "border-default-200 bg-default-50/70 h-10 cursor-not-allowed"
+                    }}
+                    endContent={
+                      <Chip size="sm" variant="flat" color="success" className="text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
+                        Auto
+                      </Chip>
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Sale amount, Profit, Cost / expense (field-row-3) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div>
+                <label className="block text-xs font-semibold text-default-600 mb-1.5">
+                  Sale amount <span className="text-default-400 font-normal">(৳)</span>
+                </label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  variant="bordered"
+                  size="sm"
+                  value={sale}
+                  onChange={(e) => setSale(e.target.value)}
+                  classNames={{
+                    inputWrapper: "border-default-300 focus-within:border-primary font-numeric font-bold h-10"
+                  }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-default-600 mb-1.5">
+                  Profit <span className="text-default-400 font-normal">(৳)</span>
+                </label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0"
+                  variant="bordered"
+                  size="sm"
+                  value={profit}
+                  onChange={(e) => setProfit(e.target.value)}
+                  classNames={{
+                    inputWrapper: "border-default-300 focus-within:border-teal-500 font-numeric font-bold text-teal-600 dark:text-teal-400 h-10"
+                  }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-default-600 mb-1.5">
+                  Cost / expense <span className="text-default-400 font-normal">(৳)</span>
+                </label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0"
+                  variant="bordered"
+                  size="sm"
+                  value={cost}
+                  onChange={(e) => setCost(e.target.value)}
+                  classNames={{
+                    inputWrapper: "border-default-300 focus-within:border-primary font-numeric h-10"
+                  }}
+                  required
                 />
               </div>
             </div>
           </div>
 
-          {/* Row 2: Sale amount, Profit, Cost / expense (field-row-3) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-            <div>
-              <label className="block text-xs font-semibold text-default-600 mb-1.5">
-                Sale amount <span className="text-default-400 font-normal">(৳)</span>
-              </label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0"
-                variant="bordered"
-                size="sm"
-                value={sale}
-                onChange={(e) => setSale(e.target.value)}
-                classNames={{
-                  inputWrapper: "border-default-300 focus-within:border-primary font-numeric font-bold h-10"
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-default-600 mb-1.5">
-                Profit <span className="text-default-400 font-normal">(৳)</span>
-              </label>
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="0"
-                variant="bordered"
-                size="sm"
-                value={profit}
-                onChange={(e) => setProfit(e.target.value)}
-                classNames={{
-                  inputWrapper: "border-default-300 focus-within:border-teal-500 font-numeric font-bold text-teal-600 dark:text-teal-400 h-10"
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-default-600 mb-1.5">
-                Cost / expense <span className="text-default-400 font-normal">(৳)</span>
-              </label>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0"
-                variant="bordered"
-                size="sm"
-                value={cost}
-                onChange={(e) => setCost(e.target.value)}
-                classNames={{
-                  inputWrapper: "border-default-300 focus-within:border-primary font-numeric h-10"
-                }}
-                required
-              />
-            </div>
-          </div>
-
           {/* Submit Button */}
-          <div className="mt-auto pt-8">
+          <div className="mt-auto pt-6 sm:pt-8">
             <Button
               type="submit"
               color="primary"
