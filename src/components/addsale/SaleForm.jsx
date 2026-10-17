@@ -5,7 +5,7 @@ import { db, firebase, firebaseReady } from '../../services/firebase';
 import { logAudit } from '../../services/auth';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
-import { dhakaNow, toISODate, formatPct } from '../../utils/calculations';
+import { dhakaNow, toISODate, formatPct, formatMoney } from '../../utils/calculations';
 
 export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, showToast }) {
   const { user } = useAuth();
@@ -34,6 +34,10 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
   const numCost = parseFloat(cost) || 0;
   const pct = numSale > 0 ? (numProfit / numSale) : 0;
   const marginDisplay = numSale > 0 ? formatPct(pct) : 'auto';
+
+  // Cost and profit percentages for the distribution bar
+  const costRatio = numSale > 0 ? Math.min(Math.max((numCost / numSale) * 100, 0), 100) : 0;
+  const profitRatio = numSale > 0 ? Math.min(Math.max((numProfit / numSale) * 100, 0), 100) : 0;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -207,6 +211,56 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
                   required
                 />
               </div>
+            </div>
+
+            {/* Distribution Bar — below the inputs dialogue box and above save button */}
+            <div className="pt-2">
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                <span className="font-semibold text-default-600 text-[11px] uppercase tracking-wider">
+                  Distribution
+                </span>
+                {numSale > 0 && (
+                  <span className="font-numeric text-xs font-semibold text-default-500">
+                    <span className="text-default-600 font-bold">{Math.round(costRatio)}%</span> Cost
+                    <span className="mx-1.5 text-default-300">·</span>
+                    <span className="text-teal-600 dark:text-teal-400 font-bold">{Math.round(profitRatio)}%</span> Profit
+                  </span>
+                )}
+              </div>
+
+              {/* Visual Split Bar */}
+              <div className="w-full h-2.5 rounded-full bg-default-100 dark:bg-default-50/40 overflow-hidden flex">
+                {numSale > 0 ? (
+                  <>
+                    <div
+                      className="bg-default-400 dark:bg-default-500 h-full transition-all duration-300"
+                      style={{ width: `${costRatio}%` }}
+                      title={`Cost: ${formatMoney(numCost)} (${Math.round(costRatio)}%)`}
+                    />
+                    <div
+                      className="bg-teal-500 dark:bg-teal-400 h-full transition-all duration-300"
+                      style={{ width: `${profitRatio}%` }}
+                      title={`Profit: ${formatMoney(numProfit)} (${Math.round(profitRatio)}%)`}
+                    />
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-default-200/50 dark:bg-default-50/20" />
+                )}
+              </div>
+
+              {/* Details below bar */}
+              {numSale > 0 && (
+                <div className="flex items-center justify-between text-[11px] text-default-400 pt-1.5 font-numeric">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-default-400 dark:bg-default-500 shrink-0"></span>
+                    Cost: <span className="font-semibold text-default-700 dark:text-default-300">{formatMoney(numCost)}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-teal-500 dark:bg-teal-400 shrink-0"></span>
+                    Profit: <span className="font-bold text-teal-600 dark:text-teal-400">{formatMoney(numProfit)}</span>
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
