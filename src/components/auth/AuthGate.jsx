@@ -11,6 +11,7 @@ import {
 import { ShieldAlert, LogIn, Lock, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import PinInput from '../common/PinInput';
+import PmcBrandLogo from '../common/PmcBrandLogo';
 
 export default function AuthGate() {
   const {
@@ -83,13 +84,15 @@ export default function AuthGate() {
       <Card className="w-full max-w-md border border-default-200/80 shadow-2xl bg-content1 overflow-hidden">
         {/* Brand Header */}
         <CardHeader className="flex flex-col items-center pt-8 pb-4 px-6 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary-600 via-primary-500 to-primary-300 flex items-center justify-center font-display font-extrabold text-2xl text-white shadow-lg shadow-primary/30 mb-3">
-            PMC
-          </div>
-          <h2 className="text-xl font-bold font-display tracking-tight text-foreground">
+          <PmcBrandLogo
+            variant="icon"
+            size={56}
+            className="mb-3 shadow-md rounded-2xl"
+          />
+          <h2 className="text-xl font-bold font-display tracking-tight text-foreground uppercase">
             PM COMPUTERS
           </h2>
-          <p className="text-xs uppercase tracking-widest text-default-400 font-semibold mt-0.5">
+          <p className="text-xs uppercase tracking-widest text-primary font-semibold font-display mt-0.5">
             Data Management System
           </p>
         </CardHeader>

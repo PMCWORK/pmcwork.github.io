@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { NAV_ITEMS } from '../../constants/navigation';
+import PmcBrandLogo from '../common/PmcBrandLogo';
 
 export default function Sidebar({ activeView, setActiveView, isDark, setIsDark, onOpenSettings }) {
   const { user, logout } = useAuth();
@@ -20,15 +21,34 @@ export default function Sidebar({ activeView, setActiveView, isDark, setIsDark, 
   return (
     <aside className="w-64 h-screen sticky top-0 flex flex-col border-r border-default-200 bg-content1 px-3 py-4 select-none shrink-0 z-20">
       {/* Brand Header */}
-      <div className="flex items-center gap-3 px-3 py-2 mb-2">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary-600 via-primary-500 to-primary-300 flex items-center justify-center font-display font-bold text-white shadow-md shadow-primary/30 shrink-0">
-          PMC
-        </div>
-        <div className="leading-tight">
-          <div className="font-display font-semibold text-sm tracking-tight text-foreground">
-            PM Computers
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => {
+          setActiveView('dashboard');
+          window.location.hash = '';
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setActiveView('dashboard');
+            window.location.hash = '';
+          }
+        }}
+        className="flex items-center gap-3 px-3 py-2 mb-2 rounded-xl hover:bg-default-100/60 transition-colors cursor-pointer group"
+        title="PM Computers Dashboard"
+      >
+        <PmcBrandLogo
+          variant="icon"
+          isDark={isDark}
+          size={36}
+          className="shadow-sm transition-transform duration-200 group-hover:scale-105"
+        />
+        <div className="leading-tight min-w-0">
+          <div className="font-display font-bold text-sm tracking-tight text-foreground uppercase truncate">
+            PM COMPUTERS
           </div>
-          <div className="text-[10px] uppercase tracking-wider text-default-400 font-medium">
+          <div className="text-[10px] uppercase tracking-wider text-primary font-semibold font-display truncate">
             Management System
           </div>
         </div>

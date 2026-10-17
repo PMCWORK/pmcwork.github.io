@@ -1,0 +1,56 @@
+{
+  "brand": {
+    "carbon": "#0B1117",
+    "graphite": "#101820",
+    "signal-green": "#3DDC84",
+    "circuit-green": "#0FA958",
+    "mist": "#E6EDF3",
+    "paper": "#F6F8FA",
+    "white": "#FFFFFF"
+  },
+  "semantic": {
+    "info": "#3B82F6",
+    "warning": "#FFB020",
+    "danger": "#FF5C5C",
+    "tracking": "#8B5CF6"
+  },
+  "chart": [
+    "#3DDC84",
+    "#3B82F6",
+    "#FFB020",
+    "#8B5CF6",
+    "#22D3EE",
+    "#FF5C5C"
+  ],
+  "theme": {
+    "dark": {
+      "bg": "#0B1117",
+      "surface": "#111A23",
+      "raised": "#16212C",
+      "border": "#243240",
+      "text": "#E6EDF3",
+      "muted": "#8B98A5",
+      "primary": "#3DDC84"
+    },
+    "light": {
+      "bg": "#F6F8FA",
+      "surface": "#FFFFFF",
+      "raised": "#FFFFFF",
+      "border": "#D8DEE4",
+      "text": "#0B1117",
+      "muted": "#57606A",
+      "primary": "#0FA958"
+    }
+  },
+  "type": {
+    "display": "Chakra Petch",
+    "ui": "IBM Plex Sans",
+    "mono": "JetBrains Mono"
+  },
+  "radius": [
+    2,
+    4,
+    8
+  ],
+  "space": "4px base"
+}

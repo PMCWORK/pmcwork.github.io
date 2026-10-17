@@ -137,7 +137,7 @@ export default function App() {
         {/* 2. TOPBAR */}
         <Topbar
           title={currentNav.label}
-          eyebrow={activeView === 'dashboard' ? 'PMC Management System' : null}
+          eyebrow={activeView === 'dashboard' ? 'PM Computers · Management System' : null}
           date={activeView === 'addsale' && selectedDateForAddSale ? selectedDateForAddSale : null}
           isDark={isDark}
           onToggleTheme={() => setIsDark(prev => !prev)}

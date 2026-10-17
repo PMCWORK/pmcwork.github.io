@@ -1,0 +1,3 @@
+:root{--pmc-font-display:"Chakra Petch",sans-serif;--pmc-font-ui:"IBM Plex Sans",system-ui,sans-serif;--pmc-font-mono:"JetBrains Mono",monospace;--pmc-info:#3B82F6;--pmc-warning:#FFB020;--pmc-danger:#FF5C5C;--pmc-tracking:#8B5CF6;--pmc-radius:4px}
+:root,[data-theme="dark"]{--pmc-bg:#0B1117;--pmc-surface:#111A23;--pmc-raised:#16212C;--pmc-border:#243240;--pmc-text:#E6EDF3;--pmc-muted:#8B98A5;--pmc-primary:#3DDC84;}
+[data-theme="light"]{--pmc-bg:#F6F8FA;--pmc-surface:#FFFFFF;--pmc-raised:#FFFFFF;--pmc-border:#D8DEE4;--pmc-text:#0B1117;--pmc-muted:#57606A;--pmc-primary:#0FA958;--pmc-link:#0A7F44}

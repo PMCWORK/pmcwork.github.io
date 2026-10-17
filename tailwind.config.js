@@ -12,8 +12,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'Plus Jakarta Sans', 'sans-serif'],
-        display: ['Space Grotesk', 'Outfit', 'sans-serif'],
+        sans: ['"IBM Plex Sans"', 'Inter', 'Plus Jakarta Sans', 'sans-serif'],
+        display: ['"Chakra Petch"', 'Space Grotesk', 'Outfit', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
       },
     },
   },
