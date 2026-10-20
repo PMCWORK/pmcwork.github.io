@@ -83,6 +83,13 @@ export default function App() {
       document.documentElement.setAttribute('data-theme', 'light');
       document.body.classList.remove('dark');
     }
+
+    try {
+      const svgIcon = document.querySelector("link[rel='icon'][type='image/svg+xml']:not([media])");
+      if (svgIcon) {
+        svgIcon.href = isDark ? '/icons/favicon-dark.svg' : '/icons/favicon-light.svg';
+      }
+    } catch (_) {}
   }, [isDark]);
 
   // Sync hash routing on window load
