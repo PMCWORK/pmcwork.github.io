@@ -51,7 +51,7 @@ import {
 
 export default function TrackerView({ showToast }) {
   const { user } = useAuth();
-  const { products = [], shops = [], setProducts, loadProducts } = useData();
+  const { products = [], shops = [], setProducts, loadProducts, syncAllData } = useData();
   const { appConfirm } = useDialog();
 
   const today = dhakaNow();

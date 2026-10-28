@@ -139,7 +139,11 @@ export default function PmBringsModal({
       if (isEditing) {
         const before = { ...item };
         await db.collection('pm_brings').doc(item.id).update(payload);
-        await logAudit('pm_brings', item.id, 'update', before, payload, user);
+        try {
+          await logAudit('pm_brings', item.id, 'update', before, payload, user);
+        } catch (auditErr) {
+          console.warn('Audit log failed:', auditErr);
+        }
         showToast?.('Brought item entry updated');
       } else {
         const serverTs = firebase.firestore?.FieldValue
@@ -154,12 +158,24 @@ export default function PmBringsModal({
         };
 
         const docRef = await db.collection('pm_brings').add(newEntry);
-        await logAudit('pm_brings', docRef.id, 'create', null, newEntry, user);
+        try {
+          await logAudit('pm_brings', docRef.id, 'create', null, newEntry, user);
+        } catch (auditErr) {
+          console.warn('Audit log failed:', auditErr);
+        }
         showToast?.('Brought item saved to log');
       }
 
-      syncAllData?.();
-      onSaveSuccess?.();
+      try {
+        await syncAllData?.();
+      } catch (syncErr) {
+        console.warn('syncAllData failed:', syncErr);
+      }
+      try {
+        onSaveSuccess?.();
+      } catch (cbErr) {
+        console.warn('onSaveSuccess failed:', cbErr);
+      }
       onClose();
     } catch (err) {
       console.error('Save PM Brings error:', err);

@@ -41,8 +41,18 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!numSale && numSale !== 0) {
+    if (!sale || isNaN(parseFloat(sale)) || parseFloat(sale) <= 0) {
       showToast?.('Please enter a valid sale amount.');
+      return;
+    }
+
+    if (profit === '' || isNaN(parseFloat(profit))) {
+      showToast?.('Please enter profit amount.');
+      return;
+    }
+
+    if (cost === '' || isNaN(parseFloat(cost))) {
+      showToast?.('Please enter cost / expense amount.');
       return;
     }
 
@@ -106,7 +116,7 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 justify-between">
           <div className="space-y-4 sm:space-y-5">
             {/* Row 1: Date & Profit % */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
               <div>
                 <label className="block text-xs font-semibold text-default-600 mb-1.5">
                   Date
@@ -121,7 +131,8 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
                     onDateChange?.(e.target.value);
                   }}
                   classNames={{
-                    inputWrapper: "border-default-300 focus-within:border-primary h-10"
+                    inputWrapper: "border-default-300 focus-within:border-primary h-10",
+                    helperWrapper: "!hidden"
                   }}
                   required
                 />
@@ -139,7 +150,8 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
                     value={marginDisplay}
                     classNames={{
                       input: "font-mono font-semibold text-default-500",
-                      inputWrapper: "border-default-200 bg-default-50/70 h-10 cursor-not-allowed"
+                      inputWrapper: "border-default-200 bg-default-50/70 h-10 cursor-not-allowed",
+                      helperWrapper: "!hidden"
                     }}
                     endContent={
                       <Chip size="sm" variant="flat" color="success" className="text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
@@ -152,7 +164,7 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
             </div>
 
             {/* Row 2: Sale amount, Profit, Cost / expense (field-row-3) */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 items-start">
               <div>
                 <label className="block text-xs font-semibold text-default-600 mb-1.5">
                   Sale amount <span className="text-default-400 font-normal">(৳)</span>
@@ -167,7 +179,8 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
                   value={sale}
                   onChange={(e) => setSale(e.target.value)}
                   classNames={{
-                    inputWrapper: "border-default-300 focus-within:border-primary font-numeric font-bold h-10"
+                    inputWrapper: "border-default-300 focus-within:border-primary font-numeric font-bold h-10",
+                    helperWrapper: "!hidden"
                   }}
                   required
                 />
@@ -186,7 +199,8 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
                   value={profit}
                   onChange={(e) => setProfit(e.target.value)}
                   classNames={{
-                    inputWrapper: "border-default-300 focus-within:border-teal-500 font-numeric font-bold text-teal-600 dark:text-teal-400 h-10"
+                    inputWrapper: "border-default-300 focus-within:border-teal-500 font-numeric font-bold text-teal-600 dark:text-teal-400 h-10",
+                    helperWrapper: "!hidden"
                   }}
                   required
                 />
@@ -206,7 +220,8 @@ export default function SaleForm({ initialDate, onDateChange, onSaveSuccess, sho
                   value={cost}
                   onChange={(e) => setCost(e.target.value)}
                   classNames={{
-                    inputWrapper: "border-default-300 focus-within:border-primary font-numeric h-10"
+                    inputWrapper: "border-default-300 focus-within:border-primary font-numeric h-10",
+                    helperWrapper: "!hidden"
                   }}
                   required
                 />

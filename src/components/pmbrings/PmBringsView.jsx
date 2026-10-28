@@ -48,7 +48,7 @@ import { formatMoney } from '../../utils/calculations';
 
 export default function PmBringsView({ showToast }) {
   const { user } = useAuth();
-  const { pmBrings = [], shops = [], setPmBrings, loadPmBrings } = useData();
+  const { pmBrings = [], shops = [], setPmBrings, loadPmBrings, syncAllData } = useData();
   const { appConfirm } = useDialog();
 
   const today = dhakaNow();

@@ -64,7 +64,7 @@ export default function ProductModal({
           setDateTime(localDatetimeValue(dhakaNow()));
         }
       } else {
-        setShop(unifiedShops[0] || 'Liton');
+        setShop('');
         setDesc('');
         setSn('');
         setNote('');
@@ -148,7 +148,11 @@ export default function ProductModal({
         };
 
         await db.collection('product_tracker').doc(product.id).update(payload);
-        await logAudit('product', product.id, 'update', before, payload, user);
+        try {
+          await logAudit('product', product.id, 'update', before, payload, user);
+        } catch (auditErr) {
+          console.warn('Audit log failed:', auditErr);
+        }
         showToast?.('Product entry updated');
       } else {
         const trackNum = getNextAvailableProductNumber(products);
@@ -166,12 +170,24 @@ export default function ProductModal({
         };
 
         const docRef = await db.collection('product_tracker').add(newEntry);
-        await logAudit('product', docRef.id, 'create', null, newEntry, user);
+        try {
+          await logAudit('product', docRef.id, 'create', null, newEntry, user);
+        } catch (auditErr) {
+          console.warn('Audit log failed:', auditErr);
+        }
         showToast?.(`Entry added (#${trackNum})`);
       }
 
-      syncAllData?.();
-      onSaveSuccess?.();
+      try {
+        await syncAllData?.();
+      } catch (syncErr) {
+        console.warn('syncAllData failed:', syncErr);
+      }
+      try {
+        onSaveSuccess?.();
+      } catch (cbErr) {
+        console.warn('onSaveSuccess failed:', cbErr);
+      }
       onClose();
     } catch (err) {
       console.error('Save product error:', err);
@@ -216,6 +232,7 @@ export default function ProductModal({
                   size="sm"
                   variant="bordered"
                   aria-label="Shop"
+                  placeholder="Select a shop"
                   selectedKeys={shop ? new Set([shop]) : new Set([])}
                   onSelectionChange={handleShopChange}
                   classNames={{
