@@ -27,7 +27,9 @@ import {
   Download,
   Upload,
   RefreshCw,
-  X
+  X,
+  KeyRound,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
@@ -44,6 +46,16 @@ import {
   downloadJsonBackup,
   executeDatabaseRestore
 } from '../../utils/backupHelpers';
+import {
+  generateBackupKeyPair,
+  loadBackupKeyDoc,
+  saveBackupKey,
+  downloadKeyFile,
+  isEncryptedBackup,
+  isKeyFile,
+  decryptBackup,
+  collectCandidateKeys
+} from '../../utils/backupCrypto';
 
 export default function ShopSettingsModal({
   isOpen,
@@ -99,6 +111,13 @@ export default function ShopSettingsModal({
   const [uploadedBackup, setUploadedBackup] = useState(null);
   const [restoreMode, setRestoreMode] = useState('merge');
   const [isRestoring, setIsRestoring] = useState(false);
+
+  // Encrypted nightly backup key state (see utils/backupCrypto.js)
+  const [backupKeyDoc, setBackupKeyDoc] = useState(undefined); // undefined = loading, null = not set up
+  const [isSettingUpKey, setIsSettingUpKey] = useState(false);
+  const [uploadedKeyFile, setUploadedKeyFile] = useState(null);
+  const [pendingEncrypted, setPendingEncrypted] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
 
   // Sync initial view when prop changes or modal opens
   useEffect(() => {
@@ -260,16 +279,88 @@ export default function ShopSettingsModal({
     }
   };
 
-  // Backup file upload
+  // Load the backup encryption key status when the Backups tab is opened
+  useEffect(() => {
+    if (!isOpen || selectedTab !== 'backups') return;
+    if (!firebaseReady || !db) { setBackupKeyDoc(null); return; }
+    let cancelled = false;
+    loadBackupKeyDoc(db)
+      .then((doc) => { if (!cancelled) setBackupKeyDoc(doc); })
+      .catch((err) => {
+        console.warn('Could not load backup key status:', err);
+        if (!cancelled) setBackupKeyDoc(null);
+      });
+    return () => { cancelled = true; };
+  }, [isOpen, selectedTab]);
+
+  const handleSetupBackupKey = async (isReplace = false) => {
+    const confirmed = await appConfirm?.({
+      title: isReplace ? 'Replace Backup Key?' : 'Set Up Encrypted Backups',
+      message: isReplace
+        ? 'A new key will lock all future nightly backups. Older backups stay restorable here (the old key is kept), and your old key file still opens them. A new key file will download: keep it safe.'
+        : 'This creates the key that locks your nightly backups. A key file will download: keep it somewhere safe (Google Drive, USB). You need it to open backups if the database itself is ever lost.',
+      confirmText: isReplace ? 'Replace Key' : 'Set Up & Download Key File',
+      danger: isReplace
+    });
+    if (!confirmed) return;
+
+    setIsSettingUpKey(true);
+    try {
+      const key = await generateBackupKeyPair();
+      await saveBackupKey(db, key, user);
+      downloadKeyFile(key);
+      setBackupKeyDoc(await loadBackupKeyDoc(db));
+      await logAudit('settings', 'backup_encryption', isReplace ? 'update' : 'create', null, { keyId: key.keyId }, user);
+      showToast?.('Encrypted nightly backups are set up. Keep the downloaded key file safe.');
+    } catch (err) {
+      console.error(err);
+      showToast?.('Could not set up backup key: ' + err.message);
+    } finally {
+      setIsSettingUpKey(false);
+    }
+  };
+
+  const tryDecryptBackup = async (envelope, keyFile) => {
+    setIsDecrypting(true);
+    try {
+      let keyDoc = backupKeyDoc;
+      if (keyDoc === undefined && db) keyDoc = await loadBackupKeyDoc(db).catch(() => null);
+      const parsed = await decryptBackup(envelope, collectCandidateKeys(keyDoc, keyFile));
+      if (!parsed?.data || !parsed?.meta) throw new Error('Decrypted file is not a PMC backup.');
+      setPendingEncrypted(null);
+      setUploadedBackup(parsed);
+      showToast?.(`Unlocked nightly backup from ${parsed.meta.exportedDateDisplay || 'backup'}`);
+    } catch (err) {
+      if (err.code === 'key-not-found') {
+        setPendingEncrypted(envelope);
+        showToast?.('Key not found. Upload your backup key file (pmc-backup-key-….json) in the same box.');
+      } else {
+        console.error(err);
+        showToast?.('Could not unlock backup: the file may be damaged or the key is wrong.');
+      }
+    } finally {
+      setIsDecrypting(false);
+    }
+  };
+
+  // Backup file upload (plain JSON snapshot, encrypted nightly backup, or key file)
   const handleBackupFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = '';
 
     const reader = new FileReader();
     reader.onload = (evt) => {
       try {
         const parsed = JSON.parse(evt.target?.result);
-        if (parsed?.data && parsed?.meta) {
+        if (isKeyFile(parsed)) {
+          setUploadedKeyFile(parsed);
+          showToast?.(`Loaded key file ${parsed.keyId}`);
+          if (pendingEncrypted) tryDecryptBackup(pendingEncrypted, parsed);
+        } else if (isEncryptedBackup(parsed)) {
+          setUploadedBackup(null);
+          tryDecryptBackup(parsed, uploadedKeyFile);
+        } else if (parsed?.data && parsed?.meta) {
           setUploadedBackup(parsed);
           showToast?.(`Loaded backup file from ${parsed.meta.exportedDateDisplay || 'export'}`);
         } else {
@@ -815,22 +906,95 @@ export default function ShopSettingsModal({
                     </div>
                   </div>
 
+                  {/* Encrypted Nightly Backups */}
+                  <div className="p-3.5 rounded-xl border border-default-200 bg-content1 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-bold text-foreground flex items-center gap-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                        Automatic Nightly Backups (Encrypted)
+                      </span>
+                      {backupKeyDoc === undefined ? (
+                        <Chip size="sm" variant="flat" className="h-5 text-[10px] font-bold">Checking…</Chip>
+                      ) : backupKeyDoc?.publicKeyPem ? (
+                        <Chip size="sm" variant="flat" color="success" className="h-5 text-[10px] font-bold">● Active</Chip>
+                      ) : (
+                        <Chip size="sm" variant="flat" color="warning" className="h-5 text-[10px] font-bold">Not set up</Chip>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-default-400 leading-snug">
+                      Every night at 11 PM a full encrypted copy of the database is saved on GitHub (Actions tab) for 90 days.
+                      Only this site (when logged in) or your key file can unlock it. Restore it with the box below.
+                    </p>
+                    {backupKeyDoc?.publicKeyPem ? (
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <span className="text-[10px] text-default-400 font-mono">
+                          Key {backupKeyDoc.keyId} · {backupKeyDoc.createdAt ? new Date(backupKeyDoc.createdAt).toLocaleDateString() : ''}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          radius="sm"
+                          className="h-7 text-[11px] font-bold"
+                          startContent={<KeyRound className="w-3 h-3" />}
+                          onPress={() => {
+                            downloadKeyFile(backupKeyDoc);
+                            showToast?.('Key file downloaded. Keep it safe and private.');
+                          }}
+                        >
+                          Download Key File
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="light"
+                          radius="sm"
+                          color="danger"
+                          className="h-7 text-[11px] font-bold"
+                          isLoading={isSettingUpKey}
+                          onPress={() => handleSetupBackupKey(true)}
+                        >
+                          Replace Key
+                        </Button>
+                      </div>
+                    ) : backupKeyDoc === null ? (
+                      <div className="pt-1">
+                        <Button
+                          size="sm"
+                          color="primary"
+                          radius="sm"
+                          className="font-bold text-xs"
+                          isLoading={isSettingUpKey}
+                          startContent={!isSettingUpKey && <KeyRound className="w-3.5 h-3.5" />}
+                          onPress={() => handleSetupBackupKey(false)}
+                        >
+                          Set Up Encrypted Backups
+                        </Button>
+                      </div>
+                    ) : null}
+                  </div>
+
                   {/* Restore from JSON */}
                   <div className="p-3.5 rounded-xl border border-default-200 bg-content1 space-y-2.5">
                     <div className="text-xs font-bold text-foreground">
                       Restore Database from Snapshot
                     </div>
                     <p className="text-[11px] text-default-400 leading-snug">
-                      Upload a previously exported .json snapshot file to safely merge or restore records.
+                      Upload a .json snapshot or an encrypted nightly backup (unzip the GitHub download first) to safely merge or restore records.
                     </p>
 
                     <label className="border-2 border-dashed border-default-300 hover:border-primary rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-colors text-center block">
                       <Upload className="w-6 h-6 text-default-400 mb-1" />
                       <span className="text-xs font-bold text-foreground">
-                        {uploadedBackup ? `Loaded: ${uploadedBackup.meta?.recordCounts?.sales || 0} sales ready` : 'Click or drop .json backup file here'}
+                        {isDecrypting
+                          ? 'Unlocking encrypted backup…'
+                          : pendingEncrypted
+                            ? 'Now upload your key file here to unlock the backup'
+                            : uploadedBackup
+                              ? `Loaded: ${uploadedBackup.data?.sales?.length || 0} sales ready`
+                              : 'Click or drop .json backup file here'}
                       </span>
                       <span className="text-[10px] text-default-400 mt-0.5">
-                        Accepts official PMC .json snapshot exports
+                        Accepts PMC .json snapshots, encrypted nightly backups, and backup key files
+                        {uploadedKeyFile ? ` · key ${uploadedKeyFile.keyId} loaded` : ''}
                       </span>
                       <input
                         type="file"
