@@ -288,18 +288,14 @@ export default function InvoicesView({ showToast }) {
         isClone={isCloneMode}
         allInvoices={invoices}
         remoteCounters={remoteCounters}
-        onSuccess={async (savedId) => {
+        onSuccess={async (savedId, savedInvoice) => {
+          // Open the receipt with the data that was just saved. The `invoices` list in this
+          // closure is from before the save, so looking it up there showed a stale or wrong
+          // invoice (e.g. missing the buyer name just entered).
+          const existing = invoices.find(x => x.id === savedId);
+          const target = savedInvoice ? { ...(existing || {}), ...savedInvoice } : existing;
+          if (target) handleOpenPreview(target);
           if (loadInvoices) await loadInvoices();
-          const target = invoices.find(x => x.id === savedId);
-          if (target) {
-            handleOpenPreview(target);
-          } else {
-            // refresh and find
-            setTimeout(() => {
-              const fresh = invoices.find(x => x.id === savedId) || invoices[0];
-              if (fresh) handleOpenPreview(fresh);
-            }, 300);
-          }
         }}
       />
 

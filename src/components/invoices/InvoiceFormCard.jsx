@@ -279,7 +279,9 @@ export default function InvoiceFormCard({
         }
       }
 
-      if (onSuccess) onSuccess(savedId);
+      // Pass the saved data so the receipt shows exactly what was just saved
+      // (the invoice list may not have refreshed yet).
+      if (onSuccess) onSuccess(savedId, { id: savedId, ...payload });
       onClose();
     } catch (err) {
       console.error('Error saving invoice:', err);
