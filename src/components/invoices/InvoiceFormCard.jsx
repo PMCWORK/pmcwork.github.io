@@ -32,6 +32,11 @@ import {
   WARRANTY_PRESET_OPTIONS
 } from '../../utils/invoiceHelpers';
 
+// Same fixed height for every line-item input so description, qty and price sit on one line.
+const LINE_INPUT_CLASSES = {
+  inputWrapper: 'h-9 min-h-9 border-default-300 focus-within:border-primary'
+};
+
 export default function InvoiceFormCard({
   isOpen,
   onClose,
@@ -491,13 +496,15 @@ export default function InvoiceFormCard({
 
                     return (
                       <tr key={index} className="hover:bg-default-50/50 transition-colors">
-                        {/* Row # */}
-                        <td className="py-3 px-3 text-center font-bold text-default-400 font-numeric">
-                          {index + 1}
+                        {/* Row # (all cells top-aligned; single-line cells sit in an h-9 box so they line up with the inputs) */}
+                        <td className="py-3 px-3 align-top">
+                          <div className="h-9 flex items-center justify-center font-bold text-default-400 font-numeric">
+                            {index + 1}
+                          </div>
                         </td>
 
                         {/* Description & Warranty Toggle */}
-                        <td className="py-3 px-3 space-y-2">
+                        <td className="py-3 px-3 space-y-2 align-top">
                           <Input
                             placeholder="Product name, brand, model..."
                             size="sm"
@@ -505,6 +512,7 @@ export default function InvoiceFormCard({
                             value={item.desc}
                             onChange={(e) => handleItemChange(index, 'desc', e.target.value)}
                             isRequired
+                            classNames={LINE_INPUT_CLASSES}
                           />
 
                           {/* Warranty Bar */}
@@ -587,7 +595,7 @@ export default function InvoiceFormCard({
                         </td>
 
                         {/* Quantity */}
-                        <td className="py-3 px-3">
+                        <td className="py-3 px-3 align-top">
                           <Input
                             type="number"
                             min="1"
@@ -595,6 +603,7 @@ export default function InvoiceFormCard({
                             size="sm"
                             variant="bordered"
                             classNames={{
+                              ...LINE_INPUT_CLASSES,
                               input: "text-center font-numeric font-bold"
                             }}
                             value={String(item.qty)}
@@ -604,7 +613,7 @@ export default function InvoiceFormCard({
                         </td>
 
                         {/* Unit Price */}
-                        <td className="py-3 px-3">
+                        <td className="py-3 px-3 align-top">
                           <Input
                             type="number"
                             min="0"
@@ -613,6 +622,7 @@ export default function InvoiceFormCard({
                             size="sm"
                             variant="bordered"
                             classNames={{
+                              ...LINE_INPUT_CLASSES,
                               input: "text-right font-numeric font-bold"
                             }}
                             value={String(item.price)}
@@ -622,12 +632,15 @@ export default function InvoiceFormCard({
                         </td>
 
                         {/* Item Total */}
-                        <td className="py-3 px-3 text-right font-numeric font-extrabold text-sm text-foreground">
-                          {formatMoney(rowTotal)}
+                        <td className="py-3 px-3 align-top">
+                          <div className="h-9 flex items-center justify-end font-numeric font-extrabold text-sm text-foreground">
+                            {formatMoney(rowTotal)}
+                          </div>
                         </td>
 
                         {/* Delete Row */}
-                        <td className="py-3 px-3 text-center">
+                        <td className="py-3 px-3 align-top">
+                          <div className="h-9 flex items-center justify-center">
                           <Button
                             type="button"
                             isIconOnly
@@ -640,6 +653,7 @@ export default function InvoiceFormCard({
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </Button>
+                          </div>
                         </td>
                       </tr>
                     );

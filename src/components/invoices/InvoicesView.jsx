@@ -24,7 +24,10 @@ import {
   Phone,
   DollarSign,
   TrendingUp,
-  Receipt
+  Receipt,
+  Wallet,
+  ReceiptText,
+  Users
 } from 'lucide-react';
 import { db, firebaseReady } from '../../services/firebase';
 import { logAudit } from '../../services/auth';
@@ -216,69 +219,47 @@ export default function InvoicesView({ showToast }) {
         </Button>
       </div>
 
-      {/* Metric Cards (4 Cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* Card 1: Total Invoices */}
-        <Card className="border-l-4 border-l-primary bg-content1 shadow-sm">
-          <CardBody className="p-3.5">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-default-500">
-              Total Invoices Logged
-            </div>
-            <div className="text-xl font-black font-numeric text-foreground mt-1">
-              {totalInvoicesCount}
-            </div>
-            <div className="text-[11px] text-default-400 mt-0.5">
-              {filteredInvoices.length} matching current filter
-            </div>
-          </CardBody>
-        </Card>
+      {/* Metric strip: one bordered panel, four equal cells, neutral labels, consistent numbers */}
+      {(() => {
+        const splitTotal = foyezCount + mehediCount;
+        const foyezPct = splitTotal > 0 ? Math.round((foyezCount / splitTotal) * 100) : 50;
+        const cells = [
+          { label: 'Invoices', icon: FileText, value: totalInvoicesCount.toLocaleString('en-US'), note: `${filteredInvoices.length.toLocaleString('en-US')} in current filter` },
+          { label: 'Total billed', icon: Wallet, value: formatMoney(filteredRevenue), note: 'Net of discounts, current filter' },
+          { label: 'Average bill', icon: ReceiptText, value: formatMoney(averageBill), note: 'Per invoice, current filter' }
+        ];
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px rounded-xl overflow-hidden border border-default-200 bg-default-200 shadow-sm">
+            {cells.map(({ label, icon: Icon, value, note }) => (
+              <div key={label} className="bg-content1 px-4 py-3.5 flex flex-col">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-default-500">{label}</span>
+                  <Icon className="w-4 h-4 text-default-400" aria-hidden="true" />
+                </div>
+                <div className="mt-1.5 text-2xl font-semibold font-numeric tabular-nums tracking-tight text-foreground leading-none">
+                  {value}
+                </div>
+                <div className="mt-2 text-[11px] text-default-400">{note}</div>
+              </div>
+            ))}
 
-        {/* Card 2: Period Sales Revenue */}
-        <Card className="border-l-4 border-l-success bg-content1 shadow-sm">
-          <CardBody className="p-3.5">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-success">
-              Filtered Total Value
+            {/* Salesperson split */}
+            <div className="bg-content1 px-4 py-3.5 flex flex-col">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-default-500">Invoices by salesperson</span>
+                <Users className="w-4 h-4 text-default-400" aria-hidden="true" />
+              </div>
+              <div className="mt-1.5 flex items-baseline justify-between font-numeric tabular-nums leading-none">
+                <span className="text-sm text-default-500">Foyez <b className="text-2xl font-semibold text-foreground ml-1">{foyezCount}</b></span>
+                <span className="text-sm text-default-500"><b className="text-2xl font-semibold text-foreground mr-1">{mehediCount}</b> Mehedi</span>
+              </div>
+              <div className="mt-2.5 h-1.5 w-full rounded-full bg-default-200 overflow-hidden" aria-hidden="true">
+                <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${splitTotal > 0 ? foyezPct : 0}%` }} />
+              </div>
             </div>
-            <div className="text-xl font-black font-numeric text-success mt-1">
-              {formatMoney(filteredRevenue)}
-            </div>
-            <div className="text-[11px] text-default-400 mt-0.5">
-              Net billed amount
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Card 3: Average Bill Value */}
-        <Card className="border-l-4 border-l-secondary bg-content1 shadow-sm">
-          <CardBody className="p-3.5">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-secondary-600">
-              Average Bill Value
-            </div>
-            <div className="text-xl font-black font-numeric text-foreground mt-1">
-              {formatMoney(averageBill)}
-            </div>
-            <div className="text-[11px] text-default-400 mt-0.5">
-              Per customer receipt
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Card 4: Salesperson Split */}
-        <Card className="border-l-4 border-l-amber-500 bg-content1 shadow-sm">
-          <CardBody className="p-3.5">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600">
-              Salesperson Volume
-            </div>
-            <div className="text-sm font-bold font-numeric text-foreground mt-1.5 flex items-center justify-between">
-              <span>FOYEZ: <b className="text-primary">{foyezCount}</b></span>
-              <span>MEHEDI: <b className="text-pink-600">{mehediCount}</b></span>
-            </div>
-            <div className="text-[11px] text-default-400 mt-0.5">
-              Invoices generated
-            </div>
-          </CardBody>
-        </Card>
-      </div>
+          </div>
+        );
+      })()}
 
       {/* Invoice Form Builder Card */}
       <InvoiceFormCard
