@@ -7,7 +7,6 @@ export const AUTHORIZED_EMAIL_HASHES = [
   '32f43503ae26b765ea9797acda2d66dfe252ca4331b4b9f94ec246345502b123'  // On-the-go PIN Account (ezmehedi)
 ];
 
-export const DEFAULT_GUEST_PIN_HASH = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'; // SHA-256('1234')
 
 export async function hashEmail(str) {
   if (!str) return '';
@@ -83,17 +82,26 @@ export async function loginWithGoogle() {
   return result.user;
 }
 
+// Shared Firebase email/password account used by the staff PIN pad.
+// The 6-digit PIN IS this account's Firebase password: Firebase checks it server-side,
+// so no PIN or password is stored in this (public) code. To change the PIN, reset this
+// account's password in Firebase Console > Authentication > Users.
+const PIN_ACCOUNT_EMAIL = 'ezmehedi@gmail.com';
+
 export async function loginWithPin(enteredPin) {
   if (!auth) throw new Error('Firebase Auth is not ready');
-  const pinHash = await hashEmail(enteredPin);
-  const isValid = enteredPin === '6666' || enteredPin === '1234' || pinHash === DEFAULT_GUEST_PIN_HASH;
-  if (!isValid) {
+  if (!/^\d{6}$/.test(enteredPin || '')) {
     throw new Error('Incorrect PIN');
   }
-
-  // Uses the Firebase account reserved for PIN login as in the legacy logic
-  const result = await auth.signInWithEmailAndPassword('ezmehedi@gmail.com', '666666');
-  return { ...result.user, isGuest: true };
+  try {
+    const result = await auth.signInWithEmailAndPassword(PIN_ACCOUNT_EMAIL, enteredPin);
+    return { ...result.user, isGuest: true };
+  } catch (err) {
+    const wrongPinCodes = ['auth/wrong-password', 'auth/invalid-credential', 'auth/invalid-login-credentials', 'auth/user-not-found'];
+    const e = new Error(wrongPinCodes.includes(err?.code) ? 'Incorrect PIN' : (err?.message || 'PIN login failed'));
+    e.code = err?.code;
+    throw e;
+  }
 }
 
 export async function logoutUser() {

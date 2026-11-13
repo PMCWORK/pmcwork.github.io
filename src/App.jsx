@@ -155,7 +155,7 @@ export default function App() {
         {!isAuthenticated && (
           <ConfigBanner
             title="Authentication Required"
-            message="Please sign in with Google or 4-digit PIN (1234 or 6666) to record sales."
+            message="Please sign in with Google or your 6-digit staff PIN to record sales."
             type="warning"
             actionText={isSyncingData ? "Syncing..." : "Sync Firestore"}
             onAction={() => syncAllData()}

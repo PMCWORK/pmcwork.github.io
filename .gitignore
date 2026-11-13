@@ -27,3 +27,8 @@ firestore-debug.log*
 # OS Generated Files
 .DS_Store
 Thumbs.db
+
+# Local-only handover docs (owner decision 2026-11-13: keep off the public site)
+AGENTS.md
+CLAUDE.md
+HANDOVER.md

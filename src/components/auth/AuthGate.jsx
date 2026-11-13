@@ -25,7 +25,9 @@ export default function AuthGate() {
     isAuthenticated
   } = useAuth();
 
-  const [pinDigits, setPinDigits] = useState(['', '', '', '']);
+  const PIN_LENGTH = 6;
+  const emptyPin = () => Array(PIN_LENGTH).fill('');
+  const [pinDigits, setPinDigits] = useState(emptyPin);
   const [pinError, setPinError] = useState(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [lockoutTime, setLockoutTime] = useState(0);
@@ -47,8 +49,8 @@ export default function AuthGate() {
       return;
     }
 
-    if (!pinStr || pinStr.length < 4) {
-      setPinError('Please enter all 4 digits.');
+    if (!pinStr || pinStr.length < PIN_LENGTH) {
+      setPinError(`Please enter all ${PIN_LENGTH} digits.`);
       return;
     }
 
@@ -61,11 +63,15 @@ export default function AuthGate() {
     } catch (err) {
       const nextFail = failedAttempts + 1;
       setFailedAttempts(nextFail);
-      setPinDigits(['', '', '', '']);
+      setPinDigits(emptyPin());
 
       if (nextFail >= 5) {
         setLockoutTime(300); // 5 min lockout
         setPinError('Too many failed attempts. PIN entry locked for 5 minutes.');
+      } else if (err?.code === 'auth/too-many-requests') {
+        setPinError('Too many attempts from this device. Please wait a few minutes.');
+      } else if (err?.code === 'auth/network-request-failed') {
+        setPinError('No internet connection. Check the network and try again.');
       } else {
         setPinError(`Incorrect PIN (${5 - nextFail} attempt${5 - nextFail > 1 ? 's' : ''} left)`);
       }
@@ -174,9 +180,6 @@ export default function AuthGate() {
                 >
                   Sign in with Google Account
                 </Button>
-                <p className="text-[11px] text-center text-default-400">
-                  Authorized accounts: meeeheeediii, pmcomputers.bd, pfoyez2015
-                </p>
               </div>
 
               {/* Divider */}
@@ -187,12 +190,12 @@ export default function AuthGate() {
                 </span>
               </div>
 
-              {/* 4-Digit PIN Access */}
+              {/* 6-Digit PIN Access (checked by Firebase as the PIN account's password) */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-default-600 flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5 text-primary" />
-                    Enter 4-Digit Staff PIN:
+                    Enter {PIN_LENGTH}-Digit Staff PIN:
                   </span>
                   {lockoutTime > 0 && (
                     <Chip size="sm" color="danger" variant="flat" className="text-[10px]">
@@ -202,6 +205,7 @@ export default function AuthGate() {
                 </div>
 
                 <PinInput
+                  length={PIN_LENGTH}
                   value={pinDigits}
                   onChange={setPinDigits}
                   onComplete={handlePinSubmit}
