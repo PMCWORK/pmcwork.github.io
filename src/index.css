@@ -225,8 +225,6 @@ body {
     transform: none !important;
     filter: none !important;
     backdrop-filter: none !important;
-    /* The modal fades in; never print it mid-animation (faint or missing text) */
-    opacity: 1 !important;
   }
 
   /* Printable invoice area - sits cleanly at top of page */
