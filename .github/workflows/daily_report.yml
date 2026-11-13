@@ -2,10 +2,16 @@ name: Daily Store Closing Summary
 
 on:
   workflow_dispatch: # Triggered on-time via Cloudflare Precision Worker API (11:00 PM BST)
+    inputs:
+      backup_only:
+        description: 'Only run the database backup (skip the closing email)'
+        type: boolean
+        default: false
 
 jobs:
   send-daily-report:
     name: Dispatch 11:00 PM Closing Summary Email
+    if: ${{ !inputs.backup_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -33,3 +39,62 @@ jobs:
           EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
         run: |
           node scripts/send_daily_summary.js
+
+  # Runs independently of the email job: a full, encrypted snapshot of the whole
+  # database, kept as a downloadable artifact for 90 days. Restore steps: AGENTS.md.
+  nightly-backup:
+    name: Encrypted Nightly Database Backup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check backup passphrase is set
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          if [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::error::Repository secret BACKUP_PASSPHRASE is not set. Refusing to create an unencrypted backup."
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: 'scripts/package.json'
+
+      - name: Install Dependencies
+        run: |
+          cd scripts
+          npm ci || npm install
+
+      - name: Export full database
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "STAMP=$(TZ=Asia/Dhaka date +%Y-%m-%d_%H%M)" >> "$GITHUB_ENV"
+          node scripts/backup_firestore.js "$RUNNER_TEMP/backup.json"
+
+      - name: Encrypt backup
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt \
+            -in "$RUNNER_TEMP/backup.json" \
+            -out "$RUNNER_TEMP/out/pmc-backup-$STAMP.json.enc" \
+            -pass env:BACKUP_PASSPHRASE
+          rm -f "$RUNNER_TEMP/backup.json"
+          ls -l "$RUNNER_TEMP/out"
+
+      - name: Upload encrypted backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: pmc-backup-${{ env.STAMP }}
+          path: ${{ runner.temp }}/out/pmc-backup-${{ env.STAMP }}.json.enc
+          retention-days: 90
+          if-no-files-found: error
